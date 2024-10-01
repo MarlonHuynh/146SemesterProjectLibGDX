@@ -1,7 +1,10 @@
-# YourProjectName
+# DSA EVOLUTION - CS 146 Semester Project
+
+A card game based off the flash game "Dino Evolution" with algorithms and data structures as the theme and implementation! 
+
+# Engine
 
 A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
-
 This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
 
 ## Platforms
