@@ -1,6 +1,6 @@
-# DSA EVOLUTION - CS 146 Semester Project
+# DATA EVOLUTION - CS 146 Semester Project
 
-A card game based off the flash game "Dino Evolution" with algorithms and data structures as the theme and implementation! 
+A card game based off the flash game "Dino Evolution" with algorithms and data structures as the theme and implemented in a fun, interactive way!
 
 # Engine
 
