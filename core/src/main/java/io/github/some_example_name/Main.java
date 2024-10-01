@@ -15,20 +15,21 @@ public class Main extends ApplicationAdapter {
     private OrthographicCamera camera;
     private FitViewport viewport;
 
+    // Instantiated upon startup
     @Override
     public void create() {
+        // 2D imaging vars
         batch = new SpriteBatch();
         image = new Texture("cardsprites/balancedbinarytree.png");
-
         // Set up camera and viewport
         camera = new OrthographicCamera();
         viewport = new FitViewport(600, 600, camera); // 600x600 is the virtual world size
         viewport.apply();
-
         // Center the camera
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
     }
 
+    // Called every refresh rate for rendering
     @Override
     public void render() {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
@@ -40,11 +41,13 @@ public class Main extends ApplicationAdapter {
         batch.end();
     }
 
+    // Called when resizing window
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
     }
 
+    // Called when exiting
     @Override
     public void dispose() {
         batch.dispose();
