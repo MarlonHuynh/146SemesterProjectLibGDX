@@ -1,3 +1,7 @@
+/*
+    Class for reading cards from CSV file to Card objects and doubles as a storage of all cards
+*/
+
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.graphics.Texture;

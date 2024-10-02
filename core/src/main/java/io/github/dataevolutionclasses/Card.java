@@ -1,3 +1,7 @@
+/*
+    Card class
+*/
+
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.graphics.Texture;

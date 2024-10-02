@@ -1,3 +1,8 @@
+/*
+    Class for Gameplay Scene
+    Will be managed by SceneManager (TBD) in the future, but is currently used for testing
+*/
+
 package io.github.dataevolutionclasses;
 
 // Render
