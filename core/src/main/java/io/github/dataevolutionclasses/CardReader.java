@@ -17,20 +17,19 @@ public class CardReader {
         this.cardList = new ArrayList<>();
     }
     public void generateCardsFromCSV() {
+        // Read CSV file into string list
         List<String[]> data = new ArrayList<>();
         String line;
         String delimiter = ",";
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             while ((line = br.readLine()) != null) {
-                // Split the line into values based on the delimiter
                 String[] values = line.split(delimiter);
                 data.add(values);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        System.out.println("Printing data: ");
+        // Convert string array into card object list
         for (int i = 1; i < data.size(); i++){
             for (int j = 0; j + 6 < data.get(i).length; j += 6){
                 Card newCard = new Card(data.get(i)[0], data.get(i)[1],
@@ -40,7 +39,10 @@ public class CardReader {
                 cardList.add(newCard);
             }
         }
+        // Assign textures to cards
         assignTexturePathToCard();
+        // Print all card in console for debugging
+        System.out.println("Printing data: ");
         printCardList();
     }
     public List<Card> getCardList() {

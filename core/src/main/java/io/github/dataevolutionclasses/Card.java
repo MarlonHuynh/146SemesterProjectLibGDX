@@ -34,11 +34,13 @@ public class Card {
     }
     public Card(){
         texture = new Texture("cardsprites/balancedbinarytree.png");
-        name = "DefaultCardName";
+        name = "NullName";
+        type = "NullType";
         stage = -1;
         cost = -1;
         attack = -1;
         shield = -1;
+        desc = "NullDesc";
     }
     // Getters
     public Texture getTexture(){
