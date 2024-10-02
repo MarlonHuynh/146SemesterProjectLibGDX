@@ -5,25 +5,32 @@ import com.badlogic.gdx.graphics.Texture;
 public class Card {
     private Texture texture;
     private String name;
+    private String type;
     private int stage;
     private int cost;
     private int attack;
     private int shield;
-    public Card(Texture i, String n, int st, int c, int a, int sh){
-        texture = i;
-        name = n;
-        stage = st;
-        cost = c;
-        attack = a;
-        shield = sh;
+    private String desc;
+    public Card(Texture texture, String name, String type, int stage, int cost, int attack, int shield, String desc){
+        this.texture = texture;
+        this.name = name;
+        this.type = type;
+        this.stage = stage;
+        this.cost = cost;
+        this.attack = attack;
+        this.shield = shield;
+        this.desc = desc;
     }
-    public Card(String n, int st, int c, int a, int sh){
+    public Card(String name, String type, int stage, int cost, int attack, int shield, String desc){
         texture = new Texture("cardsprites/balancedbinarytree.png");
-        name = n;
-        stage = st;
-        cost = c;
-        attack = a;
-        shield = sh;
+        this.name = name;
+        this.type = type;
+        this.stage = stage;
+        this.cost = cost;
+        this.attack = attack;
+        this.shield = shield;
+        this.desc = desc;
+
     }
     public Card(){
         texture = new Texture("cardsprites/balancedbinarytree.png");
@@ -52,6 +59,9 @@ public class Card {
     public int getShield(){
         return shield;
     }
+    public String getDesc(){
+        return desc;
+    }
 
     // Setters
     public void setTexture(String path){
@@ -72,4 +82,12 @@ public class Card {
     public void setShield(int shield){
         this.shield = shield;
     }
+    public void setDesc(String desc){
+        this.desc = desc;
+    }
+    public void print(){
+        System.out.println(name + " | " + type + " | " + stage + " | "
+            + cost + " | " + attack + " | " + shield + " | " + desc);
+    }
+
 }
