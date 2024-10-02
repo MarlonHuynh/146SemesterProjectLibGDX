@@ -1,13 +1,13 @@
-package io.github.some_example_name;
+package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+
+import java.util.List;
 
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
@@ -27,6 +27,18 @@ public class Main extends ApplicationAdapter {
         viewport.apply();
         // Center the camera
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
+        // Card
+        // Create a CardReader object with the path to the CSV file
+        CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats.csv");
+        // Read the CSV data into a list
+        List<String[]> csvData = reader.readCSV();
+        // Print the CSV content to verify
+        for (String[] row : csvData) {
+            for (String value : row) {
+                System.out.print(value + " ");
+            }
+            System.out.println();
+        }
     }
 
     // Called every refresh rate for rendering
