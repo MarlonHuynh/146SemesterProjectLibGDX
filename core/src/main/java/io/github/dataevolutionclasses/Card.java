@@ -15,6 +15,7 @@ public class Card {
     private int attack;
     private int shield;
     private String desc;
+    // Full constructor
     public Card(Texture texture, String name, String type, int stage, int cost, int attack, int shield, String desc){
         this.texture = texture;
         this.name = name;
@@ -25,6 +26,7 @@ public class Card {
         this.shield = shield;
         this.desc = desc;
     }
+    // Textureless constructor
     public Card(String name, String type, int stage, int cost, int attack, int shield, String desc){
         texture = new Texture("cardsprites/balancedbinarytree.png");
         this.name = name;
@@ -36,6 +38,7 @@ public class Card {
         this.desc = desc;
 
     }
+    // Null constructor
     public Card(){
         texture = new Texture("cardsprites/balancedbinarytree.png");
         name = "NullName";
@@ -68,7 +71,6 @@ public class Card {
     public String getDesc(){
         return desc;
     }
-
     // Setters
     public void setTexture(String path){
         texture = new Texture(path);
@@ -91,6 +93,7 @@ public class Card {
     public void setDesc(String desc){
         this.desc = desc;
     }
+    // Console print
     public void print(){
         System.out.println(name + " | " + type + " | " + stage + " | "
             + cost + " | " + attack + " | " + shield + " | " + desc);
