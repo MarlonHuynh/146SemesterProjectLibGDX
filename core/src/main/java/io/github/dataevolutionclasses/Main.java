@@ -42,9 +42,9 @@ public class Main extends ApplicationAdapter {
     private GlyphLayout descLayout;
     private float descWidth = 250; // Specify the width for wrapping
     private String creatureText = "DefaultName";
-    private String costText = "-1";
-    private String attackText = "-1";
-    private String shieldText = "-1";
+    private String costText = "9";
+    private String attackText = "6";
+    private String shieldText = "3";
 
     // Instantiated upon startup
     @Override
@@ -123,6 +123,12 @@ public class Main extends ApplicationAdapter {
         // Desc
         descLayout.setText(font, descText, Color.BLACK, descWidth, Align.left, true);
         font.draw(batch, descLayout, viewport.getWorldWidth()/4, viewport.getWorldHeight()/4);
+        // Cost
+        font.draw(batch, costText, viewport.getWorldWidth()/4, viewport.getWorldHeight()/2+235);
+        // Attack
+        font.draw(batch, attackText, viewport.getWorldWidth()/2+125, viewport.getWorldHeight()/2-225);
+        // Shield
+        font.draw(batch, shieldText, viewport.getWorldWidth()/2+125, viewport.getWorldHeight()/2-150);
         batch.end();
     }
     public void manageInput(){
@@ -134,12 +140,16 @@ public class Main extends ApplicationAdapter {
                 int x = Gdx.input.getX();
                 int y = Gdx.input.getY();
                 System.out.println("Left mouse button clicked at (" + x + ", " + y + ")");
+                // Change card vars
                 Texture cardCreatureTexture = cardList.get(cardListIndex).getTexture();
                 cardCreatureSprite.set(new Sprite(cardCreatureTexture));
                 cardCreatureSprite.setSize(cardCreatureSprite.getWidth() * 2, cardCreatureSprite.getHeight() * 2);
                 descText = cardList.get(cardListIndex).getDesc();
                 nameText = cardList.get(cardListIndex).getName();
-                if (cardListIndex < cardList.size() - 1){
+                costText = Integer.toString(cardList.get(cardListIndex).getCost());
+                attackText = Integer.toString(cardList.get(cardListIndex).getAttack());
+                shieldText = Integer.toString(cardList.get(cardListIndex).getShield());
+                if (cardListIndex < cardList.size() - 1){ // Increment card index
                     cardListIndex++;
                 }
             }

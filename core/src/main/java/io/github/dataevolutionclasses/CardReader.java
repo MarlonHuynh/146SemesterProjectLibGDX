@@ -154,6 +154,9 @@ public class CardReader {
                 case "Superoverclock":
                     card.setTexture("cardsprites/plusattack.png");
                     break;
+                case "Recover data":
+                    card.setTexture("cardsprites/plushealth.png");
+                    break;
                 case "Backup data":
                     card.setTexture("cardsprites/plushealth.png");
                     break;
