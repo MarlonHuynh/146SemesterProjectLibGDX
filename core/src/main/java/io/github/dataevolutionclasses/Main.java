@@ -7,9 +7,11 @@ package io.github.dataevolutionclasses;
 
 // Render
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -18,6 +20,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 // Text
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 // Util
 import java.util.List;
 
@@ -34,7 +37,10 @@ public class Main extends ApplicationAdapter {
     private Sprite cardCreatureSprite;
     private Sprite cardbackSprite;
     private BitmapFont font;
-    private String worldText = "Left-click to scroll through cards.";
+    private String nameText = "Creature name here";
+    private String descText = "Left-click to scroll through cards.";
+    private GlyphLayout descLayout;
+    private float descWidth = 250; // Specify the width for wrapping
     private String creatureText = "DefaultName";
     private String costText = "-1";
     private String attackText = "-1";
@@ -43,8 +49,11 @@ public class Main extends ApplicationAdapter {
     // Instantiated upon startup
     @Override
     public void create() {
+        // UI
         // Set up initial textures for the scene
         setInitialTextures();
+        // Set up layouts
+        descLayout = new GlyphLayout();
         // Set up camera and viewport
         camera = new OrthographicCamera();
         viewport = new FitViewport(600, 600, camera); // 600x600 is the virtual world size
@@ -89,8 +98,8 @@ public class Main extends ApplicationAdapter {
         cardCreatureSprite = new Sprite(cardCreatureTexture);
         cardCreatureSprite.setSize(cardCreatureSprite.getWidth() * 2, cardCreatureSprite.getHeight() * 2);
         // Font
-        font = new BitmapFont();
-        font.getData().setScale(2.0f);
+        font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        font.getData().setScale(1.0f);
     }
     // Called every frame in render to draw the screen
     public void draw(){
@@ -108,8 +117,12 @@ public class Main extends ApplicationAdapter {
         // Card creature
         cardCreatureSprite.setPosition(cardX + 50, cardY + 175);
         cardCreatureSprite.draw(batch);
-        // Font
-        font.draw(batch, worldText, viewport.getWorldWidth()/4, viewport.getWorldHeight()/4);
+        // ----- Text -------
+        // Creature name
+        font.draw(batch, nameText, viewport.getWorldWidth()/4+55, viewport.getWorldHeight()/2+235);
+        // Desc
+        descLayout.setText(font, descText, Color.BLACK, descWidth, Align.left, true);
+        font.draw(batch, descLayout, viewport.getWorldWidth()/4, viewport.getWorldHeight()/4);
         batch.end();
     }
     public void manageInput(){
@@ -124,7 +137,8 @@ public class Main extends ApplicationAdapter {
                 Texture cardCreatureTexture = cardList.get(cardListIndex).getTexture();
                 cardCreatureSprite.set(new Sprite(cardCreatureTexture));
                 cardCreatureSprite.setSize(cardCreatureSprite.getWidth() * 2, cardCreatureSprite.getHeight() * 2);
-                worldText = cardList.get(cardListIndex).getName();
+                descText = cardList.get(cardListIndex).getDesc();
+                nameText = cardList.get(cardListIndex).getName();
                 if (cardListIndex < cardList.size() - 1){
                     cardListIndex++;
                 }
