@@ -40,7 +40,7 @@ public class Main extends ApplicationAdapter {
     private String nameText = "Creature name here";
     private String descText = "Left-click to scroll through cards.";
     private GlyphLayout descLayout;
-    private float descWidth = 250; // Specify the width for wrapping
+    private float descWidth = 225; // Specify the width for wrapping
     private String costText = "9";
     private String attackText = "6";
     private String shieldText = "3";
@@ -89,7 +89,7 @@ public class Main extends ApplicationAdapter {
         // 2D imaging vars
         batch = new SpriteBatch();
         // Card back
-        Texture cardbackTexture = new Texture("cardback.png");
+        Texture cardbackTexture = new Texture("cardback2.png");
         cardbackSprite = new Sprite(cardbackTexture);
         cardbackSprite.setSize(cardbackTexture.getWidth() * 1.8f, cardbackTexture.getHeight() * 1.8f);
         // Card creature
@@ -118,16 +118,16 @@ public class Main extends ApplicationAdapter {
         cardCreatureSprite.draw(batch);
         // ----- Text -------
         // Creature name
-        font.draw(batch, nameText, viewport.getWorldWidth()/4+55, viewport.getWorldHeight()/2+235);
+        font.draw(batch, nameText, viewport.getWorldWidth()/4+85, viewport.getWorldHeight()/2+225);
         // Desc
         descLayout.setText(font, descText, Color.BLACK, descWidth, Align.left, true);
-        font.draw(batch, descLayout, viewport.getWorldWidth()/4, viewport.getWorldHeight()/4);
+        font.draw(batch, descLayout, viewport.getWorldWidth()/4+10, viewport.getWorldHeight()/4+10);
         // Cost
-        font.draw(batch, costText, viewport.getWorldWidth()/4, viewport.getWorldHeight()/2+235);
+        font.draw(batch, costText, viewport.getWorldWidth()/4+20, viewport.getWorldHeight()/2+225);
         // Attack
-        font.draw(batch, attackText, viewport.getWorldWidth()/2+125, viewport.getWorldHeight()/2-225);
+        font.draw(batch, attackText, viewport.getWorldWidth()/2+105, viewport.getWorldHeight()/2-135);
         // Shield
-        font.draw(batch, shieldText, viewport.getWorldWidth()/2+125, viewport.getWorldHeight()/2-150);
+        font.draw(batch, shieldText, viewport.getWorldWidth()/2+105, viewport.getWorldHeight()/2-205);
         batch.end();
     }
     public void manageInput(){
