@@ -5,8 +5,7 @@
 
 package io.github.dataevolutionclasses;
 
-// Render
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.ApplicationAdapter; // Rendering
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -15,14 +14,11 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-// Input
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Gdx; // Input
 import com.badlogic.gdx.Input;
-// Text
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFont; // Text
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-// Util
-import java.util.List;
+import java.util.List; // Util
 
 public class Main extends ApplicationAdapter {
     // Viewport
@@ -50,7 +46,6 @@ public class Main extends ApplicationAdapter {
     // Instantiated upon startup
     @Override
     public void create() {
-        // UI
         // Set up initial textures for the scene
         setInitialTextures();
         // Set up layouts
@@ -93,7 +88,6 @@ public class Main extends ApplicationAdapter {
         // Card back
         Texture cardbackTexture = new Texture("cardback2.png");
         cardbackSprite = new Sprite(cardbackTexture);
-
         cardbackSprite.setSize(cardbackTexture.getWidth() * cardScale, cardbackTexture.getHeight() * cardScale);
         // Card creature
         Texture cardCreatureTexture = new Texture("hashmap.png");
@@ -105,43 +99,36 @@ public class Main extends ApplicationAdapter {
     }
     // Called every frame in render to draw the screen
     public void draw(){
-        // Clears screen
+        // Clears screen and prepares batch for drawing
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-        // Draws batch of sprites
         batch.begin();
-
         // Find position of card
         // Note: DO NOT USE PIXELS to get your position. Use relative sizing.
         cardX = (viewport.getWorldWidth() / 2) - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2); // Bottom left corner x
         cardY = (viewport.getWorldHeight() / 2) - ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Bottom left corner y
         midcardX = ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2); // Distance from the left edge to middle
         midcardY = ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Distance from the bottom edge to middle
-
-        // Cardback
+        // ----- Images -----
+        // Card back
         cardbackSprite.setPosition(cardX, cardY);
         cardbackSprite.draw(batch);
         // Card creature
         cardCreatureSprite.setPosition(cardX+(midcardX/3.5f), cardY+(midcardY/1.5f));
         cardCreatureSprite.draw(batch);
-
-        // ----- Text -------
-        // Creature name
+        // ----- Text -----
+        // Name
         font.draw(batch, nameText, cardX+(midcardX*0.6f), cardY+(midcardY*1.82f));
-
         // Desc
         descLayout.setText(font, descText, Color.BLACK, descWidth, Align.left, true);
         font.draw(batch, descLayout, cardX+(midcardX*0.25f), cardY+(midcardY*0.5f));
         // Cost
         font.draw(batch, costText, cardX+(midcardX*0.25f), cardY+(midcardY*1.82f));
-
         // Attack
         font.draw(batch, attackText, cardX+(midcardX*1.6f), cardY+(midcardY*0.5f));
         // Shield
         font.draw(batch, shieldText, cardX+(midcardX*1.6f), cardY+(midcardY*0.25f));
-
-
         batch.end();
     }
     public void manageInput(){
@@ -150,6 +137,7 @@ public class Main extends ApplicationAdapter {
             if (!isLeftButtonPressed) {
                 // The button was just pressed (first frame detection)
                 isLeftButtonPressed = true;
+                // Console logs
                 int x = Gdx.input.getX();
                 int y = Gdx.input.getY();
                 System.out.println("Left mouse button clicked at (" + x + ", " + y + ")");
@@ -163,7 +151,8 @@ public class Main extends ApplicationAdapter {
                 costText = Integer.toString(cardList.get(cardListIndex).getCost());
                 attackText = Integer.toString(cardList.get(cardListIndex).getAttack());
                 shieldText = Integer.toString(cardList.get(cardListIndex).getShield());
-                if (cardListIndex < cardList.size() - 1){ // Increment card index
+                // Increment card index to get new creature from cardList next click
+                if (cardListIndex < cardList.size() - 1){
                     cardListIndex++;
                 }
             }
