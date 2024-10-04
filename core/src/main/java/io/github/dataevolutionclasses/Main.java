@@ -60,7 +60,7 @@ public class Main extends ApplicationAdapter {
         // Center the camera
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
         // Read and generate cards
-        CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats.csv");
+        CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats2.csv");
         reader.generateCardsFromCSV();
         cardList = reader.getCardList();
     }
