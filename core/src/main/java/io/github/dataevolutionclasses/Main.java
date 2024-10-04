@@ -41,7 +41,6 @@ public class Main extends ApplicationAdapter {
     private String descText = "Left-click to scroll through cards.";
     private GlyphLayout descLayout;
     private float descWidth = 250; // Specify the width for wrapping
-    private String creatureText = "DefaultName";
     private String costText = "9";
     private String attackText = "6";
     private String shieldText = "3";
