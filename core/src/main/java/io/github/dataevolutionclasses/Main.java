@@ -40,10 +40,12 @@ public class Main extends ApplicationAdapter {
     private String nameText = "Creature name here";
     private String descText = "Left-click to scroll through cards.";
     private GlyphLayout descLayout;
-    private float descWidth = 225; // Specify the width for wrapping
     private String costText = "9";
     private String attackText = "6";
     private String shieldText = "3";
+    private float cardScale = 1f;
+    private float descWidth = 100*cardScale; // Specify the width for wrapping
+    private float cardX, cardY, midcardX, midcardY;
 
     // Instantiated upon startup
     @Override
@@ -91,14 +93,15 @@ public class Main extends ApplicationAdapter {
         // Card back
         Texture cardbackTexture = new Texture("cardback2.png");
         cardbackSprite = new Sprite(cardbackTexture);
-        cardbackSprite.setSize(cardbackTexture.getWidth() * 1.8f, cardbackTexture.getHeight() * 1.8f);
+
+        cardbackSprite.setSize(cardbackTexture.getWidth() * cardScale, cardbackTexture.getHeight() * cardScale);
         // Card creature
         Texture cardCreatureTexture = new Texture("hashmap.png");
         cardCreatureSprite = new Sprite(cardCreatureTexture);
-        cardCreatureSprite.setSize(cardCreatureSprite.getWidth() * 2, cardCreatureSprite.getHeight() * 2);
+        cardCreatureSprite.setSize(cardCreatureSprite.getWidth() * cardScale, cardCreatureSprite.getHeight() * cardScale);
         // Font
         font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        font.getData().setScale(1.0f);
+        font.getData().setScale(cardScale * 0.5f);
     }
     // Called every frame in render to draw the screen
     public void draw(){
@@ -108,26 +111,37 @@ public class Main extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
         // Draws batch of sprites
         batch.begin();
-        float cardX = (viewport.getWorldWidth() / 2) - (cardbackSprite.getWidth() / 2);
-        float cardY = (viewport.getWorldHeight() / 2) - (cardbackSprite.getHeight() / 2);
+
+        // Find position of card
+        // Note: DO NOT USE PIXELS to get your position. Use relative sizing.
+        cardX = (viewport.getWorldWidth() / 2) - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2); // Bottom left corner x
+        cardY = (viewport.getWorldHeight() / 2) - ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Bottom left corner y
+        midcardX = ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2); // Distance from the left edge to middle
+        midcardY = ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Distance from the bottom edge to middle
+
         // Cardback
         cardbackSprite.setPosition(cardX, cardY);
         cardbackSprite.draw(batch);
         // Card creature
-        cardCreatureSprite.setPosition(cardX + 50, cardY + 175);
+        cardCreatureSprite.setPosition(cardX+(midcardX/3.5f), cardY+(midcardY/1.5f));
         cardCreatureSprite.draw(batch);
+
         // ----- Text -------
         // Creature name
-        font.draw(batch, nameText, viewport.getWorldWidth()/4+85, viewport.getWorldHeight()/2+225);
+        font.draw(batch, nameText, cardX+(midcardX*0.6f), cardY+(midcardY*1.82f));
+
         // Desc
         descLayout.setText(font, descText, Color.BLACK, descWidth, Align.left, true);
-        font.draw(batch, descLayout, viewport.getWorldWidth()/4+10, viewport.getWorldHeight()/4+10);
+        font.draw(batch, descLayout, cardX+(midcardX*0.25f), cardY+(midcardY*0.5f));
         // Cost
-        font.draw(batch, costText, viewport.getWorldWidth()/4+20, viewport.getWorldHeight()/2+225);
+        font.draw(batch, costText, cardX+(midcardX*0.25f), cardY+(midcardY*1.82f));
+
         // Attack
-        font.draw(batch, attackText, viewport.getWorldWidth()/2+105, viewport.getWorldHeight()/2-135);
+        font.draw(batch, attackText, cardX+(midcardX*1.6f), cardY+(midcardY*0.5f));
         // Shield
-        font.draw(batch, shieldText, viewport.getWorldWidth()/2+105, viewport.getWorldHeight()/2-205);
+        font.draw(batch, shieldText, cardX+(midcardX*1.6f), cardY+(midcardY*0.25f));
+
+
         batch.end();
     }
     public void manageInput(){
@@ -139,10 +153,11 @@ public class Main extends ApplicationAdapter {
                 int x = Gdx.input.getX();
                 int y = Gdx.input.getY();
                 System.out.println("Left mouse button clicked at (" + x + ", " + y + ")");
+                System.out.println(cardX + ", " + cardY + ", " + midcardX + ", " + midcardY);
                 // Change card vars
                 Texture cardCreatureTexture = cardList.get(cardListIndex).getTexture();
                 cardCreatureSprite.set(new Sprite(cardCreatureTexture));
-                cardCreatureSprite.setSize(cardCreatureSprite.getWidth() * 2, cardCreatureSprite.getHeight() * 2);
+                cardCreatureSprite.setSize(cardCreatureSprite.getWidth() * cardScale, cardCreatureSprite.getHeight() * cardScale);
                 descText = cardList.get(cardListIndex).getDesc();
                 nameText = cardList.get(cardListIndex).getName();
                 costText = Integer.toString(cardList.get(cardListIndex).getCost());
