@@ -21,7 +21,7 @@ public class CardReader {
         this.cardList = new ArrayList<>();
     }
     public void generateCardsFromCSV() {
-        // Read CSV file into string list
+        // Read CSV file into string list 'data'
         List<String[]> data = new ArrayList<>();
         String line;
         String delimiter = ",";
@@ -33,7 +33,7 @@ public class CardReader {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // Convert string array into card object list
+        // Convert string array into Card list
         for (int i = 1; i < data.size(); i++){
             for (int j = 0; j + 6 < data.get(i).length; j += 6){
                 Card newCard = new Card(data.get(i)[0], data.get(i)[1],
@@ -43,20 +43,23 @@ public class CardReader {
                 cardList.add(newCard);
             }
         }
-        // Assign textures to cards
+        // Assign textures to cards (done separately because the CSV file does not have texture paths)
         assignTexturePathToCard();
-        // Print all card in console for debugging
+        // Print all card in console for debugging purposes
         System.out.println("Printing data: ");
         printCardList();
     }
+    // Returns a copy of the Card list
     public List<Card> getCardList() {
         return cardList;
     }
+    // Prints all cards
     public void printCardList() {
         for (Card card : cardList){
             card.print();
         }
     }
+    // Assigns a texture path to all the cards in the Card list
     public void assignTexturePathToCard(){
         String path;
         for (Card card : cardList){

@@ -1,5 +1,7 @@
 /*
-    Card class
+    Card class to store all information about a card, including texture,
+    name, type, stage, cost, attack, shield (creature health, not called
+    health because I'm saving that for player's health), and description
 */
 
 package io.github.dataevolutionclasses;
@@ -36,7 +38,6 @@ public class Card {
         this.attack = attack;
         this.shield = shield;
         this.desc = desc;
-
     }
     // Null constructor
     public Card(){
