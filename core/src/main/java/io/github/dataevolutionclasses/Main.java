@@ -55,12 +55,19 @@ public class Main extends ApplicationAdapter {
         viewport = new FitViewport(600, 600, camera);                   // 600x600 is the virtual world size
         viewport.apply();
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0); // Center the camera
-        // Set up initial textures for the scene
-        setInitialTextures();
         // Read and generate cards and place cards into Card list
         CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats2.csv");
         reader.generateCardsFromCSV();
         cardList = reader.getCardList();
+        // Initial startup card back image
+        Texture cardbackTexture = new Texture("cardback2.png");
+        cardbackSprite = new Sprite(cardbackTexture);
+        // Initial startup card creature image
+        Texture cardCreatureTexture = new Texture("hashmap.png");
+        cardCreatureSprite = new Sprite(cardCreatureTexture);
+        // Initialize startup Font
+        font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        font.getData().setScale(cardScale * 0.5f);
     }
 
     // Called every refresh rate for rendering
@@ -82,23 +89,10 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
     }
 
-    // Initialize starting textures/sprites
-    public void setInitialTextures(){
-        // Initial startup card back image
-        Texture cardbackTexture = new Texture("cardback2.png");
-        cardbackSprite = new Sprite(cardbackTexture);
-        // Initial startup card creature image
-        Texture cardCreatureTexture = new Texture("hashmap.png");
-        cardCreatureSprite = new Sprite(cardCreatureTexture);
-        // Initialize startup Font
-        font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        font.getData().setScale(cardScale * 0.5f);
-    }
     // Called every frame in render to draw the screen
     public void draw(){
         // Clears screen and prepares batch for drawing
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        camera.update();
         // Display FPS counter
         SpriteBatch fpsBatch = new SpriteBatch();
         fpsBatch.setProjectionMatrix(camera.combined);
@@ -138,7 +132,9 @@ public class Main extends ApplicationAdapter {
             isLeftButtonPressed = false;
         }
     }
-
+    /*
+    This drawCard functions works with Main.java's variables specifically (for input testing purposes)
+    */
     public void drawCard(float x, float y, float scale){
         // Initial card back image
         Texture cardbackTexture = new Texture("cardback2.png");
@@ -173,9 +169,19 @@ public class Main extends ApplicationAdapter {
         font.draw(batch, costText, cardX+(midcardX*0.25f), cardY+(midcardY*1.82f)); // Draw cost text
         font.draw(batch, attackText, cardX+(midcardX*1.6f), cardY+(midcardY*0.5f)); // Draw attack text
         font.draw(batch, shieldText, cardX+(midcardX*1.6f), cardY+(midcardY*0.25f)); // Draw shield text
+        // End batch and update camera frame
         batch.end();
-    }
+        camera.update();
 
+    }
+    /*
+    This drawCard functions works independently of Main.java
+        x - x-coordinate of card
+        y - y-coordiate of card
+        scale - scale of the card
+        card - Card object to be drawn
+        camera - the camera of the scene
+    */
     public void drawCard(float x, float y, float scale, Card card, OrthographicCamera camera){
         // Initial card back image
         Texture cardbackTexture = new Texture("cardback2.png");
@@ -212,6 +218,8 @@ public class Main extends ApplicationAdapter {
         font.draw(batch, Integer.toString(card.getCost()), cardX+(midcardX*0.25f), cardY+(midcardY*1.82f)); // Draw cost text
         font.draw(batch, Integer.toString(card.getAttack()), cardX+(midcardX*1.6f), cardY+(midcardY*0.5f)); // Draw attack text
         font.draw(batch, Integer.toString(card.getShield()), cardX+(midcardX*1.6f), cardY+(midcardY*0.25f)); // Draw shield text
+        // End batch and update camera frame
         batch.end();
+        camera.update();
     }
 }
