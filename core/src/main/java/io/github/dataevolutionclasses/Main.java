@@ -106,7 +106,7 @@ public class Main extends ApplicationAdapter {
         font.draw(fpsBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20); // Display FPS in bottom-left corner
         fpsBatch.end();
         // Test drawing card from drawCard function
-        drawCard(viewport.getWorldWidth()*(1/4f), viewport.getWorldHeight()/2, 0.5f);
+        drawCard(viewport.getWorldWidth()*(1/4f), viewport.getWorldHeight()/2, 0.5f, cardList.get(0), camera);
         drawCard(viewport.getWorldWidth()*(3/4f), viewport.getWorldHeight()/2, 1f);
     }
     public void manageInput(){
@@ -173,6 +173,45 @@ public class Main extends ApplicationAdapter {
         font.draw(batch, costText, cardX+(midcardX*0.25f), cardY+(midcardY*1.82f)); // Draw cost text
         font.draw(batch, attackText, cardX+(midcardX*1.6f), cardY+(midcardY*0.5f)); // Draw attack text
         font.draw(batch, shieldText, cardX+(midcardX*1.6f), cardY+(midcardY*0.25f)); // Draw shield text
+        batch.end();
+    }
+
+    public void drawCard(float x, float y, float scale, Card card, OrthographicCamera camera){
+        // Initial card back image
+        Texture cardbackTexture = new Texture("cardback2.png");
+        Sprite cardbackSprite = new Sprite(cardbackTexture);
+        cardbackSprite.setSize(cardbackTexture.getWidth() * scale, cardbackTexture.getHeight() * scale);
+        // Initial card creature image
+        Texture cardCreatureTexture = card.getTexture();
+        Sprite cardCreatureSprite = new Sprite(cardCreatureTexture);
+        cardCreatureSprite.setSize(cardCreatureSprite.getTexture().getWidth() * scale, cardCreatureSprite.getTexture().getHeight() * scale);
+        // Set Font
+        BitmapFont font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        font.getData().setScale(scale * 0.5f);
+        // Create batch of sprite to be drawn
+        SpriteBatch batch = new SpriteBatch();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        // Find position of card
+        // Note: DO NOT USE PIXELS to get your position. Use relative sizing.
+        float cardX = (x - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2)); // Bottom left corner x
+        float cardY = (y - ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2)); // Bottom left corner y
+        float midcardX = ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2);  // Distance from the card's left edge to middle
+        float midcardY = ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Distance from the card's bottom edge to middle
+        // ----- Images -----
+        cardbackSprite.setPosition(cardX, cardY);
+        cardbackSprite.draw(batch); // Draw card back
+        cardCreatureSprite.setPosition(cardX+(midcardX/3.5f), cardY+(midcardY/1.5f));
+        cardCreatureSprite.draw(batch); // Draw card creature
+        // ----- Text -----
+        font.draw(batch, card.getName(), cardX+(midcardX*0.6f), cardY+(midcardY*1.82f)); // Draw name text
+        GlyphLayout descLayout = new GlyphLayout();
+        float descWidth = 100 * scale;
+        descLayout.setText(font, card.getDesc(), Color.BLACK, descWidth, Align.left, true);
+        font.draw(batch, descLayout, cardX+(midcardX*0.25f), cardY+(midcardY*0.5f)); // Draw description
+        font.draw(batch, Integer.toString(card.getCost()), cardX+(midcardX*0.25f), cardY+(midcardY*1.82f)); // Draw cost text
+        font.draw(batch, Integer.toString(card.getAttack()), cardX+(midcardX*1.6f), cardY+(midcardY*0.5f)); // Draw attack text
+        font.draw(batch, Integer.toString(card.getShield()), cardX+(midcardX*1.6f), cardY+(midcardY*0.25f)); // Draw shield text
         batch.end();
     }
 }
