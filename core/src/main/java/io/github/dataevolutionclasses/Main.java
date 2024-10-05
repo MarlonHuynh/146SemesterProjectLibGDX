@@ -142,6 +142,7 @@ public class Main extends ApplicationAdapter {
                 int y = Gdx.input.getY();
                 System.out.println("Left mouse button clicked at (" + x + ", " + y + ")");
                 System.out.println(cardX + ", " + cardY + ", " + midcardX + ", " + midcardY);
+                System.out.println(cardListIndex);
                 // Change card vars
                 Texture cardCreatureTexture = cardList.get(cardListIndex).getTexture();
                 cardCreatureSprite.set(new Sprite(cardCreatureTexture));
