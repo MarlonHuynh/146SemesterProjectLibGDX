@@ -43,19 +43,13 @@ public class Main extends ApplicationAdapter {
     private BitmapFont font;                        // Font
     private String nameText = "Creature name here"; // Name text
     private String descText = "Left-click to scroll through cards.";    // Description text
-    private GlyphLayout descLayout = new GlyphLayout();;                // GylphLayout used to wrap text of description
-    private float descWidth = 100 * cardScale;      // Specify the width for wrapping text in description
     private String costText = "9";                  // Cost text
     private String attackText = "6";                // Attack text
     private String shieldText = "3";                // Shield text
-    private float cardX, cardY;                     // cardX and cardY determines placement of the card (image pivot are at the bottom-left corner! Not middle)
-    private float midcardX, midcardY;               // midcardX and midcardY determines the distance from the bottom-left corner for the x and y axis respectively)
-                                                    // Used to place text relative to card size
 
     // Instantiated upon startup
     @Override
     public void create() {
-
         // Set up camera and viewport
         camera = new OrthographicCamera();
         viewport = new FitViewport(600, 600, camera);                   // 600x600 is the virtual world size
@@ -90,19 +84,13 @@ public class Main extends ApplicationAdapter {
 
     // Initialize starting textures/sprites
     public void setInitialTextures(){
-        // Create a new batch (which combine multiple Sprites into a texture to be drawn at runtime)
-        batch = new SpriteBatch();
-        // Instantiate GlyphLayout (used for wrapping description's text)
-        descLayout = new GlyphLayout();
-        // Initial card back image
+        // Initial startup card back image
         Texture cardbackTexture = new Texture("cardback2.png");
         cardbackSprite = new Sprite(cardbackTexture);
-        cardbackSprite.setSize(cardbackTexture.getWidth() * cardScale, cardbackTexture.getHeight() * cardScale);
-        // Initial card creature image
+        // Initial startup card creature image
         Texture cardCreatureTexture = new Texture("hashmap.png");
         cardCreatureSprite = new Sprite(cardCreatureTexture);
-        cardCreatureSprite.setSize(cardCreatureSprite.getWidth() * cardScale, cardCreatureSprite.getHeight() * cardScale);
-        // Set Font
+        // Initialize startup Font
         font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         font.getData().setScale(cardScale * 0.5f);
     }
@@ -111,29 +99,15 @@ public class Main extends ApplicationAdapter {
         // Clears screen and prepares batch for drawing
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         camera.update();
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        // Find position of card
-        // Note: DO NOT USE PIXELS to get your position. Use relative sizing.
-        cardX = (viewport.getWorldWidth() / 2) - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2); // Bottom left corner x
-        cardY = (viewport.getWorldHeight() / 2) - ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Bottom left corner y
-        midcardX = ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2);  // Distance from the card's left edge to middle
-        midcardY = ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Distance from the card's bottom edge to middle
-        // ----- Images -----
-        cardbackSprite.setPosition(cardX, cardY);
-        cardbackSprite.draw(batch); // Draw card back
-        cardCreatureSprite.setPosition(cardX+(midcardX/3.5f), cardY+(midcardY/1.5f));
-        cardCreatureSprite.draw(batch); // Draw card creature
-        // ----- Text -----
-        font.draw(batch, nameText, cardX+(midcardX*0.6f), cardY+(midcardY*1.82f)); // Draw name text
-        descLayout.setText(font, descText, Color.BLACK, descWidth, Align.left, true);
-        font.draw(batch, descLayout, cardX+(midcardX*0.25f), cardY+(midcardY*0.5f)); // Draw description
-        font.draw(batch, costText, cardX+(midcardX*0.25f), cardY+(midcardY*1.82f)); // Draw cost text
-        font.draw(batch, attackText, cardX+(midcardX*1.6f), cardY+(midcardY*0.5f)); // Draw attack text
-        font.draw(batch, shieldText, cardX+(midcardX*1.6f), cardY+(midcardY*0.25f)); // Draw shield text
-        // ----- Display fps (and other diagnostics TBA in the future) -----
-        font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20); // Display FPS in bottom-left corner
-        batch.end();
+        // Display FPS counter
+        SpriteBatch fpsBatch = new SpriteBatch();
+        fpsBatch.setProjectionMatrix(camera.combined);
+        fpsBatch.begin();
+        font.draw(fpsBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20); // Display FPS in bottom-left corner
+        fpsBatch.end();
+        // Test drawing card from drawCard function
+        drawCard(viewport.getWorldWidth()*(1/4f), viewport.getWorldHeight()/2, 0.5f);
+        drawCard(viewport.getWorldWidth()*(3/4f), viewport.getWorldHeight()/2, 1f);
     }
     public void manageInput(){
         // Check for left mouse button click
@@ -157,12 +131,48 @@ public class Main extends ApplicationAdapter {
                 int x = Gdx.input.getX();
                 int y = Gdx.input.getY();
                 System.out.println("Left mouse button clicked at (" + x + ", " + y + ")");
-                System.out.println(cardX + ", " + cardY + ", " + midcardX + ", " + midcardY);
                 System.out.println(cardListIndex);
             }
         } else {
             // Reset the flag when the button is released to prevent multiple left clicks being detected per frame
             isLeftButtonPressed = false;
         }
+    }
+
+    public void drawCard(float x, float y, float scale){
+        // Initial card back image
+        Texture cardbackTexture = new Texture("cardback2.png");
+        Sprite cardbackSprite = new Sprite(cardbackTexture);
+        cardbackSprite.setSize(cardbackTexture.getWidth() * scale, cardbackTexture.getHeight() * scale);
+        // Initial card creature image
+        cardCreatureSprite.setSize(cardCreatureSprite.getTexture().getWidth() * scale, cardCreatureSprite.getTexture().getHeight() * scale);
+        // Set Font
+        BitmapFont font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        font.getData().setScale(scale * 0.5f);
+        // Create batch of sprite to be drawn
+        SpriteBatch batch = new SpriteBatch();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        // Find position of card
+        // Note: DO NOT USE PIXELS to get your position. Use relative sizing.
+        float cardX = (x - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2)); // Bottom left corner x
+        float cardY = (y - ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2)); // Bottom left corner y
+        float midcardX = ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2);  // Distance from the card's left edge to middle
+        float midcardY = ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Distance from the card's bottom edge to middle
+        // ----- Images -----
+        cardbackSprite.setPosition(cardX, cardY);
+        cardbackSprite.draw(batch); // Draw card back
+        cardCreatureSprite.setPosition(cardX+(midcardX/3.5f), cardY+(midcardY/1.5f));
+        cardCreatureSprite.draw(batch); // Draw card creature
+        // ----- Text -----
+        font.draw(batch, nameText, cardX+(midcardX*0.6f), cardY+(midcardY*1.82f)); // Draw name text
+        GlyphLayout descLayout = new GlyphLayout();
+        float descWidth = 100 * scale;
+        descLayout.setText(font, descText, Color.BLACK, descWidth, Align.left, true);
+        font.draw(batch, descLayout, cardX+(midcardX*0.25f), cardY+(midcardY*0.5f)); // Draw description
+        font.draw(batch, costText, cardX+(midcardX*0.25f), cardY+(midcardY*1.82f)); // Draw cost text
+        font.draw(batch, attackText, cardX+(midcardX*1.6f), cardY+(midcardY*0.5f)); // Draw attack text
+        font.draw(batch, shieldText, cardX+(midcardX*1.6f), cardY+(midcardY*0.25f)); // Draw shield text
+        batch.end();
     }
 }
