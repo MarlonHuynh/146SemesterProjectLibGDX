@@ -67,7 +67,7 @@ public class Main extends ApplicationAdapter {
         cardCreatureSprite = new Sprite(cardCreatureTexture);
         // Initialize startup Font
         font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        font.getData().setScale(cardScale * 0.5f);
+        font.getData().setScale(cardScale * 0.6f);
     }
 
     // Called every refresh rate for rendering
@@ -100,8 +100,27 @@ public class Main extends ApplicationAdapter {
         font.draw(fpsBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20); // Display FPS in bottom-left corner
         fpsBatch.end();
         // Test drawing card from drawCard function
-        drawCard(viewport.getWorldWidth()*(1/4f), viewport.getWorldHeight()/2, 0.5f, cardList.get(0), camera);
-        drawCard(viewport.getWorldWidth()*(3/4f), viewport.getWorldHeight()/2, 1f);
+        //drawCard(viewport.getWorldWidth()*(1/4f), viewport.getWorldHeight()/2, 0.5f, cardList.get(0), camera);
+        // Player hand
+        drawCard(viewport.getWorldWidth()*(2/16f), viewport.getWorldHeight()*(2/16f), 0.5f);
+        drawCard(viewport.getWorldWidth()*(4.5f/16f), viewport.getWorldHeight()*(2/16f), 0.5f);
+        drawCard(viewport.getWorldWidth()*(7/16f), viewport.getWorldHeight()*(2/16f), 0.5f);
+        drawCard(viewport.getWorldWidth()*(9.5f/16f), viewport.getWorldHeight()*(2/16f), 0.5f);
+        drawCard(viewport.getWorldWidth()*(12/16f), viewport.getWorldHeight()*(2/16f), 0.5f);
+        // Enemy hand
+        drawCard(viewport.getWorldWidth()*(2/16f), viewport.getWorldHeight()*(14/16f), 0.5f);
+        drawCard(viewport.getWorldWidth()*(4.5f/16f), viewport.getWorldHeight()*(14/16f), 0.5f);
+        drawCard(viewport.getWorldWidth()*(7/16f), viewport.getWorldHeight()*(14/16f), 0.5f);
+        drawCard(viewport.getWorldWidth()*(9.5f/16f), viewport.getWorldHeight()*(14/16f), 0.5f);
+        drawCard(viewport.getWorldWidth()*(12/16f), viewport.getWorldHeight()*(14/16f), 0.5f);
+        // Field top (enemy)
+        drawCard(viewport.getWorldWidth()*(4.5f/16f), viewport.getWorldHeight()*(10/16f), 0.5f);
+        drawCard(viewport.getWorldWidth()*(7/16f), viewport.getWorldHeight()*(10/16f), 0.5f);
+        drawCard(viewport.getWorldWidth()*(9.5f/16f), viewport.getWorldHeight()*(10/16f), 0.5f);
+        // Field bottom (player)
+        drawCard(viewport.getWorldWidth()*(4.5f/16f), viewport.getWorldHeight()*(6/16f), 0.5f);
+        drawCard(viewport.getWorldWidth()*(7/16f), viewport.getWorldHeight()*(6/16f), 0.5f);
+        drawCard(viewport.getWorldWidth()*(9.5f/16f), viewport.getWorldHeight()*(6/16f), 0.5f);
     }
     public void manageInput(){
         // Check for left mouse button click
@@ -144,7 +163,7 @@ public class Main extends ApplicationAdapter {
         cardCreatureSprite.setSize(cardCreatureSprite.getTexture().getWidth() * scale, cardCreatureSprite.getTexture().getHeight() * scale);
         // Set Font
         BitmapFont font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        font.getData().setScale(scale * 0.5f);
+        font.getData().setScale(scale * 0.6f);
         // Create batch of sprite to be drawn
         SpriteBatch batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
@@ -193,7 +212,7 @@ public class Main extends ApplicationAdapter {
         cardCreatureSprite.setSize(cardCreatureSprite.getTexture().getWidth() * scale, cardCreatureSprite.getTexture().getHeight() * scale);
         // Set Font
         BitmapFont font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        font.getData().setScale(scale * 0.5f);
+        font.getData().setScale(scale * 0.6f);
         // Create batch of sprite to be drawn
         SpriteBatch batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
