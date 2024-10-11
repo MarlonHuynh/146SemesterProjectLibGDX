@@ -73,7 +73,7 @@ public class Main extends ApplicationAdapter {
     // Called every refresh rate for rendering
     @Override
     public void render() {
-        draw();
+        drawAll();
         manageInput();
     }
 
@@ -102,6 +102,23 @@ public class Main extends ApplicationAdapter {
         // Test drawing card from drawCard function
         drawCard(viewport.getWorldWidth()*(1/4f), viewport.getWorldHeight()/2, 0.5f, cardList.get(0), camera);
         drawCard(viewport.getWorldWidth()*(3/4f), viewport.getWorldHeight()/2, 1f);
+    }
+    public void drawAll(){
+        // Clears screen and prepares batch for drawing
+        for (int i = 0; i < cardList.size() && i < 35; i++) {
+//hi
+//            ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+//            SpriteBatch fpsBatch = new SpriteBatch();
+//            fpsBatch.setProjectionMatrix(camera.combined);
+//            fpsBatch.begin();
+//            font.draw(fpsBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20); // Display FPS in bottom-left corner
+//            fpsBatch.end();
+            drawCard((i % 3)*100+100, (i/3)*150+100, 0.5f, cardList.get(i), camera);
+
+        }
+        // Display FPS counter
+        // Test drawing card from drawCard function
+//        drawCard(viewport.getWorldWidth()*(3/4f), viewport.getWorldHeight()/2, 1f);
     }
     public void manageInput(){
         // Check for left mouse button click
