@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-
 
 public class Scroll {
     private Slider slider;
@@ -34,25 +34,27 @@ public class Scroll {
         Skin skin = new Skin();
 
         // Create a pixmap for the slider background
-        Pixmap pixmap = new Pixmap(200, 20, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.GRAY);
-        pixmap.fill();
-        Texture backgroundTexture = new Texture(pixmap);
-        skin.add("slider_background", new TextureRegionDrawable(new TextureRegion(backgroundTexture)));
+        Pixmap pixmapBackground = new Pixmap(200, 20, Pixmap.Format.RGBA8888);
+        pixmapBackground.setColor(Color.GRAY);
+        pixmapBackground.fill();
+        Texture backgroundTexture = new Texture(pixmapBackground);
+        Drawable backgroundDrawable = new TextureRegionDrawable(new TextureRegion(backgroundTexture));
 
         // Create a pixmap for the slider knob
-        pixmap.setColor(Color.WHITE);
-        pixmap.fillCircle(10, 10, 10);  // Create a circular knob
-        Texture knobTexture = new Texture(pixmap);
-        skin.add("slider_knob", new TextureRegionDrawable(new TextureRegion(knobTexture)));
+        Pixmap pixmapKnob = new Pixmap(20, 20, Pixmap.Format.RGBA8888);
+        pixmapKnob.setColor(Color.WHITE);
+        pixmapKnob.fillCircle(10, 10, 10);  // Create a circular knob
+        Texture knobTexture = new Texture(pixmapKnob);
+        Drawable knobDrawable = new TextureRegionDrawable(new TextureRegion(knobTexture));
 
-        // Dispose the pixmap after creating textures
-        pixmap.dispose();
+        // Dispose pixmaps after creating textures
+        pixmapBackground.dispose();
+        pixmapKnob.dispose();
 
         // Create SliderStyle and assign background and knob textures
         Slider.SliderStyle sliderStyle = new Slider.SliderStyle();
-        sliderStyle.background = skin.getDrawable("slider_background");
-        sliderStyle.knob = skin.getDrawable("slider_knob");
+        sliderStyle.background = backgroundDrawable;
+        sliderStyle.knob = knobDrawable;
 
         // Add the style to the skin
         skin.add("default-horizontal", sliderStyle);
