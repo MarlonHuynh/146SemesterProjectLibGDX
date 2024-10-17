@@ -28,6 +28,8 @@ import com.badlogic.gdx.Gdx; // Input
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont; // Text
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.List; // Util
 
 public class Main extends ApplicationAdapter {
@@ -47,10 +49,23 @@ public class Main extends ApplicationAdapter {
     private String attackText = "6";                // Attack text
     private String shieldText = "3";                // Shield text
 
+    private Stage stage;
+
+    private Scroll scroll;
+
+
     // Instantiated upon startup
     @Override
     public void create() {
         // Set up camera and viewport
+
+        stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(stage);
+
+        scroll = new Scroll();
+        scroll.createSlider(stage); //Add the slider into the stage
+
+
         camera = new OrthographicCamera();
         viewport = new FitViewport(600, 600, camera);                   // 600x600 is the virtual world size
         viewport.apply();
@@ -75,18 +90,23 @@ public class Main extends ApplicationAdapter {
     public void render() {
         drawAll();
         manageInput();
+        stage.act(); //Process any UI events
+        stage.draw(); //Draw the stage (including the slider)
     }
 
     // Called when resizing window
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
+        stage.getViewport().update(width, height, true); //Upadte the stage viewport
     }
 
     // Called when exiting
     @Override
     public void dispose() {
         batch.dispose();
+        stage.dispose();
+        scroll.dispose();
     }
 
     // Called every frame in render to draw the screen
