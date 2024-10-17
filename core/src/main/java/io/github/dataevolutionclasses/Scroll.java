@@ -21,7 +21,7 @@ public class Scroll {
         skin = createSliderSkin();
 
         // Create the slider with range from 0 to 100 and step size of 1
-        slider = new Slider(0, 100, 1, false, skin);
+        slider = new Slider(0, 100, 1, true, skin);
         slider.setPosition(50, Gdx.graphics.getHeight() / 2);  // Set position on screen
         slider.setSize(200, 50);  // Set size of the slider
 
@@ -35,7 +35,7 @@ public class Scroll {
 
         // Create a pixmap for the slider background
         Pixmap pixmapBackground = new Pixmap(200, 20, Pixmap.Format.RGBA8888);
-        pixmapBackground.setColor(Color.GRAY);
+        pixmapBackground.setColor(Color.GREEN);
         pixmapBackground.fill();
         Texture backgroundTexture = new Texture(pixmapBackground);
         Drawable backgroundDrawable = new TextureRegionDrawable(new TextureRegion(backgroundTexture));
