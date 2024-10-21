@@ -109,20 +109,6 @@ public class Main extends ApplicationAdapter {
         scroll.dispose();
     }
 
-    // Called every frame in render to draw the screen
-    public void draw(){
-        // Clears screen and prepares batch for drawing
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        // Display FPS counter
-        SpriteBatch fpsBatch = new SpriteBatch();
-        fpsBatch.setProjectionMatrix(camera.combined);
-        fpsBatch.begin();
-        font.draw(fpsBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20); // Display FPS in bottom-left corner
-        fpsBatch.end();
-        // Test drawing card from drawCard function
-        drawCard(viewport.getWorldWidth()*(1/4f), viewport.getWorldHeight()/2, 0.5f, cardList.get(0), camera);
-        drawCard(viewport.getWorldWidth()*(3/4f), viewport.getWorldHeight()/2, 1f);
-    }
     public void drawAll(){
         // Clears screen and prepares batch for drawing
         for (int i = 0; i < cardList.size() && i < 35; i++) {
@@ -133,7 +119,7 @@ public class Main extends ApplicationAdapter {
 //            fpsBatch.begin();
 //            font.draw(fpsBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20); // Display FPS in bottom-left corner
 //            fpsBatch.end();
-            drawCard((i % 3)*100+100, (i/3)*150+100, 0.5f, cardList.get(i), camera);
+            drawCard((i % 3)*50+30, (i/3)*100, 0.3f, cardList.get(i), camera);
 
         }
         // Display FPS counter
