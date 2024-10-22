@@ -197,7 +197,7 @@ public class Main extends ApplicationAdapter {
         float yOffset = (sliderValue / 100f) * maxScroll;
 
         // Adjust the camera's position
-        camera.position.y = visibleHeight / 2 + yOffset;
+        camera.position.y = totalHeight - (visibleHeight / 2) - yOffset;
         camera.update();
     }
 }
