@@ -103,11 +103,11 @@ public class Main extends ApplicationAdapter {
 //            fpsBatch.end();
             if (i % 3 == 0){
                 //drawCard(35, 50, 0.3f, cardList.get(i), camera);
-                drawCard(45, (i / 3)*100 + 50 /*0/3 = 0*//*3/3 = 1*/, 0.3f, cardList.get(i), camera);
+                drawCard(45, ((35-i) / 3)*100 + 50 /*0/3 = 0*//*3/3 = 1*/, 0.3f, cardList.get(i), camera);
             } else if (i%3 == 1) {
-                drawCard(110, (i / 3)*100 + 50 /*1/3 = 0*//*4/3 = 1*/, 0.3f, cardList.get(i), camera);
+                drawCard(110, ((35-i) / 3)*100 + 50 /*1/3 = 0*//*4/3 = 1*/, 0.3f, cardList.get(i), camera);
             } else if (i%3 == 2) {
-                drawCard(175, (i / 3)*100 +50 /*2/3 = 0*//*5/3 = 1*/, 0.3f, cardList.get(i), camera);
+                drawCard(175, ((35-i) / 3)*100 +50 /*2/3 = 0*//*5/3 = 1*/, 0.3f, cardList.get(i), camera);
             }
             //drawCard((i % 3)*50+35, (i/3)*100, 0.3f, cardList.get(i), camera);
 
