@@ -1,18 +1,3 @@
-/*
-    -- !!!ATTENTION!!!
-    -- Hi if you're trying to catch yourself up on understanding the code, this is the recommended reading order:
-    -- Card.java > CardReader.java > Main.java
-    -- This will give you a better sense of how a CSV file is converted into Card objects, then stored, and eventually used
-    -- by main.java. If you want to jump straight ahead into Main.java, that's okay too; the only thing you need
-    -- to know about Card.java and CardReader.java is that Card.java stores information about cards like name
-    -- and texture and CardReader reads the CardStats2.CSV file, converts it into Card objects, and stores
-    -- objects in cardList to be used in Main.
-    -- Yours truly, Marlon
-
-    Class for Gameplay Scene
-    Will be managed by SceneManager (TBD) in the future, but is currently used for testing UI and cards
-*/
-
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.ApplicationAdapter; // Rendering
@@ -53,18 +38,14 @@ public class Main extends ApplicationAdapter {
 
     private Scroll scroll;
 
-
-    // Instantiated upon startup
     @Override
     public void create() {
-        // Set up camera and viewport
 
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
         scroll = new Scroll();
         scroll.createSlider(stage); //Add the slider into the stage
-
 
         camera = new OrthographicCamera();
         viewport = new FitViewport(600, 600, camera);                   // 600x600 is the virtual world size
@@ -112,7 +93,6 @@ public class Main extends ApplicationAdapter {
     public void drawAll(){
         // Clears screen and prepares batch for drawing
         for (int i = 0; i < cardList.size() && i < 35; i++) {
-//hi
 //            ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 //            SpriteBatch fpsBatch = new SpriteBatch();
 //            fpsBatch.setProjectionMatrix(camera.combined);
@@ -129,8 +109,6 @@ public class Main extends ApplicationAdapter {
             //drawCard((i % 3)*50+35, (i/3)*100, 0.3f, cardList.get(i), camera);
 
         }
-        // Display FPS counter
-        // Test drawing card from drawCard function
 //        drawCard(viewport.getWorldWidth()*(3/4f), viewport.getWorldHeight()/2, 1f);
     }
     public void manageInput(){
@@ -162,56 +140,6 @@ public class Main extends ApplicationAdapter {
             isLeftButtonPressed = false;
         }
     }
-    /*
-    This drawCard functions works with Main.java's variables specifically (for input testing purposes)
-    */
-    public void drawCard(float x, float y, float scale){
-        // Initial card back image
-        Texture cardbackTexture = new Texture("cardback2.png");
-        Sprite cardbackSprite = new Sprite(cardbackTexture);
-        cardbackSprite.setSize(cardbackTexture.getWidth() * scale, cardbackTexture.getHeight() * scale);
-        // Initial card creature image
-        cardCreatureSprite.setSize(cardCreatureSprite.getTexture().getWidth() * scale, cardCreatureSprite.getTexture().getHeight() * scale);
-        // Set Font
-        BitmapFont font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        font.getData().setScale(scale * 0.5f);
-        // Create batch of sprite to be drawn
-        SpriteBatch batch = new SpriteBatch();
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        // Find position of card
-        // Note: DO NOT USE PIXELS to get your position. Use relative sizing.
-        float cardX = (x - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2)); // Bottom left corner x
-        float cardY = (y - ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2)); // Bottom left corner y
-        float midcardX = ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2);  // Distance from the card's left edge to middle
-        float midcardY = ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Distance from the card's bottom edge to middle
-        // ----- Images -----
-        cardbackSprite.setPosition(cardX, cardY);
-        cardbackSprite.draw(batch); // Draw card back
-        cardCreatureSprite.setPosition(cardX+(midcardX/3.5f), cardY+(midcardY/1.5f));
-        cardCreatureSprite.draw(batch); // Draw card creature
-        // ----- Text -----
-        font.draw(batch, nameText, cardX+(midcardX*0.6f), cardY+(midcardY*1.82f)); // Draw name text
-        GlyphLayout descLayout = new GlyphLayout();
-        float descWidth = 100 * scale;
-        descLayout.setText(font, descText, Color.BLACK, descWidth, Align.left, true);
-        font.draw(batch, descLayout, cardX+(midcardX*0.25f), cardY+(midcardY*0.5f)); // Draw description
-        font.draw(batch, costText, cardX+(midcardX*0.25f), cardY+(midcardY*1.82f)); // Draw cost text
-        font.draw(batch, attackText, cardX+(midcardX*1.6f), cardY+(midcardY*0.5f)); // Draw attack text
-        font.draw(batch, shieldText, cardX+(midcardX*1.6f), cardY+(midcardY*0.25f)); // Draw shield text
-        // End batch and update camera frame
-        batch.end();
-        camera.update();
-
-    }
-    /*
-    This drawCard functions works independently of Main.java
-        x - x-coordinate of card
-        y - y-coordiate of card
-        scale - scale of the card
-        card - Card object to be drawn
-        camera - the camera of the scene
-    */
     public void drawCard(float x, float y, float scale, Card card, OrthographicCamera camera){
         // Initial card back image
         Texture cardbackTexture = new Texture("cardback2.png");
