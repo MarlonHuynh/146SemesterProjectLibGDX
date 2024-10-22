@@ -185,8 +185,8 @@ public class Main extends ApplicationAdapter {
     }
     // Method to adjust the camera's position based on the slider
     public void adjustCamera() {
-        float cardHeight = 100;  // Assume each card has a height of 150 units
-        float totalHeight = cardHeight * cardList.size();
+        float cardHeight = 110;  // Assume each card has a height of 150 units
+        float totalHeight = cardHeight * 11;
         float visibleHeight = viewport.getWorldHeight();
 
         // Calculate the maximum scrollable range
