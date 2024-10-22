@@ -37,16 +37,16 @@ public class Scroll {
         Skin skin = new Skin();
 
         // Create a pixmap for the slider background
-        Pixmap pixmapBackground = new Pixmap(20, 700, Pixmap.Format.RGBA8888);
+        Pixmap pixmapBackground = new Pixmap(20, 690, Pixmap.Format.RGBA8888);
         pixmapBackground.setColor(Color.GRAY);
         pixmapBackground.fill();
         Texture backgroundTexture = new Texture(pixmapBackground);
         Drawable backgroundDrawable = new TextureRegionDrawable(new TextureRegion(backgroundTexture));
 
         // Create a pixmap for the slider knob
-        Pixmap pixmapKnob = new Pixmap(20, 20, Pixmap.Format.RGBA8888);
+        Pixmap pixmapKnob = new Pixmap(20, 690, Pixmap.Format.RGBA8888);
         pixmapKnob.setColor(Color.WHITE);
-        pixmapKnob.fillCircle(10, 700, 10);  // Create a circular knob
+        pixmapKnob.fillCircle(10, 10, 10);  // Create a circular knob
         Texture knobTexture = new Texture(pixmapKnob);
         Drawable knobDrawable = new TextureRegionDrawable(new TextureRegion(knobTexture));
 
