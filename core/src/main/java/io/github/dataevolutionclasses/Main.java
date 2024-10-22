@@ -69,7 +69,7 @@ public class Main extends ApplicationAdapter {
     // Called every refresh rate for rendering
     @Override
     public void render() {
-        drawAll();
+        drawCards();
         manageInput();
         stage.act(); //Process any UI events
         stage.draw(); //Draw the stage (including the slider)
@@ -90,28 +90,49 @@ public class Main extends ApplicationAdapter {
         scroll.dispose();
     }
 
-    public void drawAll(){
-        // Clears screen and prepares batch for drawing
-        for (int i = 0; i < cardList.size() && i < 35; i++) {
-//            ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-//            SpriteBatch fpsBatch = new SpriteBatch();
-//            fpsBatch.setProjectionMatrix(camera.combined);
-//            fpsBatch.begin();
-//            font.draw(fpsBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20); // Display FPS in bottom-left corner
-//            fpsBatch.end();
-            if (i % 3 == 0){
-                //drawCard(35, 50, 0.3f, cardList.get(i), camera);
-                drawCard(45, (i / 3)*100 + 50 /*0/3 = 0*//*3/3 = 1*/, 0.3f, cardList.get(i), camera);
-            } else if (i%3 == 1) {
-                drawCard(110, (i / 3)*100 + 50 /*1/3 = 0*//*4/3 = 1*/, 0.3f, cardList.get(i), camera);
-            } else if (i%3 == 2) {
-                drawCard(175, (i / 3)*100 + 50/*2/3 = 0*//*5/3 = 1*/, 0.3f, cardList.get(i), camera);
-            }
-            //drawCard((i % 3)*50+35, (i/3)*100, 0.3f, cardList.get(i), camera);
+//    public void drawAll(){
+//        // Clears screen and prepares batch for drawing
+//        for (int i = 0; i < cardList.size() && i < 35; i++) {
+////            ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+////            SpriteBatch fpsBatch = new SpriteBatch();
+////            fpsBatch.setProjectionMatrix(camera.combined);
+////            fpsBatch.begin();
+////            font.draw(fpsBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20); // Display FPS in bottom-left corner
+////            fpsBatch.end();
+//            if (i % 3 == 0){
+//                //drawCard(35, 50, 0.3f, cardList.get(i), camera);
+//                drawCard(45, (i / 3)*100 + 50 /*0/3 = 0*//*3/3 = 1*/, 0.3f, cardList.get(i), camera);
+//            } else if (i%3 == 1) {
+//                drawCard(110, (i / 3)*100 + 50 /*1/3 = 0*//*4/3 = 1*/, 0.3f, cardList.get(i), camera);
+//            } else if (i%3 == 2) {
+//                drawCard(175, (i / 3)*100 + 50/*2/3 = 0*//*5/3 = 1*/, 0.3f, cardList.get(i), camera);
+//            }
+//            //drawCard((i % 3)*50+35, (i/3)*100, 0.3f, cardList.get(i), camera);
+//
+//        }
+////        drawCard(viewport.getWorldWidth()*(3/4f), viewport.getWorldHeight()/2, 1f);
+//    }
+public void drawCards() {
+    // Calculate the total height of all cards
+    float cardHeight = 150;  // Assume each card has a height of 150 units
+    float totalHeight = cardHeight * cardList.size();
+    float visibleHeight = viewport.getWorldHeight();  // The height of the visible area
 
+    // Get the slider value and calculate the Y offset
+    float maxScroll = totalHeight - visibleHeight;  // Max scrollable height
+    float sliderValue = scroll.getSliderValue();  // Value from 0 to 100
+    float yOffset = (sliderValue / 100f) * maxScroll;  // Scale the offset according to the slider
+
+    // Start drawing cards, adjusting their Y-position based on yOffset
+    for (int i = 0; i < cardList.size(); i++) {
+        float cardY = (i * cardHeight) - yOffset;  // Adjust card's Y position by the offset
+
+        // Only draw cards that are within the visible area
+        if (cardY + cardHeight > 0 && cardY < visibleHeight) {
+            drawCard(viewport.getWorldWidth() / 2, cardY, 1f, cardList.get(i), camera);  // Draw the card
         }
-//        drawCard(viewport.getWorldWidth()*(3/4f), viewport.getWorldHeight()/2, 1f);
     }
+}
     public void manageInput(){
         // Check for left mouse button click
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {

@@ -21,13 +21,9 @@ public class Scroll {
         skin = createSliderSkin();
 
 //        // Create the slider with range from 0 to 100 and step size of 1
-//        slider = new Slider(0, 100, 1, true, skin);
-//        slider.setPosition(0, 0);  // Set position on screen
-//        slider.setSize(10, Gdx.graphics.getHeight());  // Set size of the slider
-        slider = new Slider(0, 100, 1, true, createSliderSkin());
-        slider.setPosition(Gdx.graphics.getWidth() - 50, 50);
-        slider.setSize(50, 200);
-        stage.addActor(slider);
+        slider = new Slider(0, 100, 1, true, skin);
+        slider.setPosition(0, 0);  // Set position on screen
+        slider.setSize(10, Gdx.graphics.getHeight());  // Set size of the slider
         // Add the slider to the stage for rendering
         //stage.addActor(slider);
     }
