@@ -25,11 +25,15 @@ public class Scroll {
         slider.setPosition(0, 0);  // Set position on screen
         slider.setSize(10, 700);  // Set size of the slider
 //Gdx.graphics.getHeight()
+        slider.setValue(slider.getMaxValue());
+
         // Add the slider to the stage for rendering
         stage.addActor(slider);
     }
     public float getSliderValue(){
-        return slider.getValue();
+        //return slider.getValue();
+        return slider.getMaxValue() - slider.getValue();
+
     }
 
     // Helper method to create a basic slider skin programmatically
