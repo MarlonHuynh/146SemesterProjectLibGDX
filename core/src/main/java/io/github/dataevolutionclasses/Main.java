@@ -69,9 +69,11 @@ public class Main extends ApplicationAdapter {
     // Called every refresh rate for rendering
     @Override
     public void render() {
-        drawAll();
-        manageInput();
+        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         stage.act(); //Process any UI events
+        manageInput();
+        adjustCamera();
+        drawAll();
         stage.draw(); //Draw the stage (including the slider)
     }
 
@@ -179,6 +181,23 @@ public class Main extends ApplicationAdapter {
         font.draw(batch, Integer.toString(card.getShield()), cardX+(midcardX*1.6f), cardY+(midcardY*0.25f)); // Draw shield text
         // End batch and update camera frame
         batch.end();
+        camera.update();
+    }
+    // Method to adjust the camera's position based on the slider
+    public void adjustCamera() {
+        float cardHeight = 150;  // Assume each card has a height of 150 units
+        float totalHeight = cardHeight * cardList.size();
+        float visibleHeight = viewport.getWorldHeight();
+
+        // Calculate the maximum scrollable range
+        float maxScroll = totalHeight - visibleHeight;
+
+        // Get the slider value and calculate the camera Y offset
+        float sliderValue = scroll.getSliderValue();  // Value from 0 to 100
+        float yOffset = (sliderValue / 100f) * maxScroll;
+
+        // Adjust the camera's position
+        camera.position.y = visibleHeight / 2 + yOffset;
         camera.update();
     }
 }
