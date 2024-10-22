@@ -99,12 +99,13 @@ public class Main extends ApplicationAdapter {
 //            fpsBatch.begin();
 //            font.draw(fpsBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20); // Display FPS in bottom-left corner
 //            fpsBatch.end();
-            if (i%3 == 0){
-                drawCard((i % 3)*50+35, (i/3)*100, 0.3f, cardList.get(i), camera);
+            if (i % 3 == 0){
+                //drawCard(35, 50, 0.3f, cardList.get(i), camera);
+                drawCard(45, (i / 3)*100 + 50 /*0/3 = 0*//*3/3 = 1*/, 0.3f, cardList.get(i), camera);
             } else if (i%3 == 1) {
-                drawCard((i % 3)*50+35, (i/3)*100, 0.3f, cardList.get(i), camera);
+                drawCard(110, (i / 3)*100 + 50 /*1/3 = 0*//*4/3 = 1*/, 0.3f, cardList.get(i), camera);
             } else if (i%3 == 2) {
-                drawCard((i % 3)*50+35, (i/3)*100, 0.3f, cardList.get(i), camera);
+                drawCard(175, (i / 3)*100 + 50/*2/3 = 0*//*5/3 = 1*/, 0.3f, cardList.get(i), camera);
             }
             //drawCard((i % 3)*50+35, (i/3)*100, 0.3f, cardList.get(i), camera);
 
