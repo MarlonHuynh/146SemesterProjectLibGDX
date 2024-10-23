@@ -42,7 +42,7 @@ public class Scroll {
 
         // Create a pixmap for the slider background
         Pixmap pixmapBackground = new Pixmap(20, 10, Pixmap.Format.RGBA8888);
-        pixmapBackground.setColor(Color.GRAY);
+        pixmapBackground.setColor(135 / 255f, 175 / 255f, 64 / 255f, 255 / 255f);
         pixmapBackground.fill();
         Texture backgroundTexture = new Texture(pixmapBackground);
         Drawable backgroundDrawable = new TextureRegionDrawable(new TextureRegion(backgroundTexture));
