@@ -35,7 +35,7 @@ public class CardOnScreenData {
     public CardOnScreenData(Card card, float x, float y, float scale){
         this.card = card;
         this.cardSprite = new Sprite(card.getTexture());
-        this.cardbackSprite = new Sprite(new Texture(Gdx.files.internal("cardback2.png")));
+        this.cardbackSprite = new Sprite(new Texture("cardback2.png"));
         this.x = x;
         this.y = y;
         this.scale = scale;
