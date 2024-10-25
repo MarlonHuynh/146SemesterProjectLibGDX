@@ -20,15 +20,21 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Gdx; // Input
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont; // Text
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.List; // Util
+import java.lang.Math;
 
 public class Main extends ApplicationAdapter {
     private OrthographicCamera camera;              // Camera
@@ -46,6 +52,12 @@ public class Main extends ApplicationAdapter {
     private String costText = "9";                  // Cost text
     private String attackText = "6";                // Attack text
     private String shieldText = "3";                // Shield text
+    private ArrayList<Sprite> sprites;
+    private ArrayList<String> spriteNames;
+    private ArrayList<CardOnScreenData> cardOnScreenDatas;
+    private CardOnScreenData enemyHand1, enemyHand2, enemyHand3, enemyHand4, enemyHand5;
+    private Sprite enemyHand1Spr, enemyHand2Spr, enemyHand3Spr, enemyHand4Spr, enemyHand5Spr;
+
 
     // Instantiated upon startup
     @Override
@@ -68,6 +80,53 @@ public class Main extends ApplicationAdapter {
         // Initialize startup Font
         font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         font.getData().setScale(cardScale * 0.6f);
+        // Set up array of Sprite names and sprites to keep track of the sprites on screen for input handling
+        cardOnScreenDatas = new ArrayList<CardOnScreenData>();
+        sprites = new ArrayList<Sprite>();
+        spriteNames = new ArrayList<String>();
+        // Create all cards on screen
+        for (int i = 0; i < 1; i ++){
+            CardOnScreenData newData = new CardOnScreenData(cardList.get(0), viewport.getWorldWidth()*(2/16f), viewport.getWorldHeight()*(14/16f), 0.5f);
+            cardOnScreenDatas.add(newData);
+            sprites.add(newData.getSprite());
+            spriteNames.add(newData.getCard().getName() + " instance #" + Integer.toString(i + 1));
+            System.out.println("spriteName added: " + newData.getCard().getName() + " instance #" + Integer.toString(i + 1));
+        }
+
+        spriteNames.add("Enemy Hand 5 Sprite");
+        // Set up an input processor to handle clicks
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                // LibGDX's origin for the Y axis is flipped, so invert the Y axis
+                // Convert screen coordinates to world coordinates
+                Vector3 worldCoords = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+                // Check which sprite was clicked
+                String clickedObject = getClickedObject(screenX, screenY);
+                if (clickedObject != null) {
+                    System.out.println(clickedObject + " clicked!");
+                    return true; // Event handled
+                }
+                else{
+                    System.out.println("No object in sprites array was clicked! Printing all object bounds:");
+                    System.out.println(sprites.get(0).getBoundingRectangle());
+                }
+                return false; // No sprite was clicked
+            }
+        });
+    }
+    // Method to check which sprite was clicked and return its name
+    private String getClickedObject(int screenX, int screenY) {
+        // Convert screen coordinates to world coordinates
+        Vector3 worldCoords = camera.unproject(new Vector3(screenX, screenY, 0));
+        // Loop through each sprite and check if the click is within its bounding rectangle
+        for (int i = 0; i < sprites.size(); i++) {
+            if (sprites.get(i).getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                return spriteNames.get(i); // Return the name of the clicked sprite
+            }
+        }
+        return null; // No sprite was clicked
     }
 
     // Called every refresh rate for rendering
@@ -93,26 +152,33 @@ public class Main extends ApplicationAdapter {
     public void draw(){
         // Clears screen and prepares batch for drawing
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        // Display FPS counter
+        // Display FPS counter and position of cursor
         SpriteBatch fpsBatch = new SpriteBatch();
         fpsBatch.setProjectionMatrix(camera.combined);
         fpsBatch.begin();
         font.draw(fpsBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20); // Display FPS in bottom-left corner
+        font.draw(fpsBatch, "X: " + Gdx.input.getX(), 10, 60);
+        font.draw(fpsBatch, "Y: " + Gdx.input.getY(), 10, 45);
         fpsBatch.end();
         // Test drawing card from drawCard function
+        drawCard(cardOnScreenDatas.get(0), camera);
         //drawCard(viewport.getWorldWidth()*(1/4f), viewport.getWorldHeight()/2, 0.5f, cardList.get(0), camera);
         // Player hand
+        /*
         drawCard(viewport.getWorldWidth()*(2/16f), viewport.getWorldHeight()*(2/16f), 0.5f);
         drawCard(viewport.getWorldWidth()*(4.5f/16f), viewport.getWorldHeight()*(2/16f), 0.5f);
         drawCard(viewport.getWorldWidth()*(7/16f), viewport.getWorldHeight()*(2/16f), 0.5f);
         drawCard(viewport.getWorldWidth()*(9.5f/16f), viewport.getWorldHeight()*(2/16f), 0.5f);
         drawCard(viewport.getWorldWidth()*(12/16f), viewport.getWorldHeight()*(2/16f), 0.5f);
+        */
+        /*
         // Enemy hand
-        drawCard(viewport.getWorldWidth()*(2/16f), viewport.getWorldHeight()*(14/16f), 0.5f);
-        drawCard(viewport.getWorldWidth()*(4.5f/16f), viewport.getWorldHeight()*(14/16f), 0.5f);
-        drawCard(viewport.getWorldWidth()*(7/16f), viewport.getWorldHeight()*(14/16f), 0.5f);
-        drawCard(viewport.getWorldWidth()*(9.5f/16f), viewport.getWorldHeight()*(14/16f), 0.5f);
-        drawCard(viewport.getWorldWidth()*(12/16f), viewport.getWorldHeight()*(14/16f), 0.5f);
+        drawCard(viewport.getWorldWidth()*(2/16f), viewport.getWorldHeight()*(14/16f), 0.5f, cardOnScreenDatas.get(0).getCard(), camera);
+        drawCard(viewport.getWorldWidth()*(4.5f/16f), viewport.getWorldHeight()*(14/16f), 0.5f, cardOnScreenDatas.get(1).getCard(), camera);
+        drawCard(viewport.getWorldWidth()*(7/16f), viewport.getWorldHeight()*(14/16f), 0.5f, cardOnScreenDatas.get(2).getCard(), camera);
+        drawCard(viewport.getWorldWidth()*(9.5f/16f), viewport.getWorldHeight()*(14/16f), 0.5f, cardOnScreenDatas.get(3).getCard(), camera);
+        drawCard(viewport.getWorldWidth()*(12/16f), viewport.getWorldHeight()*(14/16f), 0.5f, cardOnScreenDatas.get(4).getCard(), camera);
+        /*
         // Field top (enemy)
         drawCard(viewport.getWorldWidth()*(4.5f/16f), viewport.getWorldHeight()*(10/16f), 0.5f);
         drawCard(viewport.getWorldWidth()*(7/16f), viewport.getWorldHeight()*(10/16f), 0.5f);
@@ -120,7 +186,8 @@ public class Main extends ApplicationAdapter {
         // Field bottom (player)
         drawCard(viewport.getWorldWidth()*(4.5f/16f), viewport.getWorldHeight()*(6/16f), 0.5f);
         drawCard(viewport.getWorldWidth()*(7/16f), viewport.getWorldHeight()*(6/16f), 0.5f);
-        drawCard(viewport.getWorldWidth()*(9.5f/16f), viewport.getWorldHeight()*(6/16f), 0.5f);
+        drawCard(viewport.getWorldWidth()*(9.5f/16f), viewport.getWorldHeight()*(6/16f), 0.5f);*/
+
     }
     public void manageInput(){
         // Check for left mouse button click
@@ -151,64 +218,19 @@ public class Main extends ApplicationAdapter {
             isLeftButtonPressed = false;
         }
     }
-    /*
-    This drawCard functions works with Main.java's variables specifically (for input testing purposes)
-    */
-    public void drawCard(float x, float y, float scale){
-        // Initial card back image
-        Texture cardbackTexture = new Texture("cardback2.png");
-        Sprite cardbackSprite = new Sprite(cardbackTexture);
-        cardbackSprite.setSize(cardbackTexture.getWidth() * scale, cardbackTexture.getHeight() * scale);
-        // Initial card creature image
-        cardCreatureSprite.setSize(cardCreatureSprite.getTexture().getWidth() * scale, cardCreatureSprite.getTexture().getHeight() * scale);
-        // Set Font
-        BitmapFont font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        font.getData().setScale(scale * 0.6f);
-        // Create batch of sprite to be drawn
-        SpriteBatch batch = new SpriteBatch();
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        // Find position of card
-        // Note: DO NOT USE PIXELS to get your position. Use relative sizing.
-        float cardX = (x - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2)); // Bottom left corner x
-        float cardY = (y - ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2)); // Bottom left corner y
-        float midcardX = ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2);  // Distance from the card's left edge to middle
-        float midcardY = ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Distance from the card's bottom edge to middle
-        // ----- Images -----
-        cardbackSprite.setPosition(cardX, cardY);
-        cardbackSprite.draw(batch); // Draw card back
-        cardCreatureSprite.setPosition(cardX+(midcardX/3.5f), cardY+(midcardY/1.5f));
-        cardCreatureSprite.draw(batch); // Draw card creature
-        // ----- Text -----
-        font.draw(batch, nameText, cardX+(midcardX*0.6f), cardY+(midcardY*1.82f)); // Draw name text
-        GlyphLayout descLayout = new GlyphLayout();
-        float descWidth = 100 * scale;
-        descLayout.setText(font, descText, Color.BLACK, descWidth, Align.left, true);
-        font.draw(batch, descLayout, cardX+(midcardX*0.25f), cardY+(midcardY*0.5f)); // Draw description
-        font.draw(batch, costText, cardX+(midcardX*0.25f), cardY+(midcardY*1.82f)); // Draw cost text
-        font.draw(batch, attackText, cardX+(midcardX*1.6f), cardY+(midcardY*0.5f)); // Draw attack text
-        font.draw(batch, shieldText, cardX+(midcardX*1.6f), cardY+(midcardY*0.25f)); // Draw shield text
-        // End batch and update camera frame
-        batch.end();
-        camera.update();
 
-    }
-    /*
-    This drawCard functions works independently of Main.java
-        x - x-coordinate of card
-        y - y-coordiate of card
-        scale - scale of the card
-        card - Card object to be drawn
-        camera - the camera of the scene
-    */
-    public void drawCard(float x, float y, float scale, Card card, OrthographicCamera camera){
+    public void drawCard(CardOnScreenData cardOnScreenData, OrthographicCamera camera){
+        Card card = cardOnScreenData.getCard();
+        float x = cardOnScreenData.getX();
+        float y = cardOnScreenData.getY();
+        float scale = cardOnScreenData.getScale();
         // Initial card back image
         Texture cardbackTexture = new Texture("cardback2.png");
         Sprite cardbackSprite = new Sprite(cardbackTexture);
         cardbackSprite.setSize(cardbackTexture.getWidth() * scale, cardbackTexture.getHeight() * scale);
         // Initial card creature image
         Texture cardCreatureTexture = card.getTexture();
-        Sprite cardCreatureSprite = new Sprite(cardCreatureTexture);
+        Sprite cardCreatureSprite = cardOnScreenData.getSprite();
         cardCreatureSprite.setSize(cardCreatureSprite.getTexture().getWidth() * scale, cardCreatureSprite.getTexture().getHeight() * scale);
         // Set Font
         BitmapFont font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
