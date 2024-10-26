@@ -2,6 +2,7 @@ cardback.png
 cardback2.png
 cardback3.png
 cardback4.png
+CardbackHighlight.png
 cardsprites/array.png
 cardsprites/astar.png
 cardsprites/balancedbinarytree.png
