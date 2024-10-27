@@ -16,6 +16,8 @@
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.ApplicationAdapter; // Rendering
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -40,8 +42,9 @@ public class Main extends ApplicationAdapter {
     private ArrayList<String> CardInstancesNames;           // Named instances of the card for easy debugging
     private int selectedCardNumber = -1;            // Changes when a player clicks on a card (starts at -1 for no card selected)
     private int prevSelectedCardNumber = -1;
-    GlyphLayout descLayout = new GlyphLayout();
-    float descWidth;
+    private GlyphLayout descLayout = new GlyphLayout();
+    private float descWidth;
+    private Sprite playerHealthSpr, enemyHealthSpr;
 
     private BitmapFont font;
     // Instantiated upon startup
@@ -62,6 +65,13 @@ public class Main extends ApplicationAdapter {
         defaultFont.getData().setScale(0.6f);
         // Initialize card font
         font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        // Initialize health sprites
+        playerHealthSpr = new Sprite(new Texture("yourhealth.png"));
+        playerHealthSpr.setScale(0.6f);
+        playerHealthSpr.setPosition(-30, 180);
+        enemyHealthSpr = new Sprite(new Texture("enemyhealth.png"));
+        enemyHealthSpr.setScale(0.6f);
+        enemyHealthSpr.setPosition(-30, 270);
         // Set up array of Sprite names and sprites to keep track of the sprites on screen for input handling
         cardOnScreenDatas = new ArrayList<CardOnScreenData>();
         CardInstancesNames = new ArrayList<String>();
@@ -73,11 +83,11 @@ public class Main extends ApplicationAdapter {
         cardOnScreenDatas.add(new CardOnScreenData(3,  viewport.getWorldWidth() * (9.5f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
         cardOnScreenDatas.add(new CardOnScreenData(4,  viewport.getWorldWidth() * (12 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
         //  Player's hand (Instance 5-9)
-        cardOnScreenDatas.add(new CardOnScreenData(5,  viewport.getWorldWidth() * (2 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(6,  viewport.getWorldWidth() * (4.5f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(7,  viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(8,  viewport.getWorldWidth() * (9.5f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(9,  viewport.getWorldWidth() * (12 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(5,  viewport.getWorldWidth() * (3.3f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(6,  viewport.getWorldWidth() * (5.64f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(7,  viewport.getWorldWidth() * (8 / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(8,  viewport.getWorldWidth() * (10.35f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(9,  viewport.getWorldWidth() * (12.7f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
         // Field top (enemy) (Instance 10-12)
         cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (4.2f / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
         cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
@@ -87,9 +97,9 @@ public class Main extends ApplicationAdapter {
         cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
         cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (9.8f / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
         // Deck draw (Instance 16)
-        cardOnScreenDatas.add(new CardOnScreenData(35, viewport.getWorldWidth() * (14.7f / 16f), viewport.getWorldHeight() * (6.2f / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(35, viewport.getWorldWidth() * (1f / 16f), viewport.getWorldHeight() * (1.5f / 16f), 0.4f));
         // Trash (Instance 17)
-        cardOnScreenDatas.add(new CardOnScreenData(36, viewport.getWorldWidth() * (14.7f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(36, viewport.getWorldWidth() * (15f / 16f), viewport.getWorldHeight() * (1.5f / 16f), 0.4f));
         // Debug
         for (int i = 0; i < cardOnScreenDatas.size(); i ++){
             CardInstancesNames.add("Card " + cardOnScreenDatas.get(i).getCard().getName() + ", Instance #" + Integer.toString(i + 1));
@@ -112,7 +122,7 @@ public class Main extends ApplicationAdapter {
                             clicked = true;
                             break;
                         }
-                        else if (selectedCardNumber != -1){
+                        else {
                             prevSelectedCardNumber = selectedCardNumber;
                             selectedCardNumber = i;
                             clicked = true;
@@ -142,6 +152,20 @@ public class Main extends ApplicationAdapter {
     public void draw(){
         // Clears screen and prepares batch for drawing
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        // Display FPS counter and position of cursor
+        int screenX =  Gdx.input.getX();
+        int screenY =  Gdx.input.getY();
+        Vector3 worldCoords = camera.unproject(new Vector3(screenX, screenY, 0));
+        SpriteBatch drawBatch = new SpriteBatch();
+        drawBatch.setProjectionMatrix(camera.combined);
+        drawBatch.begin();
+        defaultFont.draw(drawBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 530, 540); // Display FPS in bottom-left corner
+        defaultFont.draw(drawBatch, "X: " + worldCoords.x, 530, 580);
+        defaultFont.draw(drawBatch, "Y: " + worldCoords.y, 530, 560);
+        // Draw hearts sprites
+        playerHealthSpr.draw(drawBatch);
+        enemyHealthSpr.draw(drawBatch);
+        drawBatch.end();
         // Draw Select Sprite if needed
         if (selectedCardNumber != -1){
             drawSelected(cardOnScreenDatas.get(selectedCardNumber), camera);
@@ -150,17 +174,7 @@ public class Main extends ApplicationAdapter {
         for (int i = 0; i < cardOnScreenDatas.size(); i++) {
             drawCard(cardOnScreenDatas.get(i), camera);
         }
-        // Display FPS counter and position of cursor
-        int screenX =  Gdx.input.getX();
-        int screenY =  Gdx.input.getY();
-        Vector3 worldCoords = camera.unproject(new Vector3(screenX, screenY, 0));
-        SpriteBatch fpsBatch = new SpriteBatch();
-        fpsBatch.setProjectionMatrix(camera.combined);
-        fpsBatch.begin();
-        defaultFont.draw(fpsBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 530, 540); // Display FPS in bottom-left corner
-        defaultFont.draw(fpsBatch, "X: " + worldCoords.x, 530, 580);
-        defaultFont.draw(fpsBatch, "Y: " + worldCoords.y, 530, 560);
-        fpsBatch.end();
+
 
     }
     public void drawSelected(CardOnScreenData CoSD, OrthographicCamera camera) {

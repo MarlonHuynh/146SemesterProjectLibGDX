@@ -35,6 +35,7 @@ cardsprites/stack.png
 cardsprites/string.png
 cardsprites/tuple.png
 cardsprites/word.png
+enemyhealth.png
 libgdx.png
 ui/dpcomic.bmp
 ui/dpcomic.fnt
@@ -47,3 +48,4 @@ ui/font.fnt
 ui/uiskin.atlas
 ui/uiskin.json
 ui/uiskin.png
+yourhealth.png
