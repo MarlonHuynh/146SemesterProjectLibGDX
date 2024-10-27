@@ -37,14 +37,15 @@ public class Main extends ApplicationAdapter {
     private FitViewport viewport;                   // Viewport
     private boolean isLeftButtonPressed = false;    // Input
     private List<Card> cardList;                    // Master Card Storage (Do not change)
-    private BitmapFont defaultFont;                         // Font
+    private BitmapFont debugFont, noncardUIFont;                         // Font
     private ArrayList<CardOnScreenData> cardOnScreenDatas;  // Houses all information about all cards displayed on the screen
     private ArrayList<String> CardInstancesNames;           // Named instances of the card for easy debugging
     private int selectedCardNumber = -1;            // Changes when a player clicks on a card (starts at -1 for no card selected)
     private int prevSelectedCardNumber = -1;
     private GlyphLayout descLayout = new GlyphLayout();
     private float descWidth;
-    private Sprite playerHealthSpr, enemyHealthSpr;
+    private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr;
+    private int playerHealth, enemyHealth, playerRecharge, enemyRecharge, playerEnergy, enemyEnergy;
 
     private BitmapFont font;
     // Instantiated upon startup
@@ -60,28 +61,50 @@ public class Main extends ApplicationAdapter {
         reader.generateCardsFromCSV();
         cardList = reader.getCardList();
         CardOnScreenData.staticSetCardList(cardList);   // Sets the static cardList in CardOnScreenData so it knows which cardList to reference
-        // Initialize startup Font
-        defaultFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        defaultFont.getData().setScale(0.6f);
+        // Initialize debug Font
+        debugFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        debugFont.getData().setScale(0.6f);
+        noncardUIFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        noncardUIFont.getData().setScale(1f);
         // Initialize card font
         font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        // Initialize health sprites
+        // Initialize non-card sprites
+        bgSpr = new Sprite(new Texture("background.png"));
         playerHealthSpr = new Sprite(new Texture("yourhealth.png"));
-        playerHealthSpr.setScale(0.6f);
-        playerHealthSpr.setPosition(-30, 180);
+        playerHealthSpr.setScale(0.65f);
+        playerHealthSpr.setPosition(-35, 180);
         enemyHealthSpr = new Sprite(new Texture("enemyhealth.png"));
-        enemyHealthSpr.setScale(0.6f);
-        enemyHealthSpr.setPosition(-30, 270);
+        enemyHealthSpr.setScale(0.65f);
+        enemyHealthSpr.setPosition(-35, 270);
+        playerCloudSpr = new Sprite(new Texture("playercloud.png"));
+        playerCloudSpr.setScale(0.5f);
+        playerCloudSpr.setPosition(380, 180);
+        enemyCloudSpr = new Sprite(new Texture("enemycloud.png"));
+        enemyCloudSpr.setScale(0.5f);
+        enemyCloudSpr.setPosition(380, 340);
+        playerEnergySpr = new Sprite(new Texture("playerenergy.png"));
+        playerEnergySpr.setScale(0.5f);
+        playerEnergySpr.setPosition(380, 110);
+        enemyEnergySpr = new Sprite(new Texture("enemyenergy.png"));
+        enemyEnergySpr.setScale(0.5f);
+        enemyEnergySpr.setPosition(380, 270);
+        // Initialize stat variables
+        playerHealth = 60;
+        enemyHealth = 40;
+        playerEnergy = 1;
+        playerRecharge = 2;
+        enemyEnergy = 3;
+        enemyRecharge = 4;
         // Set up array of Sprite names and sprites to keep track of the sprites on screen for input handling
         cardOnScreenDatas = new ArrayList<CardOnScreenData>();
         CardInstancesNames = new ArrayList<String>();
         // Create all cards on screen
         // Enemy's hand (Instance 0-4)
-        cardOnScreenDatas.add(new CardOnScreenData(0,  viewport.getWorldWidth() * (2 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(1,  viewport.getWorldWidth() * (4.5f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(2,  viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(3,  viewport.getWorldWidth() * (9.5f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(4,  viewport.getWorldWidth() * (12 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(0,  viewport.getWorldWidth() * (3.3f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(1,  viewport.getWorldWidth() * (5.64f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(2,  viewport.getWorldWidth() * (8 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(3,  viewport.getWorldWidth() * (10.35f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(4,  viewport.getWorldWidth() * (12.7f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
         //  Player's hand (Instance 5-9)
         cardOnScreenDatas.add(new CardOnScreenData(5,  viewport.getWorldWidth() * (3.3f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
         cardOnScreenDatas.add(new CardOnScreenData(6,  viewport.getWorldWidth() * (5.64f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
@@ -100,6 +123,8 @@ public class Main extends ApplicationAdapter {
         cardOnScreenDatas.add(new CardOnScreenData(35, viewport.getWorldWidth() * (1f / 16f), viewport.getWorldHeight() * (1.5f / 16f), 0.4f));
         // Trash (Instance 17)
         cardOnScreenDatas.add(new CardOnScreenData(36, viewport.getWorldWidth() * (15f / 16f), viewport.getWorldHeight() * (1.5f / 16f), 0.4f));
+        // End Turn (Instance 18)
+        cardOnScreenDatas.add(new CardOnScreenData(38, viewport.getWorldWidth() * (15f / 16f), viewport.getWorldHeight() * (4.75f / 16f), 0.4f));
         // Debug
         for (int i = 0; i < cardOnScreenDatas.size(); i ++){
             CardInstancesNames.add("Card " + cardOnScreenDatas.get(i).getCard().getName() + ", Instance #" + Integer.toString(i + 1));
@@ -151,7 +176,7 @@ public class Main extends ApplicationAdapter {
     // Called every frame in render to draw the screen
     public void draw(){
         // Clears screen and prepares batch for drawing
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
         // Display FPS counter and position of cursor
         int screenX =  Gdx.input.getX();
         int screenY =  Gdx.input.getY();
@@ -159,23 +184,35 @@ public class Main extends ApplicationAdapter {
         SpriteBatch drawBatch = new SpriteBatch();
         drawBatch.setProjectionMatrix(camera.combined);
         drawBatch.begin();
-        defaultFont.draw(drawBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 530, 540); // Display FPS in bottom-left corner
-        defaultFont.draw(drawBatch, "X: " + worldCoords.x, 530, 580);
-        defaultFont.draw(drawBatch, "Y: " + worldCoords.y, 530, 560);
-        // Draw hearts sprites
+        bgSpr.draw(drawBatch);
+        debugFont.draw(drawBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 520, 340);
+        debugFont.draw(drawBatch, "X: " + (int)worldCoords.x, 520, 380);
+        debugFont.draw(drawBatch, "Y: " + (int)worldCoords.y, 520, 360);
+        // Draw non-card UI sprites
         playerHealthSpr.draw(drawBatch);
         enemyHealthSpr.draw(drawBatch);
+        playerEnergySpr.draw(drawBatch);
+        enemyEnergySpr.draw(drawBatch);
+        playerCloudSpr.draw(drawBatch);
+        enemyCloudSpr.draw(drawBatch);
+        // End non-method batch
         drawBatch.end();
-        // Draw Select Sprite if needed
+        // Draw every card on the screen
+        for (CardOnScreenData CoSD : cardOnScreenDatas) {
+            drawCard(CoSD, camera);
+        }// Draw Select Sprite if needed
         if (selectedCardNumber != -1){
             drawSelected(cardOnScreenDatas.get(selectedCardNumber), camera);
         }
-        // Draw every card on the screen
-        for (int i = 0; i < cardOnScreenDatas.size(); i++) {
-            drawCard(cardOnScreenDatas.get(i), camera);
-        }
-
-
+        // Draw non-card text UI
+        drawBatch.begin();
+        noncardUIFont.draw(drawBatch, Integer.toString(playerHealth), 35, 270);
+        noncardUIFont.draw(drawBatch, Integer.toString(enemyHealth), 35, 360);
+        noncardUIFont.draw(drawBatch, Integer.toString(playerRecharge), 460, 265);
+        noncardUIFont.draw(drawBatch, Integer.toString(playerEnergy), 460, 200);
+        noncardUIFont.draw(drawBatch, Integer.toString(enemyRecharge), 460, 425);
+        noncardUIFont.draw(drawBatch, Integer.toString(enemyEnergy), 460, 360);
+        drawBatch.end();
     }
     public void drawSelected(CardOnScreenData CoSD, OrthographicCamera camera) {
         SpriteBatch batch = new SpriteBatch();
@@ -193,7 +230,7 @@ public class Main extends ApplicationAdapter {
         batch.begin();
         // Draw cardback
         CoSD.getCardbackSprite().draw(batch);
-        if (!card.getName().equals("Draw") && !card.getName().equals("Trash") && !card.getName().equals("Blank")) {
+        if (!card.getName().equals("Draw") && !card.getName().equals("Trash") && !card.getName().equals("Blank") && !card.getName().equals("End Turn")) {
             // Draw creature
             CoSD.getCardSprite().draw(batch);
             // Draw text
@@ -212,7 +249,6 @@ public class Main extends ApplicationAdapter {
     @Override
     public void render() {
         draw();
-        //manageInput();
     }
 
     // Called when resizing window

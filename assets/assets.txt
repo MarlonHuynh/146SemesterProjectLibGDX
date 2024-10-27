@@ -1,3 +1,4 @@
+background.png
 cardback.png
 cardback2.png
 cardback3.png
@@ -35,8 +36,14 @@ cardsprites/stack.png
 cardsprites/string.png
 cardsprites/tuple.png
 cardsprites/word.png
+discard.png
+endturn.png
+enemycloud.png
+enemyenergy.png
 enemyhealth.png
 libgdx.png
+playercloud.png
+playerenergy.png
 ui/dpcomic.bmp
 ui/dpcomic.fnt
 ui/dpcomic.ttf

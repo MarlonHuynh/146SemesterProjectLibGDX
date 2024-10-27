@@ -37,3 +37,4 @@ Send Malware,Spell,-1,2,-1,-1,Subtract 3 health from target
 Draw,Special,-1,-1,-1,-1,NullText IF SEEN ERROR OCCURED
 Trash,Special,-1,-1,-1,-1,NullText IF SEEN ERROR OCCURED
 Blank,Special,-1,-1,-1,-1,NullText IF SEEN ERROR OCCURED
+End Turn,Special,-1,-1,-1,-1,NullText IF SEEN ERROR OCCURED

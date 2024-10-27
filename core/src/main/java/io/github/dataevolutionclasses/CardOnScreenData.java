@@ -65,27 +65,33 @@ public class CardOnScreenData {
             this.cardbackSprite = new Sprite(new Texture("cardback3.png"));
         }
         else if (card.getName().equals("Trash")){
-            this.cardbackSprite = new Sprite(new Texture("cardback4.png"));
+            this.cardbackSprite = new Sprite(new Texture("discard.png"));
         }
         else if (card.getName().equals("Blank")){
             this.cardbackSprite = new Sprite(new Texture("CardbackBlank.png"));
+        }
+        else if (card.getName().equals("End Turn")){
+            this.cardbackSprite = new Sprite(new Texture("endturn.png"));
         }
         this.selectedSprite = new Sprite(new Texture("CardbackHighlight.png"));
         this.x = x;
         this.y = y;
         this.scale = scale;
-        // Set card sizing and position (doesn't directly draw)
+        // Set card sizing (doesn't directly draw)
         selectedSprite.setSize(selectedSprite.getTexture().getWidth() * scale, selectedSprite.getTexture().getHeight() * scale);
         cardbackSprite.setSize(cardbackSprite.getTexture().getWidth() * scale, cardbackSprite.getTexture().getHeight() * scale);
         cardSprite.setSize(cardSprite.getTexture().getWidth() * scale * 1.2f, cardSprite.getTexture().getHeight() * scale * 1.2f);
+        // Get position variables
         float cardX = (x - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2)); // Bottom left corner x
         float cardY = (y - ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2)); // Bottom left corner y
         float midcardX = ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2);  // Distance from the card's left edge to middle
         float midcardY = ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Distance from the card's bottom edge to middle
+        // Set sprite position (doesn't directly draw)
         cardbackSprite.setPosition(cardX , cardY);
         selectedSprite.setPosition(cardX - (midcardX * 0.1f), cardY - (midcardY * 0.06f));
         cardSprite.setPosition(cardX + (midcardX / 3.5f), cardY + (midcardY / 1.6f));
         // Set text sizing and position (doesn't directly draw)
+        selectedSprite.setAlpha(0.2f);
         nameFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         nameFont.getData().setScale(scale * 0.70f);
         nameX =  cardX + (midcardX * 0.16f);
