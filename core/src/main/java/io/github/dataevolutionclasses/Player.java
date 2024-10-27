@@ -11,7 +11,6 @@ public class Player {
     private ArrayList<Card> handCard;
     private int energy;
     private boolean alreadyTrashed;
-
     public Player() {
         this.deck = new ArrayList<>();
         this.health = 40;
@@ -82,10 +81,8 @@ public class Player {
             System.out.println("Your energy: " + energy);
         }
     }
-
-    //Sort handCards by stages
-    //Using quickSort (quickest way to sort)
-
+    // Sort handCards by stages
+    // Using quickSort (quickest way to sort)
     public void quickSortByStages(int low, int high){
         if (low < high){
             int a = partition(low, high);
@@ -93,7 +90,6 @@ public class Player {
             quickSortByStages(a+1,high);
         }
     }
-
     private int partition(int low, int high ){
         int pivot = handCard.get(high).getStage();
         int i = low -1;
@@ -110,7 +106,6 @@ public class Player {
         handCard.set(high,temp);
         return i+1;
     }
-
     public void sortHandCard(){
         if(handCard.isEmpty()){
             return;

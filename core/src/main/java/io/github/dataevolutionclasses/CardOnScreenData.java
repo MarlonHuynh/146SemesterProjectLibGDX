@@ -14,17 +14,20 @@ package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Align;
 
-import java.awt.*;
+import java.util.HashMap;
+import java.util.List;
 
 public class CardOnScreenData {
+
+    private static List<Card> cardList;
+    private static HashMap<Integer, Card> indexToCardListMap;
+
 
     private Card card;
     private int cardListID;
@@ -49,12 +52,12 @@ public class CardOnScreenData {
     private float shieldTextX;
     private float shieldTextY;
 
-    public CardOnScreenData(Card card, int cardListID, float x, float y, float scale){
-        remakeCard(card, cardListID, x, y, scale); // Called to avoid duplicating code
+    public CardOnScreenData(int cardListID, float x, float y, float scale){
+        remakeCard(cardListID, x, y, scale); // Called to avoid duplicating code
     }
 
-    public void remakeCard(Card card, int cardListID, float x, float y, float scale){
-        this.card = card;
+    public void remakeCard(int cardListID, float x, float y, float scale){
+        this.card = CardOnScreenData.getIndexToCardListMap().get(cardListID);
         this.cardListID = cardListID;
         this.cardSprite = new Sprite(card.getTexture());
         this.cardbackSprite = new Sprite(new Texture("cardback2.png"));
@@ -100,14 +103,36 @@ public class CardOnScreenData {
         attackTextY =  cardY + (midcardY * 0.56f);
         shieldTextX = cardX + (midcardX * 1.64f);
         shieldTextY =  cardY + (midcardY * 0.22f);
-        // Debug
-        // System.out.println("COSD: " + Float.toString(x) + ", " + Float.toString(y) + ", Scale: " + Float.toString(scale));
     }
+
+    // Get/Set static cardList
+    public static List<Card> getCardList(){
+        return cardList;
+    }
+    public static void staticSetCardList(List<Card>  cardList){
+        if (CardOnScreenData.cardList == null){ // Sets only if null
+            CardOnScreenData.cardList = cardList;
+        }
+        generateIndexToCardlistTuple();
+    }
+    public static void generateIndexToCardlistTuple(){
+        if (CardOnScreenData.indexToCardListMap == null){
+            indexToCardListMap = new HashMap<>();
+            for (int i = 0; i < CardOnScreenData.getCardList().size(); i++){
+                indexToCardListMap.put(i, CardOnScreenData.getCardList().get(i));
+                System.out.println("---" + Integer.toString(i)+ ", " + indexToCardListMap.get(i).getName());
+            }
+        }
+    }
+    private static HashMap<Integer, Card> getIndexToCardListMap(){
+        return CardOnScreenData.indexToCardListMap;
+    }
+
     // Getters and Setters
     public Card getCard() { return card; }
     public void setCard(Card card) { this.card = card; }
 
-    public int getCardListID() {return cardListID; }
+    public int getCardID() {return cardListID; }
     public void setCardID(int cardID) {this.cardListID = cardID; }
 
     public Sprite getCardSprite() { return cardSprite; }

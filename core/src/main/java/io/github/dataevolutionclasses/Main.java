@@ -16,17 +16,12 @@
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.ApplicationAdapter; // Rendering
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Gdx; // Input
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont; // Text
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -57,10 +52,11 @@ public class Main extends ApplicationAdapter {
         viewport = new FitViewport(600, 600, camera);                   // 600x600 is the virtual world size
         viewport.apply();
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0); // Center the camera
-        // Read and generate cards and place cards into Card list
+        // Read and generate cards and place cards into cardList
         CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats2.csv");
         reader.generateCardsFromCSV();
         cardList = reader.getCardList();
+        CardOnScreenData.staticSetCardList(cardList);   // Sets the static cardList in CardOnScreenData so it knows which cardList to reference
         // Initialize startup Font
         defaultFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         defaultFont.getData().setScale(0.6f);
@@ -71,29 +67,30 @@ public class Main extends ApplicationAdapter {
         CardInstancesNames = new ArrayList<String>();
         // Create all cards on screen
         // Enemy's hand (Instance 0-4)
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(0), 0,  viewport.getWorldWidth() * (2 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(1),1,  viewport.getWorldWidth() * (4.5f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(2),2,  viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(3),3,  viewport.getWorldWidth() * (9.5f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(4),4,  viewport.getWorldWidth() * (12 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(0,  viewport.getWorldWidth() * (2 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(1,  viewport.getWorldWidth() * (4.5f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(2,  viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(3,  viewport.getWorldWidth() * (9.5f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(4,  viewport.getWorldWidth() * (12 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
         //  Player's hand (Instance 5-9)
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(5),5,  viewport.getWorldWidth() * (2 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(6),6,  viewport.getWorldWidth() * (4.5f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(7),7,  viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(8),8,  viewport.getWorldWidth() * (9.5f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(9),9,  viewport.getWorldWidth() * (12 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(5,  viewport.getWorldWidth() * (2 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(6,  viewport.getWorldWidth() * (4.5f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(7,  viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(8,  viewport.getWorldWidth() * (9.5f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(9,  viewport.getWorldWidth() * (12 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
         // Field top (enemy) (Instance 10-12)
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(37),37, viewport.getWorldWidth() * (4.2f / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(37),37, viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(37),37, viewport.getWorldWidth() * (9.8f / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
-        // Field bottom (player) (Instance 14-15)
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(37),37, viewport.getWorldWidth() * (4.2f / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(37),37, viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(37),37, viewport.getWorldWidth() * (9.8f / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (4.2f / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (9.8f / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
+        // Field bottom (player) (Instance 13-15)
+        cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (4.2f / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (9.8f / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
         // Deck draw (Instance 16)
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(35),35, viewport.getWorldWidth() * (14.7f / 16f), viewport.getWorldHeight() * (6.2f / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(35, viewport.getWorldWidth() * (14.7f / 16f), viewport.getWorldHeight() * (6.2f / 16f), 0.5f));
         // Trash (Instance 17)
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(36),36, viewport.getWorldWidth() * (14.7f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(36, viewport.getWorldWidth() * (14.7f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.5f));
+        // Debug
         for (int i = 0; i < cardOnScreenDatas.size(); i ++){
             CardInstancesNames.add("Card " + cardOnScreenDatas.get(i).getCard().getName() + ", Instance #" + Integer.toString(i + 1));
             System.out.println("spriteName added: " + CardInstancesNames.get(i));
@@ -109,7 +106,7 @@ public class Main extends ApplicationAdapter {
                 for (int i = 0; i < cardOnScreenDatas.size(); i++) {
                     if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)
                         || cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
-                        // Update selection variables accordingly
+                        // Update selection variables accordingly to what was clicked and what was previously clicked
                         if (selectedCardNumber == -1) {
                             selectedCardNumber = i;
                             clicked = true;
@@ -129,35 +126,18 @@ public class Main extends ApplicationAdapter {
                     CardOnScreenData prevData = cardOnScreenDatas.get(prevSelectedCardNumber);
                     // Check to see if previous data is a creature card and the current data is a blank space
                     if (!prevData.getCard().getName().equals("Blank") && !prevData.getCard().getName().equals("Trash")
-                        && !prevData.getCard().getName().equals("Draw") && currData.getCard().getName().equals("Blank")) {
+                        && !prevData.getCard().getName().equals("Draw") && currData.getCard().getName().equals("Blank")
+                        && prevSelectedCardNumber >= 5 && prevSelectedCardNumber <= 9       // Previous select is in player hand
+                        && selectedCardNumber >= 13 && selectedCardNumber <= 15) {          // Current select is in bottom field (player field)
                         //Swaps blank with creature card
-                        currData.remakeCard(prevData.getCard(), prevData.getCardListID(), currData.getX(), currData.getY(), currData.getScale());
-                        prevData.remakeCard(cardList.get(37), 37, prevData.getX(), prevData.getY(), prevData.getScale());
+                        currData.remakeCard(prevData.getCardID(), currData.getX(), currData.getY(), currData.getScale());
+                        prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale());
                     }
                 }
                 return clicked;
             }
         });
     }
-
-    // Called every refresh rate for rendering
-    @Override
-    public void render() {
-        draw();
-        //manageInput();
-    }
-
-    // Called when resizing window
-    @Override
-    public void resize(int width, int height) {
-        viewport.update(width, height);
-    }
-
-    // Called when exiting
-    @Override
-    public void dispose() {
-    }
-
     // Called every frame in render to draw the screen
     public void draw(){
         // Clears screen and prepares batch for drawing
@@ -214,19 +194,21 @@ public class Main extends ApplicationAdapter {
         camera.update();
     }
 
+    // Called every refresh rate for rendering
+    @Override
+    public void render() {
+        draw();
+        //manageInput();
+    }
 
-    /* Outdated methods below
-    -------------------------
+    // Called when resizing window
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height);
+    }
 
-    public void manageInput(){
-        // Check for left mouse button click
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            if (!isLeftButtonPressed) {     // isLeftButtonPressed starts out False
-                isLeftButtonPressed = true; // This + assigning it true right after makes it so only one instance of a left-click is detected until the left click button is released.
-            }
-        } else {
-            // Reset the flag when the button is released to prevent multiple left clicks being detected per frame
-            isLeftButtonPressed = false;
-        }
-    }*/
+    // Called when exiting
+    @Override
+    public void dispose() {
+    }
 }
