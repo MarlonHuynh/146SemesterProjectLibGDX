@@ -84,7 +84,7 @@ public class CardOnScreenData {
         cardSprite.setPosition(cardX + (midcardX / 3.5f), cardY + (midcardY / 1.6f));
         // Set text sizing and position (doesn't directly draw)
         nameFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        nameFont.getData().setScale(scale * 0.75f);
+        nameFont.getData().setScale(scale * 0.70f);
         nameX =  cardX + (midcardX * 0.16f);
         nameY = cardY + (midcardY * 1.88f);
         descWidth = 130 * scale;
