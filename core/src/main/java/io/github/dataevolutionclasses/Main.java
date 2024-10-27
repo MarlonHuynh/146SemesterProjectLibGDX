@@ -44,12 +44,11 @@ public class Main extends ApplicationAdapter {
     private ArrayList<CardOnScreenData> cardOnScreenDatas;  // Houses all information about all cards displayed on the screen
     private ArrayList<String> CardInstancesNames;           // Named instances of the card for easy debugging
     private int selectedCardNumber = -1;            // Changes when a player clicks on a card (starts at -1 for no card selected)
+    private int prevSelectedCardNumber = -1;
     GlyphLayout descLayout = new GlyphLayout();
     float descWidth;
 
     private BitmapFont font;
-
-
     // Instantiated upon startup
     @Override
     public void create() {
@@ -72,29 +71,29 @@ public class Main extends ApplicationAdapter {
         CardInstancesNames = new ArrayList<String>();
         // Create all cards on screen
         // Enemy's hand (Instance 0-4)
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(0), viewport.getWorldWidth() * (2 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(1), viewport.getWorldWidth() * (4.5f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(2), viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(3), viewport.getWorldWidth() * (9.5f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(4), viewport.getWorldWidth() * (12 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(0), 0,  viewport.getWorldWidth() * (2 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(1),1,  viewport.getWorldWidth() * (4.5f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(2),2,  viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(3),3,  viewport.getWorldWidth() * (9.5f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(4),4,  viewport.getWorldWidth() * (12 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
         //  Player's hand (Instance 5-9)
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(5), viewport.getWorldWidth() * (2 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(6), viewport.getWorldWidth() * (4.5f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(7), viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(8), viewport.getWorldWidth() * (9.5f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(9), viewport.getWorldWidth() * (12 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(5),5,  viewport.getWorldWidth() * (2 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(6),6,  viewport.getWorldWidth() * (4.5f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(7),7,  viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(8),8,  viewport.getWorldWidth() * (9.5f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(9),9,  viewport.getWorldWidth() * (12 / 16f), viewport.getWorldHeight() * (2 / 16f), 0.45f));
         // Field top (enemy) (Instance 10-12)
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(10), viewport.getWorldWidth() * (4.2f / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(11), viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(12), viewport.getWorldWidth() * (9.8f / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(37),37, viewport.getWorldWidth() * (4.2f / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(37),37, viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(37),37, viewport.getWorldWidth() * (9.8f / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
         // Field bottom (player) (Instance 14-15)
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(13), viewport.getWorldWidth() * (4.2f / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(14), viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(15), viewport.getWorldWidth() * (9.8f / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(37),37, viewport.getWorldWidth() * (4.2f / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(37),37, viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(37),37, viewport.getWorldWidth() * (9.8f / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
         // Deck draw (Instance 16)
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(35), viewport.getWorldWidth() * (14.7f / 16f), viewport.getWorldHeight() * (6.2f / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(35),35, viewport.getWorldWidth() * (14.7f / 16f), viewport.getWorldHeight() * (6.2f / 16f), 0.5f));
         // Trash (Instance 17)
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(36), viewport.getWorldWidth() * (14.7f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.5f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(36),36, viewport.getWorldWidth() * (14.7f / 16f), viewport.getWorldHeight() * (2 / 16f), 0.5f));
         for (int i = 0; i < cardOnScreenDatas.size(); i ++){
             CardInstancesNames.add("Card " + cardOnScreenDatas.get(i).getCard().getName() + ", Instance #" + Integer.toString(i + 1));
             System.out.println("spriteName added: " + CardInstancesNames.get(i));
@@ -103,42 +102,49 @@ public class Main extends ApplicationAdapter {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                // Check which sprite was clicked
-                String clickedObject = getClickedObject(screenX, screenY);
-                if (clickedObject != null) { // Selected/clicked a card!
-                    System.out.println(clickedObject + " clicked!");
-                    System.out.println("Current Selected Card is numbered: " + selectedCardNumber);
-                    return true; // Event handled
+                boolean clicked = false;
+                // Convert screen coordinates to world coordinates
+                Vector3 worldCoords = camera.unproject(new Vector3(screenX, screenY, 0));
+                // Loop through each sprite and check if the click is within a bounding rectangle
+                for (int i = 0; i < cardOnScreenDatas.size(); i++) {
+                    if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)
+                        || cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                        // Update selection variables accordingly
+                        if (selectedCardNumber == -1) {
+                            selectedCardNumber = i;
+                            clicked = true;
+                            break;
+                        }
+                        else if (selectedCardNumber != -1){
+                            prevSelectedCardNumber = selectedCardNumber;
+                            selectedCardNumber = i;
+                            clicked = true;
+                            break;
+                        }
+                    }
                 }
-                else{
-                    selectedCardNumber = -1; // No card is selected
-                    System.out.println("Current Selected Card is numbered: " + selectedCardNumber);
-                    System.out.println("No object in sprites array was clicked!");
+                // Swaps card if clicked a Blank space and previously clicked was a card
+                if (prevSelectedCardNumber != -1 && selectedCardNumber != -1) {
+                    CardOnScreenData currData = cardOnScreenDatas.get(selectedCardNumber);
+                    CardOnScreenData prevData = cardOnScreenDatas.get(prevSelectedCardNumber);
+                    // Check to see if previous data is a creature card and the current data is a blank space
+                    if (!prevData.getCard().getName().equals("Blank") && !prevData.getCard().getName().equals("Trash")
+                        && !prevData.getCard().getName().equals("Draw") && currData.getCard().getName().equals("Blank")) {
+                        //Swaps blank with creature card
+                        currData.remakeCard(prevData.getCard(), prevData.getCardListID(), currData.getX(), currData.getY(), currData.getScale());
+                        prevData.remakeCard(cardList.get(37), 37, prevData.getX(), prevData.getY(), prevData.getScale());
+                    }
                 }
-                return false; // No sprite was clicked
+                return clicked;
             }
         });
-    }
-    // Method to check which sprite was clicked and return its name
-    private String getClickedObject(int screenX, int screenY) {
-        // Convert screen coordinates to world coordinates
-        Vector3 worldCoords = camera.unproject(new Vector3(screenX, screenY, 0));
-        // Loop through each sprite and check if the click is within its bounding rectangle
-        for (int i = 0; i < cardOnScreenDatas.size(); i++) {
-            if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)
-                || cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
-                selectedCardNumber = i;
-                return CardInstancesNames.get(i); // Return the name of the clicked sprite
-            }
-        }
-        return null; // No sprite was clicked
     }
 
     // Called every refresh rate for rendering
     @Override
     public void render() {
         draw();
-        manageInput();
+        //manageInput();
     }
 
     // Called when resizing window
@@ -160,7 +166,7 @@ public class Main extends ApplicationAdapter {
         if (selectedCardNumber != -1){
             drawSelected(cardOnScreenDatas.get(selectedCardNumber), camera);
         }
-        // Test drawing card from drawCard function
+        // Draw every card on the screen
         for (int i = 0; i < cardOnScreenDatas.size(); i++) {
             drawCard(cardOnScreenDatas.get(i), camera);
         }
@@ -176,17 +182,6 @@ public class Main extends ApplicationAdapter {
         defaultFont.draw(fpsBatch, "Y: " + worldCoords.y, 530, 560);
         fpsBatch.end();
 
-    }
-    public void manageInput(){
-        // Check for left mouse button click
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            if (!isLeftButtonPressed) {     // isLeftButtonPressed starts out False
-                isLeftButtonPressed = true; // This + assigning it true right after makes it so only one instance of a left-click is detected until the left click button is released.
-            }
-        } else {
-            // Reset the flag when the button is released to prevent multiple left clicks being detected per frame
-            isLeftButtonPressed = false;
-        }
     }
     public void drawSelected(CardOnScreenData CoSD, OrthographicCamera camera) {
         SpriteBatch batch = new SpriteBatch();
@@ -204,7 +199,7 @@ public class Main extends ApplicationAdapter {
         batch.begin();
         // Draw cardback
         CoSD.getCardbackSprite().draw(batch);
-        if (!card.getName().equals("Draw") && !card.getName().equals("Trash")) {
+        if (!card.getName().equals("Draw") && !card.getName().equals("Trash") && !card.getName().equals("Blank")) {
             // Draw creature
             CoSD.getCardSprite().draw(batch);
             // Draw text
@@ -218,4 +213,20 @@ public class Main extends ApplicationAdapter {
         batch.end();
         camera.update();
     }
+
+
+    /* Outdated methods below
+    -------------------------
+
+    public void manageInput(){
+        // Check for left mouse button click
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            if (!isLeftButtonPressed) {     // isLeftButtonPressed starts out False
+                isLeftButtonPressed = true; // This + assigning it true right after makes it so only one instance of a left-click is detected until the left click button is released.
+            }
+        } else {
+            // Reset the flag when the button is released to prevent multiple left clicks being detected per frame
+            isLeftButtonPressed = false;
+        }
+    }*/
 }

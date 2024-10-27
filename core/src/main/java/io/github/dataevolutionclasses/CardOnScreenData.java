@@ -27,6 +27,7 @@ import java.awt.*;
 public class CardOnScreenData {
 
     private Card card;
+    private int cardListID;
     private Sprite cardSprite;
     private Sprite cardbackSprite;
     private Sprite selectedSprite;
@@ -48,8 +49,13 @@ public class CardOnScreenData {
     private float shieldTextX;
     private float shieldTextY;
 
-    public CardOnScreenData(Card card, float x, float y, float scale){
+    public CardOnScreenData(Card card, int cardListID, float x, float y, float scale){
+        remakeCard(card, cardListID, x, y, scale); // Called to avoid duplicating code
+    }
+
+    public void remakeCard(Card card, int cardListID, float x, float y, float scale){
         this.card = card;
+        this.cardListID = cardListID;
         this.cardSprite = new Sprite(card.getTexture());
         this.cardbackSprite = new Sprite(new Texture("cardback2.png"));
         if (card.getName().equals("Draw")){
@@ -58,6 +64,9 @@ public class CardOnScreenData {
         else if (card.getName().equals("Trash")){
             this.cardbackSprite = new Sprite(new Texture("cardback4.png"));
         }
+        else if (card.getName().equals("Blank")){
+            this.cardbackSprite = new Sprite(new Texture("CardbackBlank.png"));
+        }
         this.selectedSprite = new Sprite(new Texture("CardbackHighlight.png"));
         this.x = x;
         this.y = y;
@@ -65,15 +74,14 @@ public class CardOnScreenData {
         // Set card sizing and position (doesn't directly draw)
         selectedSprite.setSize(selectedSprite.getTexture().getWidth() * scale, selectedSprite.getTexture().getHeight() * scale);
         cardbackSprite.setSize(cardbackSprite.getTexture().getWidth() * scale, cardbackSprite.getTexture().getHeight() * scale);
-        cardSprite.setSize(cardSprite.getTexture().getWidth() * scale, cardSprite.getTexture().getHeight() * scale);
+        cardSprite.setSize(cardSprite.getTexture().getWidth() * scale * 1.2f, cardSprite.getTexture().getHeight() * scale * 1.2f);
         float cardX = (x - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2)); // Bottom left corner x
         float cardY = (y - ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2)); // Bottom left corner y
         float midcardX = ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2);  // Distance from the card's left edge to middle
         float midcardY = ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Distance from the card's bottom edge to middle
-        cardbackSprite.setPosition(cardX, cardY);
+        cardbackSprite.setPosition(cardX , cardY);
         selectedSprite.setPosition(cardX - (midcardX * 0.1f), cardY - (midcardY * 0.06f));
-        cardSprite.setPosition(cardX + (midcardX / 3.5f), cardY + (midcardY / 1.3f));
-
+        cardSprite.setPosition(cardX + (midcardX / 3.5f), cardY + (midcardY / 1.6f));
         // Set text sizing and position (doesn't directly draw)
         nameFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         nameFont.getData().setScale(scale * 0.75f);
@@ -98,6 +106,9 @@ public class CardOnScreenData {
     // Getters and Setters
     public Card getCard() { return card; }
     public void setCard(Card card) { this.card = card; }
+
+    public int getCardListID() {return cardListID; }
+    public void setCardID(int cardID) {this.cardListID = cardID; }
 
     public Sprite getCardSprite() { return cardSprite; }
     public void setCardSprite(Sprite cardSprite) { this.cardSprite = cardSprite; }

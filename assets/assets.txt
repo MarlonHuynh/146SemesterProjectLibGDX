@@ -2,6 +2,7 @@ cardback.png
 cardback2.png
 cardback3.png
 cardback4.png
+CardbackBlank.png
 CardbackHighlight.png
 cardsprites/array.png
 cardsprites/astar.png
