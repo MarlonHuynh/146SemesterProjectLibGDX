@@ -72,6 +72,8 @@ public class Card {
     public String getDesc(){
         return desc;
     }
+    public String getType() { return type; }
+
     // Setters
     public void setTexture(String path){
         texture = new Texture(path);
@@ -94,6 +96,7 @@ public class Card {
     public void setDesc(String desc){
         this.desc = desc;
     }
+    public void setType(String type){ this.type = type; }
     // Console print
     public void print(){
         System.out.println(name + " | " + type + " | " + stage + " | "
