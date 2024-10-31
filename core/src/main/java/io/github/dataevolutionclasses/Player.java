@@ -47,29 +47,33 @@ public class Player {
         this.energy = energy;
     }
 
+    public void setAlreadyTrashed(boolean alreadyTrashed) {
+        this.alreadyTrashed = alreadyTrashed;
+    }
+
     //    TrashCard method:
 //      Moi luot (co quyen) duoc trash 1 la tren hand
 //      Trash -> +1 energy
-    public void trashCard(){
+    public Card trashCard(){
         if (alreadyTrashed || handCard.size() <= 1){
             System.out.println("Unable to trash card this round");
+            return null;
         }
         else {
             Scanner scnr = new Scanner(System.in);
             System.out.println("Choose one of these card to trash");
-            for (int i=0; i<handCard.size(); i++){
+            for (int i = 0; i < handCard.size(); i++) {
                 System.out.println(handCard.get(i).getName());
             }
             int choice;
             // Prevent trolling
-            while (true){
+            while (true) {
                 System.out.println("Card you want to trash is:");
                 choice = scnr.nextInt();
-                if (choice >0 && choice < handCard.size()){
+                if (choice > 0 && choice < handCard.size()) {
                     break;
-                }
-                else {
-                    System.out.println("-1000 social credit");
+                } else {
+                    System.out.println("Try again:");
                 }
             }
 
@@ -77,13 +81,14 @@ public class Player {
             handCard.remove(cardtoTrash);
             energy++;
             alreadyTrashed = true;
-            System.out.println("You have just trash "+ cardtoTrash.getName() );
+            System.out.println("You have just trash " + cardtoTrash.getName());
             System.out.println("Your energy: " + energy);
+            return cardtoTrash;
         }
     }
     // Sort handCards by stages
     // Using quickSort (quickest way to sort)
-    public void quickSortByStages(int low, int high){
+    private void quickSortByStages(int low, int high){
         if (low < high){
             int a = partition(low, high);
             quickSortByStages(low, a-1);
@@ -114,4 +119,19 @@ public class Player {
             quickSortByStages(0,handCard.size()-1);
         }
     }
+
+    public Card drawCard(){
+        if(!deck.isEmpty()){
+            Card drawnCard = deck.remove(0);
+            handCard.add(drawnCard);
+            return drawnCard;
+        }
+        return null;
+    }
+
+    public void endTurn(){
+        alreadyTrashed = false;
+        System.out.println("Turn ended.");
+    }
+
 }
