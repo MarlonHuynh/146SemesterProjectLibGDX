@@ -29,6 +29,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont; // Text
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List; // Util
 
 
@@ -37,15 +39,19 @@ public class Main extends ApplicationAdapter {
     private FitViewport viewport;                   // Viewport
     private boolean isLeftButtonPressed = false;    // Input
     private List<Card> cardList;                    // Master Card Storage (Do not change)
-    private BitmapFont debugFont, noncardUIFont;                         // Font
+    private HashMap<String, Card> nameToCardHashmap = new HashMap<String, Card>(); // Master Card Storage (Do not change)
+    private HashMap<String, Integer> nameToIntHashmap = new HashMap<String, Integer>(); // Master Card Storage (Do not change)
     private ArrayList<CardOnScreenData> cardOnScreenDatas;  // Houses all information about all cards displayed on the screen
-    private ArrayList<String> CardInstancesNames;           // Named instances of the card for easy debugging
+    private ArrayList<Card> cardsInPlayerDeck = new ArrayList<Card>();;
+    private ArrayList<Card> cardsInPlayerHand = new ArrayList<Card>();;
     private int selectedCardNumber = -1;            // Changes when a player clicks on a card (starts at -1 for no card selected)
     private int prevSelectedCardNumber = -1;
     private GlyphLayout descLayout = new GlyphLayout();
     private float descWidth;
+    private BitmapFont debugFont, noncardUIFont;                         // Font
     private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr;
     private int playerHealth, enemyHealth, playerRecharge, enemyRecharge, playerEnergy, enemyEnergy;
+    private int cardsLeftPlayerInt;
 
     private BitmapFont font;
     // Instantiated upon startup
@@ -60,6 +66,10 @@ public class Main extends ApplicationAdapter {
         CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats2.csv");
         reader.generateCardsFromCSV();
         cardList = reader.getCardList();
+        for (int i = 0; i < cardList.size(); i++){                        // Populate the nameToCard Hashmap (For easier searches of name to Card type);
+            nameToCardHashmap.put(cardList.get(i).getName(), cardList.get(i));
+            nameToIntHashmap.put(cardList.get(i).getName(), i);
+        }
         CardOnScreenData.staticSetCardList(cardList);   // Sets the static cardList in CardOnScreenData so it knows which cardList to reference
         // Initialize debug Font
         debugFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
@@ -95,22 +105,36 @@ public class Main extends ApplicationAdapter {
         playerRecharge = 2;
         enemyEnergy = 3;
         enemyRecharge = 4;
+
         // Set up array of Sprite names and sprites to keep track of the sprites on screen for input handling
         cardOnScreenDatas = new ArrayList<CardOnScreenData>();
-        CardInstancesNames = new ArrayList<String>();
+
+        // Create the cards in the player's deck
+        List<String> strTemp = Arrays.asList("Bubble Sort", "Bubble Sort", "Bubble Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "A-Starfish");
+        for (String s : strTemp) {
+            cardsInPlayerDeck.add(nameToCardHashmap.get(s));
+        }
+        // Take random 5 cards from the player's deck to initialize in the player's hand
+        for (int i = 0; i < 5; i++){
+            int randomIndex = (int) (Math.random() * cardsInPlayerDeck.size()); // Gets a random int from index 0 to last index of cardsInPlayerDeck
+            cardsInPlayerHand.add(nameToCardHashmap.get(cardsInPlayerDeck.get(randomIndex).getName())); // Add card at randomIndex into hand
+            cardsInPlayerDeck.remove(randomIndex);                           // Remove the card from cardsInPlayerDeck
+        }
+        cardsLeftPlayerInt = cardsInPlayerDeck.size();
+
         // Create all cards on screen
         // Enemy's hand (Instance 0-4)
-        cardOnScreenDatas.add(new CardOnScreenData(0,  viewport.getWorldWidth() * (3.3f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(1,  viewport.getWorldWidth() * (5.64f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(2,  viewport.getWorldWidth() * (8 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(3,  viewport.getWorldWidth() * (10.35f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(4,  viewport.getWorldWidth() * (12.7f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(10,  viewport.getWorldWidth() * (3.3f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(10,  viewport.getWorldWidth() * (5.64f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(10,  viewport.getWorldWidth() * (8 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(10,  viewport.getWorldWidth() * (10.35f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(10,  viewport.getWorldWidth() * (12.7f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
         //  Player's hand (Instance 5-9)
-        cardOnScreenDatas.add(new CardOnScreenData(5,  viewport.getWorldWidth() * (3.3f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(6,  viewport.getWorldWidth() * (5.64f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(7,  viewport.getWorldWidth() * (8 / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(8,  viewport.getWorldWidth() * (10.35f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(9,  viewport.getWorldWidth() * (12.7f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardsInPlayerHand.get(0),  viewport.getWorldWidth() * (3.3f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardsInPlayerHand.get(1),  viewport.getWorldWidth() * (5.64f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardsInPlayerHand.get(2),  viewport.getWorldWidth() * (8 / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardsInPlayerHand.get(3),  viewport.getWorldWidth() * (10.35f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardsInPlayerHand.get(4),  viewport.getWorldWidth() * (12.7f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
         // Field top (enemy) (Instance 10-12)
         cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (4.2f / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
         cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
@@ -125,11 +149,7 @@ public class Main extends ApplicationAdapter {
         cardOnScreenDatas.add(new CardOnScreenData(36, viewport.getWorldWidth() * (15f / 16f), viewport.getWorldHeight() * (1.5f / 16f), 0.4f));
         // End Turn (Instance 18)
         cardOnScreenDatas.add(new CardOnScreenData(38, viewport.getWorldWidth() * (15f / 16f), viewport.getWorldHeight() * (4.75f / 16f), 0.4f));
-        // Debug
-        for (int i = 0; i < cardOnScreenDatas.size(); i ++){
-            CardInstancesNames.add("Card " + cardOnScreenDatas.get(i).getCard().getName() + ", Instance #" + Integer.toString(i + 1));
-            System.out.println("spriteName added: " + CardInstancesNames.get(i));
-        }
+
         // Set up an input processor to handle clicks
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
@@ -206,6 +226,8 @@ public class Main extends ApplicationAdapter {
         }
         // Draw non-card text UI
         drawBatch.begin();
+        debugFont.draw(drawBatch, "Cards Left", 5, 180);
+        debugFont.draw(drawBatch, "in Deck: " + Integer.toString(cardsLeftPlayerInt), 5, 160);
         noncardUIFont.draw(drawBatch, Integer.toString(playerHealth), 35, 270);
         noncardUIFont.draw(drawBatch, Integer.toString(enemyHealth), 35, 360);
         noncardUIFont.draw(drawBatch, Integer.toString(playerRecharge), 460, 265);

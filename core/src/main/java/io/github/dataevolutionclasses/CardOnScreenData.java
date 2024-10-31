@@ -26,7 +26,7 @@ import java.util.List;
 public class CardOnScreenData {
 
     private static List<Card> cardList;
-    private static HashMap<Integer, Card> indexToCardListMap;
+    private static HashMap<Card, Integer> cardToIntMap;
 
 
     private Card card;
@@ -55,9 +55,13 @@ public class CardOnScreenData {
     public CardOnScreenData(int cardListID, float x, float y, float scale){
         remakeCard(cardListID, x, y, scale); // Called to avoid duplicating code
     }
+    public CardOnScreenData(Card card, float x, float y, float scale){
+        int id = cardToIntMap.get(card);
+        remakeCard(id, x, y, scale); // Called to avoid duplicating code
+    }
 
     public void remakeCard(int cardListID, float x, float y, float scale){
-        this.card = CardOnScreenData.getIndexToCardListMap().get(cardListID);
+        this.card = CardOnScreenData.getCardList().get((cardListID));
         this.cardListID = cardListID;
         this.cardSprite = new Sprite(card.getTexture());
         this.cardbackSprite = new Sprite(new Texture("cardback2.png"));
@@ -119,19 +123,19 @@ public class CardOnScreenData {
         if (CardOnScreenData.cardList == null){ // Sets only if null
             CardOnScreenData.cardList = cardList;
         }
-        generateIndexToCardlistTuple();
+        generateCardToIntMap();
     }
-    public static void generateIndexToCardlistTuple(){
-        if (CardOnScreenData.indexToCardListMap == null){
-            indexToCardListMap = new HashMap<>();
+
+    public static void generateCardToIntMap(){
+        if (CardOnScreenData.cardToIntMap == null){
+            cardToIntMap = new HashMap<>();
             for (int i = 0; i < CardOnScreenData.getCardList().size(); i++){
-                indexToCardListMap.put(i, CardOnScreenData.getCardList().get(i));
-                System.out.println("---" + Integer.toString(i)+ ", " + indexToCardListMap.get(i).getName());
+                cardToIntMap.put(CardOnScreenData.getCardList().get(i), i);
             }
         }
     }
-    private static HashMap<Integer, Card> getIndexToCardListMap(){
-        return CardOnScreenData.indexToCardListMap;
+    private static HashMap<Card, Integer> getCardToIntMap(){
+        return CardOnScreenData.cardToIntMap;
     }
 
     // Getters and Setters
