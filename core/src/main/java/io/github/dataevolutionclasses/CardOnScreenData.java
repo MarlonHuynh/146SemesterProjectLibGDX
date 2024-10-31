@@ -59,6 +59,10 @@ public class CardOnScreenData {
         int id = cardToIntMap.get(card);
         remakeCard(id, x, y, scale); // Called to avoid duplicating code
     }
+    public void remakeCard(Card card, float x, float y, float scale) {
+        int id = cardToIntMap.get(card);
+        remakeCard(id, x, y, scale);
+    }
 
     public void remakeCard(int cardListID, float x, float y, float scale){
         this.card = CardOnScreenData.getCardList().get((cardListID));
@@ -204,4 +208,5 @@ public class CardOnScreenData {
 
     public float getShieldTextY() { return shieldTextY; }
     public void setShieldTextY(float shieldTextY) { this.shieldTextY = shieldTextY; }
+
 }

@@ -16,10 +16,12 @@
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.ApplicationAdapter; // Rendering
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -37,21 +39,22 @@ import java.util.List; // Util
 public class Main extends ApplicationAdapter {
     private OrthographicCamera camera;              // Camera
     private FitViewport viewport;                   // Viewport
-    private boolean isLeftButtonPressed = false;    // Input
     private List<Card> cardList;                    // Master Card Storage (Do not change)
     private HashMap<String, Card> nameToCardHashmap = new HashMap<String, Card>(); // Master Card Storage (Do not change)
     private HashMap<String, Integer> nameToIntHashmap = new HashMap<String, Integer>(); // Master Card Storage (Do not change)
     private ArrayList<CardOnScreenData> cardOnScreenDatas;  // Houses all information about all cards displayed on the screen
-    private ArrayList<Card> cardsInPlayerDeck = new ArrayList<Card>();;
-    private ArrayList<Card> cardsInPlayerHand = new ArrayList<Card>();;
+    private ArrayList<Card> cardsInPlayerDeck = new ArrayList<Card>();
+    private ArrayList<Card> cardsInPlayerHand = new ArrayList<Card>();
+    private ArrayList<Card> cardsInPlayerField = new ArrayList<Card>();
+    private boolean drawnBool = false;
+    private int turnCount = 0;
     private int selectedCardNumber = -1;            // Changes when a player clicks on a card (starts at -1 for no card selected)
     private int prevSelectedCardNumber = -1;
-    private GlyphLayout descLayout = new GlyphLayout();
-    private float descWidth;
     private BitmapFont debugFont, noncardUIFont;                         // Font
     private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr;
     private int playerHealth, enemyHealth, playerRecharge, enemyRecharge, playerEnergy, enemyEnergy;
-    private int cardsLeftPlayerInt;
+    private String drawnText;
+    private GlyphLayout drawnTextLayout = new GlyphLayout();
 
     private BitmapFont font;
     // Instantiated upon startup
@@ -73,12 +76,12 @@ public class Main extends ApplicationAdapter {
         CardOnScreenData.staticSetCardList(cardList);   // Sets the static cardList in CardOnScreenData so it knows which cardList to reference
         // Initialize debug Font
         debugFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        debugFont.getData().setScale(0.6f);
+        debugFont.getData().setScale(0.4f);
         noncardUIFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         noncardUIFont.getData().setScale(1f);
         // Initialize card font
         font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        // Initialize non-card sprites
+        // Initialize non-card sprites and text
         bgSpr = new Sprite(new Texture("background.png"));
         playerHealthSpr = new Sprite(new Texture("yourhealth.png"));
         playerHealthSpr.setScale(0.65f);
@@ -98,19 +101,19 @@ public class Main extends ApplicationAdapter {
         enemyEnergySpr = new Sprite(new Texture("enemyenergy.png"));
         enemyEnergySpr.setScale(0.5f);
         enemyEnergySpr.setPosition(380, 270);
+        drawnText = "You can draw a card.";
+        drawnTextLayout.setText(debugFont, drawnText, Color.RED, 100, Align.left, true);
         // Initialize stat variables
         playerHealth = 60;
         enemyHealth = 40;
-        playerEnergy = 1;
-        playerRecharge = 2;
-        enemyEnergy = 3;
-        enemyRecharge = 4;
-
+        playerEnergy = 0;
+        playerRecharge = 0;
+        enemyEnergy = 0;
+        enemyRecharge = 0;
         // Set up array of Sprite names and sprites to keep track of the sprites on screen for input handling
         cardOnScreenDatas = new ArrayList<CardOnScreenData>();
-
         // Create the cards in the player's deck
-        List<String> strTemp = Arrays.asList("Bubble Sort", "Bubble Sort", "Bubble Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "A-Starfish");
+        List<String> strTemp = Arrays.asList("Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Bubble Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "A-Starfish");
         for (String s : strTemp) {
             cardsInPlayerDeck.add(nameToCardHashmap.get(s));
         }
@@ -120,8 +123,6 @@ public class Main extends ApplicationAdapter {
             cardsInPlayerHand.add(nameToCardHashmap.get(cardsInPlayerDeck.get(randomIndex).getName())); // Add card at randomIndex into hand
             cardsInPlayerDeck.remove(randomIndex);                           // Remove the card from cardsInPlayerDeck
         }
-        cardsLeftPlayerInt = cardsInPlayerDeck.size();
-
         // Create all cards on screen
         // Enemy's hand (Instance 0-4)
         cardOnScreenDatas.add(new CardOnScreenData(10,  viewport.getWorldWidth() * (3.3f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
@@ -149,7 +150,6 @@ public class Main extends ApplicationAdapter {
         cardOnScreenDatas.add(new CardOnScreenData(36, viewport.getWorldWidth() * (15f / 16f), viewport.getWorldHeight() * (1.5f / 16f), 0.4f));
         // End Turn (Instance 18)
         cardOnScreenDatas.add(new CardOnScreenData(38, viewport.getWorldWidth() * (15f / 16f), viewport.getWorldHeight() * (4.75f / 16f), 0.4f));
-
         // Set up an input processor to handle clicks
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
@@ -175,19 +175,84 @@ public class Main extends ApplicationAdapter {
                         }
                     }
                 }
-                // Swaps card if clicked a Blank space and previously clicked was a card
+
                 if (prevSelectedCardNumber != -1 && selectedCardNumber != -1) {
                     CardOnScreenData currData = cardOnScreenDatas.get(selectedCardNumber);
                     CardOnScreenData prevData = cardOnScreenDatas.get(prevSelectedCardNumber);
-                    // Check to see if previous data is a creature card and the current data is a blank space
+                    // 1) Fielding Card logic
                     if (!prevData.getCard().getName().equals("Blank") && !prevData.getCard().getName().equals("Trash")
                         && !prevData.getCard().getName().equals("Draw") && currData.getCard().getName().equals("Blank")
                         && prevSelectedCardNumber >= 5 && prevSelectedCardNumber <= 9       // Previous select is in player hand
-                        && selectedCardNumber >= 13 && selectedCardNumber <= 15) {          // Current select is in bottom field (player field)
-                        //Swaps blank with creature card
+                        && selectedCardNumber >= 13 && selectedCardNumber <= 15             // Current select is in bottom field (player field)
+                        && prevData.getCard().getCost() <= playerEnergy) {                  // Checks if enough energy to place down
+                        // Swaps blank with creature card
+                        if (playerEnergy >= prevData.getCard().getCost()) {
+                            playerEnergy -= prevData.getCard().getCost();
+                        }
+                        // Remove from the player hand array and place in player field array
+                        cardsInPlayerField.add(prevData.getCard());
+                        for (int i = 0; i < cardsInPlayerHand.size(); i++){
+                            if (cardsInPlayerHand.get(i).getName().equals(prevData.getCard().getName())){
+                                cardsInPlayerHand.remove(i);
+                                break;
+                            }
+                        }
+                        // Remake the card's UI
                         currData.remakeCard(prevData.getCardID(), currData.getX(), currData.getY(), currData.getScale());
                         prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale());
+
                     }
+                    // 2) Trash Card logic
+                    else if (prevSelectedCardNumber >= 5 && prevSelectedCardNumber <= 9 // Card is in player hand
+                        &&  currData.getCard().getName().equals("Trash")) {  // Current select is in trash
+                        Card prevCard = prevData.getCard();
+                        // Remove from hand
+                        for (int i = 0; i < cardsInPlayerHand.size(); i++){
+                            if (cardsInPlayerHand.get(i).getName().equals(prevCard.getName())){
+                                cardsInPlayerHand.remove(i);
+                                break;
+                            }
+                        }
+                        // Remake Card UI
+                        prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale());
+                        // Change energy vars
+                        playerEnergy ++;
+                        playerRecharge ++;
+                    }
+                    // 3) Draw Card logic
+                    else if (currData.getCard().getName().equals("Draw") // Current select is in trash
+                    && cardsInPlayerHand.size() < 5 // Less than 5 cards in hand
+                    && cardsInPlayerDeck.size() > 0 // Deck contains card
+                    && drawnBool == false) {           // Player hasnt drawn this turn yet
+                        // Add card at random index to hand and remove card from cardsInPlayerDeck
+                        int randomIndex = (int) (Math.random() * cardsInPlayerDeck.size());
+                        Card cardToAdd = cardsInPlayerDeck.get(randomIndex);
+                        cardsInPlayerHand.add(cardToAdd); // Add card at randomIndex into hand
+                        cardsInPlayerDeck.remove(randomIndex);
+                        // Update drawnBool (drawn for the turn)
+                        drawnBool = true;
+                        drawnText = "You already drawn this turn.";
+                        drawnTextLayout.setText(debugFont, drawnText, Color.RED, 100, Align.left, true);
+                        // Update Card UI
+                        for (int i = 5; i <= 9; i++){
+                            if (cardOnScreenDatas.get(i).getCardID() == 37){ // Blank
+                                CardOnScreenData CoSD = cardOnScreenDatas.get(i);
+                                cardOnScreenDatas.get(i).remakeCard(cardToAdd, CoSD.getX(), CoSD.getY(), CoSD.getScale());
+                                break;
+                            }
+                        }
+                    }
+                    else if (currData.getCard().getName().equals(("End Turn"))){
+                        // Reset drawn bools
+                        drawnBool = false;
+                        drawnText = "You can draw a card.";
+                        drawnTextLayout.setText(debugFont, drawnText, Color.RED, 100, Align.left, true);
+                        // Reset energy to energy recharge amount
+                        playerEnergy = playerRecharge;
+                        // Increase turn count
+                        turnCount++;
+                    }
+
                 }
                 return clicked;
             }
@@ -226,8 +291,10 @@ public class Main extends ApplicationAdapter {
         }
         // Draw non-card text UI
         drawBatch.begin();
-        debugFont.draw(drawBatch, "Cards Left", 5, 180);
-        debugFont.draw(drawBatch, "in Deck: " + Integer.toString(cardsLeftPlayerInt), 5, 160);
+        debugFont.draw(drawBatch, drawnTextLayout, 5, 200);
+        debugFont.draw(drawBatch, "Cards Left", 5, 165);
+        debugFont.draw(drawBatch, "in Deck: " + Integer.toString(cardsInPlayerDeck.size()), 5, 150);
+        debugFont.draw(drawBatch, "Turn " + Integer.toString(turnCount), 540, 250);
         noncardUIFont.draw(drawBatch, Integer.toString(playerHealth), 35, 270);
         noncardUIFont.draw(drawBatch, Integer.toString(enemyHealth), 35, 360);
         noncardUIFont.draw(drawBatch, Integer.toString(playerRecharge), 460, 265);
