@@ -51,13 +51,14 @@ public class Main extends ApplicationAdapter {
     private int turnCount = 0;
     private int selectedCardNumber = -1;            // Changes when a player clicks on a card to the index of the selected card in cardOnScreenDatas
     private int prevSelectedCardNumber = -1;        // Keeps track of previous selected index
-    private BitmapFont debugFont, noncardUIFont;                         // Font
-    private String drawnText;
-    private GlyphLayout drawnTextLayout = new GlyphLayout();
+    private BitmapFont debugFont, noncardUIFont;
     private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr;
     private int playerHealth, enemyHealth, playerRecharge, enemyRecharge, playerEnergy, enemyEnergy;
+    private String drawnStr;
+    private GlyphLayout drawnTextLayout = new GlyphLayout();
     private Vector3 worldCoords = new Vector3();
     private int frameCounter = 0;
+    private StringBuilder stringBuilder = new StringBuilder();
 
     private BitmapFont font;
     // Instantiated upon startup
@@ -84,9 +85,9 @@ public class Main extends ApplicationAdapter {
         noncardUIFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         noncardUIFont.getData().setScale(1f);
         font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        drawnText = "You can draw a card.";
-        drawnTextLayout.setText(debugFont, drawnText, Color.RED, 100, Align.left, true);
         drawBatch = new SpriteBatch();
+        drawnStr = "You can draw a card";
+        drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
         // Initialize non-card sprites, with scale and position
         bgSpr = new Sprite(new Texture("background.png"));
         playerHealthSpr = new Sprite(new Texture("yourhealth.png"));
@@ -238,8 +239,9 @@ public class Main extends ApplicationAdapter {
                     cardsInPlayerDeck.remove(randomIndex);
                     // Update drawnBool (drawn for the turn)
                     drawnBool = true;
-                    drawnText = "You already drawn this turn.";
-                    drawnTextLayout.setText(debugFont, drawnText, Color.RED, 100, Align.left, true);
+                    drawnStr = "You already drawn this turn.";
+                    drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
+                    // Change card left text
                     // Update Card UI
                     for (int i = 5; i <= 9; i++) {
                         if (cardOnScreenDatas.get(i).getCardID() == 37) { // Blank
@@ -253,11 +255,11 @@ public class Main extends ApplicationAdapter {
                 else if (currData.getCard().getName().equals(("End Turn"))) {
                     // Reset drawn bools
                     drawnBool = false;
-                    drawnText = "You can draw a card.";
-                    drawnTextLayout.setText(debugFont, drawnText, Color.RED, 100, Align.left, true);
+                    drawnStr = "You can draw a card.";
+                    drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
                     // Reset energy to energy recharge amount
                     playerEnergy = playerRecharge;
-                    // Increase turn count
+                    // Increase turn count and change text
                     turnCount++;
                 }
                 return clicked;
@@ -269,21 +271,24 @@ public class Main extends ApplicationAdapter {
     public void draw(){
         // Clears screen and prepares batch for drawing
         ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
-
         // Display FPS counter and position of cursor
         worldCoords.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         //camera.unproject(worldCoords);
-
         drawBatch.setProjectionMatrix(camera.combined);
         drawBatch.begin();
-
         // Draw BG
         bgSpr.draw(drawBatch);
-
-        // Draw debug FPS and cursor location
-        debugFont.draw(drawBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 520, 340);
-        debugFont.draw(drawBatch, "X: " + (int)worldCoords.x, 520, 380);
-        debugFont.draw(drawBatch, "Y: " + (int)worldCoords.y, 520, 360);
+        // Draw debug FPS
+        stringBuilder.setLength(0);
+        stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
+        debugFont.draw(drawBatch, stringBuilder, 520, 340);
+        // Draw cursor X, Y
+        stringBuilder.setLength(0);
+        stringBuilder.append("X: ").append((int)worldCoords.x);
+        debugFont.draw(drawBatch, stringBuilder, 520, 380);
+        stringBuilder.setLength(0);
+        stringBuilder.append("Y: ").append((int)worldCoords.y);
+        debugFont.draw(drawBatch, stringBuilder, 520, 360);
         // Draw non-card UI sprites
         playerHealthSpr.draw(drawBatch);
         enemyHealthSpr.draw(drawBatch);
@@ -291,19 +296,37 @@ public class Main extends ApplicationAdapter {
         enemyEnergySpr.draw(drawBatch);
         playerCloudSpr.draw(drawBatch);
         enemyCloudSpr.draw(drawBatch);
-
         // Draw non-card text UI
         debugFont.draw(drawBatch, drawnTextLayout, 5, 200);
-        debugFont.draw(drawBatch, "Cards Left", 5, 165);
-        debugFont.draw(drawBatch, "in Deck: " + Integer.toString(cardsInPlayerDeck.size()), 5, 150);
-        debugFont.draw(drawBatch, "Turn " + Integer.toString(turnCount), 540, 250);
-        noncardUIFont.draw(drawBatch, Integer.toString(playerHealth), 35, 270);
-        noncardUIFont.draw(drawBatch, Integer.toString(enemyHealth), 35, 360);
-        noncardUIFont.draw(drawBatch, Integer.toString(playerRecharge), 460, 265);
-        noncardUIFont.draw(drawBatch, Integer.toString(playerEnergy), 460, 200);
-        noncardUIFont.draw(drawBatch, Integer.toString(enemyRecharge), 460, 425);
-        noncardUIFont.draw(drawBatch, Integer.toString(enemyEnergy), 460, 360);
-        /*
+        stringBuilder.setLength(0);
+        stringBuilder.append("Cards Left: ");
+        stringBuilder.append(cardsInPlayerDeck.size());
+        debugFont.draw(drawBatch, stringBuilder, 5, 165);
+        stringBuilder.setLength(0);
+        stringBuilder.append("Turn ");
+        stringBuilder.append(turnCount);
+        debugFont.draw(drawBatch, stringBuilder, 540, 250);
+        // Draw healths
+        stringBuilder.setLength(0);
+        stringBuilder.append(playerHealth);
+        noncardUIFont.draw(drawBatch, stringBuilder, 35, 270);
+        stringBuilder.setLength(0);
+        stringBuilder.append(enemyHealth);
+        noncardUIFont.draw(drawBatch, stringBuilder, 35, 360);
+        // Draw player energy and recharge
+        stringBuilder.setLength(0);
+        stringBuilder.append(playerRecharge);
+        noncardUIFont.draw(drawBatch, stringBuilder, 460, 265);
+        stringBuilder.setLength(0);
+        stringBuilder.append(playerEnergy);
+        noncardUIFont.draw(drawBatch, stringBuilder, 460, 200);
+        // Draw enemy energy and recharge
+        stringBuilder.setLength(0);
+        stringBuilder.append(enemyRecharge);
+        noncardUIFont.draw(drawBatch, stringBuilder, 460, 425);
+        stringBuilder.setLength(0);
+        stringBuilder.append(enemyEnergy);
+        noncardUIFont.draw(drawBatch, stringBuilder, 460, 360);
         // Draw every card on the screen
         for (CardOnScreenData CoSD : cardOnScreenDatas) {
             drawCard(CoSD, camera, drawBatch);
@@ -311,7 +334,7 @@ public class Main extends ApplicationAdapter {
         // Draw Select Sprite if needed
         if (selectedCardNumber != -1){
             cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(drawBatch);
-        }*/
+        }
         drawBatch.end();
         //camera.update();
     }
@@ -324,9 +347,18 @@ public class Main extends ApplicationAdapter {
             // Draw text
             CoSD.getNameFont().draw(batch, CoSD.getCard().getName(), CoSD.getNameX(), CoSD.getNameY());
             CoSD.getNameFont().draw(batch, CoSD.getDescLayout(), CoSD.getDescX(), CoSD.getDescY());
-            CoSD.getNumberFont().draw(batch, Integer.toString(CoSD.getCard().getCost()), CoSD.getCostTextX(), CoSD.getCostTextY());
-            CoSD.getNumberFont().draw(batch, Integer.toString(CoSD.getCard().getAttack()), CoSD.getAttackTextX(), CoSD.getAttackTextY());
-            CoSD.getNumberFont().draw(batch, Integer.toString(CoSD.getCard().getShield()), CoSD.getShieldTextX(), CoSD.getShieldTextY());
+            // Draw cost
+            stringBuilder.setLength(0);
+            stringBuilder.append(CoSD.getCard().getCost());
+            CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getCostTextX(), CoSD.getCostTextY());
+            // Draw attack
+            stringBuilder.setLength(0);
+            stringBuilder.append(CoSD.getCard().getAttack());
+            CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getAttackTextX(), CoSD.getAttackTextY());
+            // Draw shield
+            stringBuilder.setLength(0);
+            stringBuilder.append(CoSD.getCard().getShield());
+            CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getShieldTextX(), CoSD.getShieldTextY());
         }
     }
 
