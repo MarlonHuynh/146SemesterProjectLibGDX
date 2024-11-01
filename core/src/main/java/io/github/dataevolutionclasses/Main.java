@@ -1,16 +1,6 @@
 /*
-    -- !!!ATTENTION!!!
-    -- Hi if you're trying to catch yourself up on understanding the code, this is the recommended reading order:
-    -- Card.java > CardReader.java > Main.java
-    -- This will give you a better sense of how a CSV file is converted into Card objects, then stored, and eventually used
-    -- by main.java. If you want to jump straight ahead into Main.java, that's okay too; the only thing you need
-    -- to know about Card.java and CardReader.java is that Card.java stores information about cards like name
-    -- and texture and CardReader reads the CardStats2.CSV file, converts it into Card objects, and stores
-    -- objects in cardList to be used in Main.
-    -- Yours truly, Marlon
-
-    Class for Gameplay Scene
-    Will be managed by SceneManager (TBD) in the future, but is currently used for testing UI and cards
+    Creates the gameplay screen of the game and all logic on what will be drawn on the gameplay screen, variables, and input handling.
+    Basically, if it has to do with the gameplay, the code will be here.
 */
 
 package io.github.dataevolutionclasses;
@@ -35,36 +25,39 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List; // Util
 
-
 public class Main extends ApplicationAdapter {
+    // Window vars
     private OrthographicCamera camera;              // Camera
     private FitViewport viewport;                   // Viewport
-    private List<Card> cardList;                    // Master Card Storage (Do not change)
-    private HashMap<String, Card> nameToCardHashmap = new HashMap<String, Card>(); // Master Card Storage (Do not change)
+    // Storage vars
+    private List<Card> cardList;                                                        // Master Card Storage (Do not change)
+    private HashMap<String, Card> nameToCardHashmap = new HashMap<String, Card>();      // Master Card Storage (Do not change)
     private HashMap<String, Integer> nameToIntHashmap = new HashMap<String, Integer>(); // Master Card Storage (Do not change)
-    private ArrayList<CardOnScreenData> cardOnScreenDatas;  // Houses all information about all cards displayed on the screen
-    private ArrayList<Card> cardsInPlayerDeck = new ArrayList<Card>();
-    private ArrayList<Card> cardsInPlayerHand = new ArrayList<Card>();
-    private ArrayList<Card> cardsInPlayerField = new ArrayList<Card>();
-    private SpriteBatch drawBatch;
-    private boolean drawnBool = false;
-    private int turnCount = 0;
-    private int selectedCardNumber = -1;            // Changes when a player clicks on a card to the index of the selected card in cardOnScreenDatas
-    private int prevSelectedCardNumber = -1;        // Keeps track of previous selected index
-    private BitmapFont debugFont, noncardUIFont;
+    private ArrayList<CardOnScreenData> cardOnScreenDatas;                              // Houses all information about all cards spots displayed on the screen
+    private ArrayList<Card> cardsInPlayerDeck = new ArrayList<Card>();                  // Cards in player's deck
+    private ArrayList<Card> cardsInPlayerHand = new ArrayList<Card>();                  // Cards in player's hand
+    private ArrayList<Card> cardsInPlayerField = new ArrayList<Card>();                 // Cards in player's field
+    // UI vars
+    private SpriteBatch spriteBatch;
     private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr;
-    private int playerHealth, enemyHealth, playerRecharge, enemyRecharge, playerEnergy, enemyEnergy;
-    private String drawnStr;
+    private BitmapFont debugFont, noncardUIFont;
+    private String drawnStr = "You can draw a card";;
     private GlyphLayout drawnTextLayout = new GlyphLayout();
     private Vector3 worldCoords = new Vector3();
-    private int frameCounter = 0;
     private StringBuilder stringBuilder = new StringBuilder();
+    // Stats vars
+    private int playerHealth, enemyHealth, playerRecharge, enemyRecharge, playerEnergy, enemyEnergy;
+    // Game State vars
+    private boolean drawnBool = false;              // Keeps track of whether player has drawn or not yet
+    private int turnCount = 0;                      // Turn #
+    private int selectedCardNumber = -1;            // Index of cardOnScreenDatas currently selected
+    private int prevSelectedCardNumber = -1;        // Index of cardOnScreenDatas previously selected
+    // Debug vars
+    private int frameCounter = 0;
 
-    private BitmapFont font;
     // Instantiated upon startup
     @Override
     public void create() {
-
         // Set up camera and viewport
         camera = new OrthographicCamera();
         viewport = new FitViewport(600, 600, camera);                       // 600x600 is the virtual world size
@@ -79,14 +72,13 @@ public class Main extends ApplicationAdapter {
             nameToIntHashmap.put(cardList.get(i).getName(), i);
         }
         CardOnScreenData.staticSetCardList(cardList);   // Sets the static cardList in CardOnScreenData so it knows which cardList to reference
+        // Initialize drawBatch
+        spriteBatch = new SpriteBatch();
         // Initialize non-card Fonts and text
         debugFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         debugFont.getData().setScale(0.4f);
         noncardUIFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         noncardUIFont.getData().setScale(1f);
-        font = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        drawBatch = new SpriteBatch();
-        drawnStr = "You can draw a card";
         drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
         // Initialize non-card sprites, with scale and position
         bgSpr = new Sprite(new Texture("background.png"));
@@ -267,75 +259,75 @@ public class Main extends ApplicationAdapter {
         });
     }
     // Called every frame in render to draw the screen
-    // Note: DO NOT MAKE NEW BATCHES OR VARIABLES EVERY FRAME THIS WILL TANK YOUR FPS
+    // Note: DO NOT MAKE NEW BATCHES OR VARIABLES EVERY FRAME THIS WILL TANK YOUR FPS VERY BADLY!!! 300fps -> 6fps
     public void draw(){
         // Clears screen and prepares batch for drawing
         ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
         // Display FPS counter and position of cursor
         worldCoords.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         //camera.unproject(worldCoords);
-        drawBatch.setProjectionMatrix(camera.combined);
-        drawBatch.begin();
+        spriteBatch.setProjectionMatrix(camera.combined);
+        spriteBatch.begin();
         // Draw BG
-        bgSpr.draw(drawBatch);
+        bgSpr.draw(spriteBatch);
         // Draw debug FPS
         stringBuilder.setLength(0);
         stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
-        debugFont.draw(drawBatch, stringBuilder, 520, 340);
+        debugFont.draw(spriteBatch, stringBuilder, 520, 340);
         // Draw cursor X, Y
         stringBuilder.setLength(0);
         stringBuilder.append("X: ").append((int)worldCoords.x);
-        debugFont.draw(drawBatch, stringBuilder, 520, 380);
+        debugFont.draw(spriteBatch, stringBuilder, 520, 380);
         stringBuilder.setLength(0);
         stringBuilder.append("Y: ").append((int)worldCoords.y);
-        debugFont.draw(drawBatch, stringBuilder, 520, 360);
+        debugFont.draw(spriteBatch, stringBuilder, 520, 360);
         // Draw non-card UI sprites
-        playerHealthSpr.draw(drawBatch);
-        enemyHealthSpr.draw(drawBatch);
-        playerEnergySpr.draw(drawBatch);
-        enemyEnergySpr.draw(drawBatch);
-        playerCloudSpr.draw(drawBatch);
-        enemyCloudSpr.draw(drawBatch);
+        playerHealthSpr.draw(spriteBatch);
+        enemyHealthSpr.draw(spriteBatch);
+        playerEnergySpr.draw(spriteBatch);
+        enemyEnergySpr.draw(spriteBatch);
+        playerCloudSpr.draw(spriteBatch);
+        enemyCloudSpr.draw(spriteBatch);
         // Draw non-card text UI
-        debugFont.draw(drawBatch, drawnTextLayout, 5, 200);
+        debugFont.draw(spriteBatch, drawnTextLayout, 5, 200);
         stringBuilder.setLength(0);
         stringBuilder.append("Cards Left: ");
         stringBuilder.append(cardsInPlayerDeck.size());
-        debugFont.draw(drawBatch, stringBuilder, 5, 165);
+        debugFont.draw(spriteBatch, stringBuilder, 5, 165);
         stringBuilder.setLength(0);
         stringBuilder.append("Turn ");
         stringBuilder.append(turnCount);
-        debugFont.draw(drawBatch, stringBuilder, 540, 250);
+        debugFont.draw(spriteBatch, stringBuilder, 540, 250);
         // Draw healths
         stringBuilder.setLength(0);
         stringBuilder.append(playerHealth);
-        noncardUIFont.draw(drawBatch, stringBuilder, 35, 270);
+        noncardUIFont.draw(spriteBatch, stringBuilder, 35, 270);
         stringBuilder.setLength(0);
         stringBuilder.append(enemyHealth);
-        noncardUIFont.draw(drawBatch, stringBuilder, 35, 360);
+        noncardUIFont.draw(spriteBatch, stringBuilder, 35, 360);
         // Draw player energy and recharge
         stringBuilder.setLength(0);
         stringBuilder.append(playerRecharge);
-        noncardUIFont.draw(drawBatch, stringBuilder, 460, 265);
+        noncardUIFont.draw(spriteBatch, stringBuilder, 460, 265);
         stringBuilder.setLength(0);
         stringBuilder.append(playerEnergy);
-        noncardUIFont.draw(drawBatch, stringBuilder, 460, 200);
+        noncardUIFont.draw(spriteBatch, stringBuilder, 460, 200);
         // Draw enemy energy and recharge
         stringBuilder.setLength(0);
         stringBuilder.append(enemyRecharge);
-        noncardUIFont.draw(drawBatch, stringBuilder, 460, 425);
+        noncardUIFont.draw(spriteBatch, stringBuilder, 460, 425);
         stringBuilder.setLength(0);
         stringBuilder.append(enemyEnergy);
-        noncardUIFont.draw(drawBatch, stringBuilder, 460, 360);
+        noncardUIFont.draw(spriteBatch, stringBuilder, 460, 360);
         // Draw every card on the screen
         for (CardOnScreenData CoSD : cardOnScreenDatas) {
-            drawCard(CoSD, camera, drawBatch);
+            drawCard(CoSD, camera, spriteBatch);
         }
         // Draw Select Sprite if needed
         if (selectedCardNumber != -1){
-            cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(drawBatch);
+            cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(spriteBatch);
         }
-        drawBatch.end();
+        spriteBatch.end();
         //camera.update();
     }
     public void drawCard(CardOnScreenData CoSD, OrthographicCamera camera, SpriteBatch batch){
@@ -366,10 +358,8 @@ public class Main extends ApplicationAdapter {
     @Override
     public void render() {
         draw();
-        // Increment frame counter
-        frameCounter++;
-
         // Log memory every 100 frames
+        frameCounter++;
         if (frameCounter >= 100) {
             Gdx.app.log("Memory", "Used: " + Gdx.app.getJavaHeap() + " bytes");
             frameCounter = 0; // Reset counter after logging
@@ -385,10 +375,9 @@ public class Main extends ApplicationAdapter {
     // Called when exiting
     @Override
     public void dispose() {
-        drawBatch.dispose();
+        spriteBatch.dispose();
         debugFont.dispose();
         noncardUIFont.dispose();
-        font.dispose();
         bgSpr.getTexture().dispose();
         playerHealthSpr.getTexture().dispose();
         enemyHealthSpr.getTexture().dispose();

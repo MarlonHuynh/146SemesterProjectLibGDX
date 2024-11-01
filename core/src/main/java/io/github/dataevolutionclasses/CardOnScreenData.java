@@ -52,6 +52,7 @@ public class CardOnScreenData {
     private float shieldTextX;
     private float shieldTextY;
 
+    // Constructors
     public CardOnScreenData(int cardListID, float x, float y, float scale){
         remakeCard(cardListID, x, y, scale); // Called to avoid duplicating code
     }
@@ -59,11 +60,11 @@ public class CardOnScreenData {
         int id = cardToIntMap.get(card);
         remakeCard(id, x, y, scale); // Called to avoid duplicating code
     }
+    // Methods
     public void remakeCard(Card card, float x, float y, float scale) {
         int id = cardToIntMap.get(card);
         remakeCard(id, x, y, scale);
     }
-
     public void remakeCard(int cardListID, float x, float y, float scale){
         this.card = CardOnScreenData.getCardList().get((cardListID));
         this.cardListID = cardListID;
@@ -119,17 +120,18 @@ public class CardOnScreenData {
         shieldTextY =  cardY + (midcardY * 0.22f);
     }
 
-    // Get/Set static cardList
+    // Static getters
     public static List<Card> getCardList(){
         return cardList;
     }
+
+    // Set static cardList
     public static void staticSetCardList(List<Card>  cardList){
         if (CardOnScreenData.cardList == null){ // Sets only if null
             CardOnScreenData.cardList = cardList;
         }
         generateCardToIntMap();
     }
-
     public static void generateCardToIntMap(){
         if (CardOnScreenData.cardToIntMap == null){
             cardToIntMap = new HashMap<>();
