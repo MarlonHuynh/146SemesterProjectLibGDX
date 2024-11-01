@@ -56,11 +56,14 @@ public class Main extends ApplicationAdapter {
     private GlyphLayout drawnTextLayout = new GlyphLayout();
     private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr;
     private int playerHealth, enemyHealth, playerRecharge, enemyRecharge, playerEnergy, enemyEnergy;
+    private Vector3 worldCoords = new Vector3();
+    private int frameCounter = 0;
 
     private BitmapFont font;
     // Instantiated upon startup
     @Override
     public void create() {
+
         // Set up camera and viewport
         camera = new OrthographicCamera();
         viewport = new FitViewport(600, 600, camera);                       // 600x600 is the virtual world size
@@ -266,12 +269,17 @@ public class Main extends ApplicationAdapter {
     public void draw(){
         // Clears screen and prepares batch for drawing
         ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
+
         // Display FPS counter and position of cursor
-        Vector3 worldCoords = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+        worldCoords.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+        //camera.unproject(worldCoords);
+
         drawBatch.setProjectionMatrix(camera.combined);
         drawBatch.begin();
+
         // Draw BG
         bgSpr.draw(drawBatch);
+
         // Draw debug FPS and cursor location
         debugFont.draw(drawBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 520, 340);
         debugFont.draw(drawBatch, "X: " + (int)worldCoords.x, 520, 380);
@@ -283,6 +291,7 @@ public class Main extends ApplicationAdapter {
         enemyEnergySpr.draw(drawBatch);
         playerCloudSpr.draw(drawBatch);
         enemyCloudSpr.draw(drawBatch);
+
         // Draw non-card text UI
         debugFont.draw(drawBatch, drawnTextLayout, 5, 200);
         debugFont.draw(drawBatch, "Cards Left", 5, 165);
@@ -294,6 +303,7 @@ public class Main extends ApplicationAdapter {
         noncardUIFont.draw(drawBatch, Integer.toString(playerEnergy), 460, 200);
         noncardUIFont.draw(drawBatch, Integer.toString(enemyRecharge), 460, 425);
         noncardUIFont.draw(drawBatch, Integer.toString(enemyEnergy), 460, 360);
+        /*
         // Draw every card on the screen
         for (CardOnScreenData CoSD : cardOnScreenDatas) {
             drawCard(CoSD, camera, drawBatch);
@@ -301,23 +311,22 @@ public class Main extends ApplicationAdapter {
         // Draw Select Sprite if needed
         if (selectedCardNumber != -1){
             cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(drawBatch);
-        }
+        }*/
         drawBatch.end();
-        camera.update();
+        //camera.update();
     }
     public void drawCard(CardOnScreenData CoSD, OrthographicCamera camera, SpriteBatch batch){
-        Card card = CoSD.getCard();
         // Draw cardback
         CoSD.getCardbackSprite().draw(batch);
-        if (!card.getName().equals("Draw") && !card.getName().equals("Trash") && !card.getName().equals("Blank") && !card.getName().equals("End Turn")) {
+        if (!CoSD.getCard().getName().equals("Draw") && !CoSD.getCard().getName().equals("Trash") && !CoSD.getCard().getName().equals("Blank") && !CoSD.getCard().getName().equals("End Turn")) {
             // Draw creature
             CoSD.getCardSprite().draw(batch);
             // Draw text
-            CoSD.getNameFont().draw(batch, card.getName(), CoSD.getNameX(), CoSD.getNameY());
+            CoSD.getNameFont().draw(batch, CoSD.getCard().getName(), CoSD.getNameX(), CoSD.getNameY());
             CoSD.getNameFont().draw(batch, CoSD.getDescLayout(), CoSD.getDescX(), CoSD.getDescY());
-            CoSD.getNumberFont().draw(batch, Integer.toString(card.getCost()), CoSD.getCostTextX(), CoSD.getCostTextY());
-            CoSD.getNumberFont().draw(batch, Integer.toString(card.getAttack()), CoSD.getAttackTextX(), CoSD.getAttackTextY());
-            CoSD.getNumberFont().draw(batch, Integer.toString(card.getShield()), CoSD.getShieldTextX(), CoSD.getShieldTextY());
+            CoSD.getNumberFont().draw(batch, Integer.toString(CoSD.getCard().getCost()), CoSD.getCostTextX(), CoSD.getCostTextY());
+            CoSD.getNumberFont().draw(batch, Integer.toString(CoSD.getCard().getAttack()), CoSD.getAttackTextX(), CoSD.getAttackTextY());
+            CoSD.getNumberFont().draw(batch, Integer.toString(CoSD.getCard().getShield()), CoSD.getShieldTextX(), CoSD.getShieldTextY());
         }
     }
 
@@ -325,6 +334,14 @@ public class Main extends ApplicationAdapter {
     @Override
     public void render() {
         draw();
+        // Increment frame counter
+        frameCounter++;
+
+        // Log memory every 100 frames
+        if (frameCounter >= 100) {
+            Gdx.app.log("Memory", "Used: " + Gdx.app.getJavaHeap() + " bytes");
+            frameCounter = 0; // Reset counter after logging
+        }
     }
 
     // Called when resizing window
@@ -336,5 +353,16 @@ public class Main extends ApplicationAdapter {
     // Called when exiting
     @Override
     public void dispose() {
+        drawBatch.dispose();
+        debugFont.dispose();
+        noncardUIFont.dispose();
+        font.dispose();
+        bgSpr.getTexture().dispose();
+        playerHealthSpr.getTexture().dispose();
+        enemyHealthSpr.getTexture().dispose();
+        playerCloudSpr.getTexture().dispose();
+        enemyCloudSpr.getTexture().dispose();
+        playerEnergySpr.getTexture().dispose();
+        enemyEnergySpr.getTexture().dispose();
     }
 }
