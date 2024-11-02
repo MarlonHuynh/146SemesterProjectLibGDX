@@ -64,12 +64,13 @@ public class Main extends ApplicationAdapter {
     // Instantiated upon startup
     @Override
     public void create() {
-        // Set up camera and viewport
+        // Set up camera, viewport, and input processor
         camera = new OrthographicCamera();
         viewport = new FitViewport(600, 600, camera);                       // 600x600 is the virtual world size
         viewport.apply();
         camera.position.set(300, 300, 0);  // Center at 600x600 middle
         camera.update();
+        createInputProcessor();
         // Read and generate cards and place cards into cardList
         CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats2.csv");
         reader.generateCardsFromCSV();
@@ -162,8 +163,6 @@ public class Main extends ApplicationAdapter {
         cardOnScreenDatas.add(new CardOnScreenData(35, viewport.getWorldWidth() * (1f / 16f), viewport.getWorldHeight() * (1.5f / 16f), 0.4f));
         cardOnScreenDatas.add(new CardOnScreenData(36, viewport.getWorldWidth() * (15f / 16f), viewport.getWorldHeight() * (1.5f / 16f), 0.4f));
         cardOnScreenDatas.add(new CardOnScreenData(38, viewport.getWorldWidth() * (15f / 16f), viewport.getWorldHeight() * (4.75f / 16f), 0.4f));
-        // Set up an input processor to handle clicks
-        createInputProcessor();
     }
     // Called every frame in render to draw the screen
     // Note: DO NOT MAKE NEW BATCHES OR VARIABLES EVERY FRAME THIS WILL TANK YOUR FPS VERY BADLY!!! 300fps -> 6fps
@@ -359,6 +358,35 @@ public class Main extends ApplicationAdapter {
                             break;
                         }
                     }
+                    // Remake the card's UI to be reflective of the swap
+                    currData.remakeCard(prevData.getCardID(), currData.getX(), currData.getY(), currData.getScale());
+                    prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale()); // ID 37 -> blank card
+                }
+                // 1.1) Fielding card logic for EVOLUTION
+                else if (!prevData.getCard().getName().equals("Blank")                       // CONDITIONS: Previous select is not blank card
+                    && !prevData.getCard().getName().equals("Trash")
+                    && !prevData.getCard().getName().equals("End Turn")
+                    && !prevData.getCard().getName().equals("Discard")
+                    && !currData.getCard().getName().equals("Blank")                     // Current select is not blank
+                    && (prevData.getCard().getStage() == (currData.getCard().getStage()+1)) // New card is 1 stage higher than previous card
+                    && (prevData.getCard().getType().equals(currData.getCard().getType()))  // New card is same type as previous card
+                    && prevSelectedCardNumber >= 5 && prevSelectedCardNumber <= 9       // Previous select is in player hand
+                    && selectedCardNumber >= 13 && selectedCardNumber <= 15             // Current select is in bottom field (player field)
+                    && prevData.getCard().getCost() <= playerEnergy) {                  // Player has enough money to place card
+                    // Subtract cost from energy if applicable
+                    if (playerEnergy >= prevData.getCard().getCost()) {
+                        playerEnergy -= prevData.getCard().getCost();
+                    }
+                    // Add card to field array and remove from hand array
+                    cardsInPlayerField.add(prevData.getCard());
+                    for (int i = 0; i < cardsInPlayerHand.size(); i++) {
+                        if (cardsInPlayerHand.get(i).getName().equals(prevData.getCard().getName())) {
+                            cardsInPlayerHand.remove(i);
+                            break;
+                        }
+                    }
+                    // Add prevolution attack to current card's attack
+                    prevData.getCard().setAttack(prevData.getCard().getAttack() + currData.getCard().getAttack());
                     // Remake the card's UI to be reflective of the swap
                     currData.remakeCard(prevData.getCardID(), currData.getX(), currData.getY(), currData.getScale());
                     prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale()); // ID 37 -> blank card

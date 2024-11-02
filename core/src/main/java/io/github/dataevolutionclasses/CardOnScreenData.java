@@ -138,7 +138,7 @@ public class CardOnScreenData {
         descX = cardX + (midcardX * 0.16f);
         descY = cardY + (midcardY * 0.54f);
         numberFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        numberFont.getData().setScale(scale * 0.9f);
+        numberFont.getData().setScale(scale * 0.8f);
         costTextX = cardX + (midcardX * 0.2f);
         costTextY =  cardY + (midcardY * 1.7f);
         attackTextX = cardX + (midcardX * 1.64f);
