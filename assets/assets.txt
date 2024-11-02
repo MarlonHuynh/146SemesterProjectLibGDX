@@ -5,6 +5,15 @@ cardback3.png
 cardback4.png
 CardbackBlank.png
 CardbackHighlight.png
+cardback_algo1.png
+cardback_algo2.png
+cardback_algo3.png
+cardback_datastruct1.png
+cardback_datastruct2.png
+cardback_datastruct3.png
+cardback_datatype1.png
+cardback_datatype2.png
+cardback_datatype3.png
 cardsprites/array.png
 cardsprites/astar.png
 cardsprites/balancedbinarytree.png

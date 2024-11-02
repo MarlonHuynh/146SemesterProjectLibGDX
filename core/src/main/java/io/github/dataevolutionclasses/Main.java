@@ -246,8 +246,13 @@ public class Main extends ApplicationAdapter {
                 // 4) End turn logic (current -> End turn)
                 else if (currData.getCard().getName().equals(("End Turn"))) {
                     // Reset drawn bools
-                    drawnBool = false;
-                    drawnStr = "You can draw a card.";
+                    if (cardsInPlayerDeck.size() > 0) {
+                        drawnBool = false;
+                        drawnStr = "You can draw a card.";
+                    }
+                    else{
+                        drawnStr = "No more cards to draw.";
+                    }
                     drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
                     // Reset energy to energy recharge amount
                     playerEnergy = playerRecharge;
