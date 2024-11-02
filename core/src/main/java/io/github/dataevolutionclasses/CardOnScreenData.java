@@ -131,7 +131,7 @@ public class CardOnScreenData {
         nameFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         nameFont.getData().setScale(scale * 0.70f);
         nameX =  cardX + (midcardX * 0.16f);
-        nameY = cardY + (midcardY * 1.88f);
+        nameY = cardY + (midcardY * 1.92f);
         descWidth = 130 * scale;
         descLayout = new GlyphLayout();
         descLayout.setText(nameFont, card.getDesc(), Color.BLACK, 130 * scale, Align.left, true);
@@ -140,7 +140,7 @@ public class CardOnScreenData {
         numberFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         numberFont.getData().setScale(scale * 0.9f);
         costTextX = cardX + (midcardX * 0.2f);
-        costTextY =  cardY + (midcardY * 1.62f);
+        costTextY =  cardY + (midcardY * 1.7f);
         attackTextX = cardX + (midcardX * 1.64f);
         attackTextY =  cardY + (midcardY * 0.56f);
         shieldTextX = cardX + (midcardX * 1.64f);
