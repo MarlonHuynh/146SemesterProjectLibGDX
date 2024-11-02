@@ -97,7 +97,7 @@ public class CardReader {
                 case "Sphinx List":
                     card.setTexture("cardsprites/linkedlist.png");
                     break;
-                case "Binary Canary Tree":
+                case "Bin. Canary Tree":
                     card.setTexture("cardsprites/binarytree.png");
                     break;
                 case "Quack Stack":
@@ -115,7 +115,7 @@ public class CardReader {
                 case "Hippograph":
                     card.setTexture("cardsprites/graph.png");
                     break;
-                case "Balanced Canary Tree":
+                case "Bal. Canary Tree":
                     card.setTexture("cardsprites/balancedbinarytree.png");
                     break;
                 case "Bitbug":

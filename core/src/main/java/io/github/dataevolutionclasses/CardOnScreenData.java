@@ -129,9 +129,10 @@ public class CardOnScreenData {
         // Set text sizing and position (doesn't directly draw)
         selectedSprite.setAlpha(0.2f);
         nameFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        nameFont.getData().setScale(scale * 0.70f);
+        nameFont.getData().setScale(scale * 0.65f);
         nameX =  cardX + (midcardX * 0.16f);
         nameY = cardY + (midcardY * 1.92f);
+        nameFont.getData().setLineHeight(nameFont.getLineHeight() * 2.5f);
         descWidth = 130 * scale;
         descLayout = new GlyphLayout();
         descLayout.setText(nameFont, card.getDesc(), Color.BLACK, 130 * scale, Align.left, true);

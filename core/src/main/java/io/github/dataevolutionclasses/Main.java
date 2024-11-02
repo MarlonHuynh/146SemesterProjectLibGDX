@@ -46,6 +46,8 @@ public class Main extends ApplicationAdapter {
     private BitmapFont debugFont, noncardUIFont;
     private String drawnStr = "You can draw a card";;
     private GlyphLayout drawnTextLayout = new GlyphLayout();
+    private GlyphLayout playerHealthLayout = new GlyphLayout();
+    private GlyphLayout enemyHealthLayout = new GlyphLayout();
     private Vector3 worldCoords = new Vector3();
     private StringBuilder stringBuilder = new StringBuilder();
     // Stats vars
@@ -86,7 +88,7 @@ public class Main extends ApplicationAdapter {
         debugFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         debugFont.getData().setScale(0.4f);
         noncardUIFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        noncardUIFont.getData().setScale(1f);
+        noncardUIFont.getData().setScale(1.2f);
         drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
         // Initialize non-card sprites, with scale and position
         bgSpr = new Sprite(new Texture("background.png"));
@@ -117,7 +119,11 @@ public class Main extends ApplicationAdapter {
         enemyRecharge = 0;
         // Create the cards in the player's deck
         // TODO: Initial deck will be a deck taken from from the library section
-        List<String> strTemp = Arrays.asList("Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Bubble Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "A-Starfish");
+        List<String> strTemp = Arrays.asList(
+            "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort",
+            "Parraykeet","Parraykeet","Parraykeet","Bin. Canary Tree","Bin. Canary Tree","Bal. Canary Tree",
+            "Quetzelqueueotl", "Quetzelqueueotl", "Quetzelqueueotl"
+        );
         for (String s : strTemp) {
             cardsInPlayerDeck.add(nameToCardHashmap.get(s));
         }
@@ -207,10 +213,12 @@ public class Main extends ApplicationAdapter {
         // Draw healths
         stringBuilder.setLength(0);
         stringBuilder.append(playerHealth);
-        noncardUIFont.draw(spriteBatch, stringBuilder, 35, 270);
+        playerHealthLayout.setText(noncardUIFont, stringBuilder, Color.BLACK, 100, Align.center, true);
+        noncardUIFont.draw(spriteBatch, playerHealthLayout, 2, 270);
         stringBuilder.setLength(0);
         stringBuilder.append(enemyHealth);
-        noncardUIFont.draw(spriteBatch, stringBuilder, 35, 360);
+        enemyHealthLayout.setText(noncardUIFont, stringBuilder, Color.BLACK, 100, Align.center, true);
+        noncardUIFont.draw(spriteBatch, enemyHealthLayout, 2, 360);
         // Draw player energy and recharge
         stringBuilder.setLength(0);
         stringBuilder.append(playerRecharge);
@@ -227,7 +235,7 @@ public class Main extends ApplicationAdapter {
         noncardUIFont.draw(spriteBatch, stringBuilder, 460, 360);
         // Draw every card on the screen
         for (CardOnScreenData CoSD : cardOnScreenDatas) {
-            drawCard(CoSD, camera, spriteBatch);
+            drawCard(CoSD, spriteBatch);
         }
         // Draw Select Sprite if needed
         if (selectedCardNumber != -1){
@@ -236,7 +244,7 @@ public class Main extends ApplicationAdapter {
         spriteBatch.end();
         //camera.update();
     }
-    public void drawCard(CardOnScreenData CoSD, OrthographicCamera camera, SpriteBatch batch){
+    public void drawCard(CardOnScreenData CoSD, SpriteBatch batch){
         // Draw cardback
         CoSD.getCardbackSprite().draw(batch);
         if (!CoSD.getCard().getName().equals("Draw") && !CoSD.getCard().getName().equals("Trash") && !CoSD.getCard().getName().equals("Blank") && !CoSD.getCard().getName().equals("End Turn")) {
@@ -297,195 +305,191 @@ public class Main extends ApplicationAdapter {
 
     public void createInputProcessor(){
         Gdx.input.setInputProcessor(new InputAdapter() {
-            @Override
-            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                boolean clicked = false;
+        @Override
+        public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            boolean clicked = false;
 
-                // ---------- Check which card was clicked ----------
+            // ---------- Check which card was clicked ----------
+            // Convert screen coordinates to world coordinates
+            Vector3 worldCoords = viewport.unproject(new Vector3(screenX, screenY, 0));
+            // Ignore input if outside the 600x600 game area
+            if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600)
+                return false;
 
-                // Convert screen coordinates to world coordinates
-                Vector3 worldCoords = viewport.unproject(new Vector3(screenX, screenY, 0));
-                // Ignore input if outside the 600x600 game area
-                if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600) {
-                    return false;
-                }
-
-                for (int i = 0; i < cardOnScreenDatas.size(); i++) {
-                    if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)
-                        || cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
-                        // Update selection variables accordingly to what was clicked and what was previously clicked
-                        if (selectedCardNumber == -1) {
-                            selectedCardNumber = i;
-                            prevSelectedCardNumber = 0; // Initialized to 0 (enemy hand 1) at first to avoid null exceptions when retrieving card data. Doesn't affect any playerside logic.
-                            clicked = true;
-                            break;
-                        }
-                        else {
-                            prevSelectedCardNumber = selectedCardNumber;
-                            selectedCardNumber = i;
-                            clicked = true;
-                            break;
-                        }
-                    }
-                }
-                // If nothing has been clicked and nothing has been clicked, no additional logic needed so returns
-                if (prevSelectedCardNumber == -1 && selectedCardNumber == -1 ) {
-                    return clicked;
-                }
-
-                // ---------- Perform actions based on what was clicked and what was previously clicked ----------
-
-                CardOnScreenData currData = cardOnScreenDatas.get(selectedCardNumber);
-                CardOnScreenData prevData = cardOnScreenDatas.get(prevSelectedCardNumber);
-                // 1) Fielding Card logic (prev -> card in hand, curr -> player field blank)
-                if (!prevData.getCard().getName().equals("Blank")                       // CONDITIONS: Previous select is not blank card
-                    && !prevData.getCard().getName().equals("Trash")
-                    && !prevData.getCard().getName().equals("End Turn")
-                    && !prevData.getCard().getName().equals("Discard")
-                    && currData.getCard().getName().equals("Blank")                     // Current select is blank card
-                    && prevSelectedCardNumber >= 5 && prevSelectedCardNumber <= 9       // Previous select is in player hand
-                    && selectedCardNumber >= 13 && selectedCardNumber <= 15             // Current select is in bottom field (player field)
-                    && prevData.getCard().getCost() <= playerEnergy) {                  // Player has enough money to place card
-                    // Subtract cost from energy if applicable
-                    if (playerEnergy >= prevData.getCard().getCost()) {
-                        playerEnergy -= prevData.getCard().getCost();
-                    }
-                    // Add card to field array and remove from hand array
-                    cardsInPlayerField.add(prevData.getCard());
-                    for (int i = 0; i < cardsInPlayerHand.size(); i++) {
-                        if (cardsInPlayerHand.get(i).getName().equals(prevData.getCard().getName())) {
-                            cardsInPlayerHand.remove(i);
-                            break;
-                        }
-                    }
-                    // Remake the card's UI to be reflective of the swap
-                    currData.remakeCard(prevData.getCardID(), currData.getX(), currData.getY(), currData.getScale());
-                    prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale()); // ID 37 -> blank card
-                }
-                // 1.1) Fielding card logic for EVOLUTION
-                else if (!prevData.getCard().getName().equals("Blank")                       // CONDITIONS: Previous select is not blank card
-                    && !prevData.getCard().getName().equals("Trash")
-                    && !prevData.getCard().getName().equals("End Turn")
-                    && !prevData.getCard().getName().equals("Discard")
-                    && !currData.getCard().getName().equals("Blank")                     // Current select is not blank
-                    && (prevData.getCard().getStage() == (currData.getCard().getStage()+1)) // New card is 1 stage higher than previous card
-                    && (prevData.getCard().getType().equals(currData.getCard().getType()))  // New card is same type as previous card
-                    && prevSelectedCardNumber >= 5 && prevSelectedCardNumber <= 9       // Previous select is in player hand
-                    && selectedCardNumber >= 13 && selectedCardNumber <= 15             // Current select is in bottom field (player field)
-                    && prevData.getCard().getCost() <= playerEnergy) {                  // Player has enough money to place card
-                    // Subtract cost from energy if applicable
-                    if (playerEnergy >= prevData.getCard().getCost()) {
-                        playerEnergy -= prevData.getCard().getCost();
-                    }
-                    // Add card to field array and remove from hand array
-                    cardsInPlayerField.add(prevData.getCard());
-                    for (int i = 0; i < cardsInPlayerHand.size(); i++) {
-                        if (cardsInPlayerHand.get(i).getName().equals(prevData.getCard().getName())) {
-                            cardsInPlayerHand.remove(i);
-                            break;
-                        }
-                    }
-                    // Add prevolution attack to current card's attack
-                    prevData.getCard().setAttack(prevData.getCard().getAttack() + currData.getCard().getAttack());
-                    // Remake the card's UI to be reflective of the swap
-                    currData.remakeCard(prevData.getCardID(), currData.getX(), currData.getY(), currData.getScale());
-                    prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale()); // ID 37 -> blank card
-                }
-                // 2) Trash Card logic (prev -> card in hand, curr -> trash)
-                else if (prevSelectedCardNumber >= 5 && prevSelectedCardNumber <= 9 // CONDITIONS: Previous select is in player hand
-                    && !prevData.getCard().getName().equals("Blank")                // Previous select is not blank card
-                    && currData.getCard().getName().equals("Trash")                 // Current select is in trash
-                    && discardBool == false){                                       // Have not discarded this turn yet
-                    Card prevCard = prevData.getCard();
-                    // Remove from hand
-                    for (int i = 0; i < cardsInPlayerHand.size(); i++) {
-                        if (cardsInPlayerHand.get(i).getName().equals(prevCard.getName())) {
-                            cardsInPlayerHand.remove(i);
-                            break;
-                        }
-                    }
-                    // Remake Card UI
-                    prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale());
-                    // Change energy vars
-                    playerEnergy++;
-                    playerRecharge++;
-                    discardBool = true;
-                }
-                // 3) Draw Card logic (current -> draw)
-                else if (currData.getCard().getName().equals("Draw")    // CONDITIONS: Current select is trash
-                    && cardsInPlayerHand.size() < 5                     // Less than 5 cards in hand
-                    && cardsInPlayerDeck.size() > 0                     // Deck size is greater than 0
-                    && drawnBool == false) {                            // Player hasnt drawn this turn yet
-                    // Add card at random index to hand and remove card from cardsInPlayerDeck
-                    int randomIndex = (int) (Math.random() * cardsInPlayerDeck.size());
-                    Card cardToAdd = cardsInPlayerDeck.get(randomIndex);
-                    cardsInPlayerHand.add(cardToAdd); // Add card at randomIndex into hand
-                    cardsInPlayerDeck.remove(randomIndex);
-                    // Update drawnBool (drawn for the turn)
-                    drawnBool = true;
-                    drawnStr = "You already drawn this turn.";
-                    drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
-                    // Change card left text
-                    // Update Card UI
-                    for (int i = 5; i <= 9; i++) {
-                        if (cardOnScreenDatas.get(i).getCardID() == 37) { // Blank
-                            CardOnScreenData CoSD = cardOnScreenDatas.get(i);
-                            cardOnScreenDatas.get(i).remakeCard(cardToAdd, CoSD.getX(), CoSD.getY(), CoSD.getScale());
-                            break;
-                        }
-                    }
-                    // Update discard bool
-                    drawnBool = true;
-                }
-                // 4) End turn logic (current -> End turn)
-                else if (currData.getCard().getName().equals(("End Turn"))) {
-                    // TODO: Attack enemy
-                    // 13 vs 10
-                    Card card13 = cardOnScreenDatas.get(13).getCard();
-                    Card card10 = cardOnScreenDatas.get(10).getCard();
-                    if (!card13.getName().equals("Blank") && !card10.getName().equals("Blank")){
-                        card13.setShield(card13.getShield() - card10.getAttack());
-                    }
-                    else if (!card13.getName().equals("Blank") && card10.getName().equals("Blank")){
-                        enemyHealth -= card13.getAttack();
-                    }
-                    // 14 vs 11
-                    Card card14 = cardOnScreenDatas.get(14).getCard();
-                    Card card11 = cardOnScreenDatas.get(11).getCard();
-                    if (!card14.getName().equals("Blank") && !card11.getName().equals("Blank")){
-                        card14.setShield(card14.getShield() - card11.getAttack());
-                    }
-                    else if (!card14.getName().equals("Blank") && card11.getName().equals("Blank")){
-                        enemyHealth -= card14.getAttack();
-                    }
-                    // 15 vs 12
-                    Card card15 = cardOnScreenDatas.get(15).getCard();
-                    Card card12 = cardOnScreenDatas.get(12).getCard();
-                    if (!card15.getName().equals("Blank") && !card12.getName().equals("Blank")){
-                        card15.setShield(card14.getShield() - card12.getAttack());
-                    }
-                    else if (!card15.getName().equals("Blank") && card12.getName().equals("Blank")){
-                        enemyHealth -= card15.getAttack();
-                    }
-                    // Reset drawn bools
-                    if (cardsInPlayerDeck.size() < 1){
-                        drawnStr = "No more cards left.";
+            for (int i = 0; i < cardOnScreenDatas.size(); i++) {
+                if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y) || cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    // Update selection variables accordingly to what was clicked and what was previously clicked
+                    if (selectedCardNumber == -1) {
+                        selectedCardNumber = i;
+                        prevSelectedCardNumber = 0; // Initialized to 0 (enemy hand 1) at first to avoid null exceptions when retrieving card data. Doesn't affect any playerside logic.
+                        clicked = true;
+                        break;
                     }
                     else {
-                        drawnBool = false;
-                        drawnStr = "You can draw a card.";
+                        prevSelectedCardNumber = selectedCardNumber;
+                        selectedCardNumber = i;
+                        clicked = true;
+                        break;
                     }
-                    drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
-                    // Reset appropriate bools
-                    playerEnergy = playerRecharge;
-                    discardBool = false;
-                    // Process the enemy turn logic
-                    processEnemyTurn();
-                    // Increase turn count and change text
-                    turnCount++;
                 }
-                return clicked;
             }
+            // If nothing has been clicked and nothing has been clicked, no additional logic needed so returns
+            if (prevSelectedCardNumber == -1 && selectedCardNumber == -1 )
+                return clicked;
+
+            // ---------- Perform actions based on what was clicked and what was previously clicked ----------
+            CardOnScreenData currData = cardOnScreenDatas.get(selectedCardNumber);
+            CardOnScreenData prevData = cardOnScreenDatas.get(prevSelectedCardNumber);
+            // 1) Fielding Card logic (prev -> card in hand, curr -> player field blank)
+            if (!prevData.getCard().getName().equals("Blank")                       // CONDITIONS: Previous select is not blank card
+            && !prevData.getCard().getName().equals("Trash")
+            && !prevData.getCard().getName().equals("End Turn")
+            && !prevData.getCard().getName().equals("Discard")
+            && currData.getCard().getName().equals("Blank")                     // Current select is blank card
+            && prevSelectedCardNumber >= 5 && prevSelectedCardNumber <= 9       // Previous select is in player hand
+            && selectedCardNumber >= 13 && selectedCardNumber <= 15             // Current select is in bottom field (player field)
+            && prevData.getCard().getCost() <= playerEnergy) {                  // Player has enough money to place card
+                // Subtract cost from energy if applicable
+                if (playerEnergy >= prevData.getCard().getCost()) {
+                    playerEnergy -= prevData.getCard().getCost();
+                }
+                // Add card to field array and remove from hand array
+                cardsInPlayerField.add(prevData.getCard());
+                for (int i = 0; i < cardsInPlayerHand.size(); i++) {
+                    if (cardsInPlayerHand.get(i).getName().equals(prevData.getCard().getName())) {
+                        cardsInPlayerHand.remove(i);
+                        break;
+                    }
+                }
+                // Halves attack if puts down an evolution card
+                prevData.getCard().setAttack( prevData.getCard().getAttack() / 2);
+                // Remake the card's UI to be reflective of the swap
+                currData.remakeCard(prevData.getCardID(), currData.getX(), currData.getY(), currData.getScale());
+                prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale()); // ID 37 -> blank card
+            }
+            // 1.1) Fielding card logic for EVOLUTION
+            else if (!prevData.getCard().getName().equals("Blank")                       // CONDITIONS: Previous select is not blank card
+            && !prevData.getCard().getName().equals("Trash")
+            && !prevData.getCard().getName().equals("End Turn")
+            && !prevData.getCard().getName().equals("Discard")
+            && !currData.getCard().getName().equals("Blank")                     // Current select is not blank
+            && (prevData.getCard().getStage() == (currData.getCard().getStage()+1)) // New card is 1 stage higher than previous card
+            && (prevData.getCard().getType().equals(currData.getCard().getType()))  // New card is same type as previous card
+            && prevSelectedCardNumber >= 5 && prevSelectedCardNumber <= 9       // Previous select is in player hand
+            && selectedCardNumber >= 13 && selectedCardNumber <= 15             // Current select is in bottom field (player field)
+            && prevData.getCard().getCost() <= playerEnergy) {                  // Player has enough money to place card
+                // Subtract cost from energy if applicable
+                if (playerEnergy >= prevData.getCard().getCost()) {
+                    playerEnergy -= prevData.getCard().getCost();
+                }
+                // Add card to field array and remove from hand array
+                cardsInPlayerField.add(prevData.getCard());
+                for (int i = 0; i < cardsInPlayerHand.size(); i++) {
+                    if (cardsInPlayerHand.get(i).getName().equals(prevData.getCard().getName())) {
+                        cardsInPlayerHand.remove(i);
+                        break;
+                    }
+                }
+                // Add prevolution attack to current card's attack
+                prevData.getCard().setAttack(prevData.getCard().getAttack() + currData.getCard().getAttack());
+                // Remake the card's UI to be reflective of the swap
+                currData.remakeCard(prevData.getCardID(), currData.getX(), currData.getY(), currData.getScale());
+                prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale()); // ID 37 -> blank card
+            }
+            // 2) Trash Card logic (prev -> card in hand, curr -> trash)
+            else if (prevSelectedCardNumber >= 5 && prevSelectedCardNumber <= 9 // CONDITIONS: Previous select is in player hand
+            && !prevData.getCard().getName().equals("Blank")                // Previous select is not blank card
+            && currData.getCard().getName().equals("Trash")                 // Current select is in trash
+            && discardBool == false){                                       // Have not discarded this turn yet
+            Card prevCard = prevData.getCard();
+                // Remove from hand
+                for (int i = 0; i < cardsInPlayerHand.size(); i++) {
+                    if (cardsInPlayerHand.get(i).getName().equals(prevCard.getName())) {
+                        cardsInPlayerHand.remove(i);
+                        break;
+                    }
+                }
+                // Remake Card UI
+                prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale());
+                // Change energy vars
+                playerEnergy++;
+                playerRecharge++;
+                discardBool = true;
+            }
+            // 3) Draw Card logic (current -> draw)
+            else if (currData.getCard().getName().equals("Draw")    // CONDITIONS: Current select is trash
+            && cardsInPlayerHand.size() < 5                     // Less than 5 cards in hand
+            && cardsInPlayerDeck.size() > 0                     // Deck size is greater than 0
+            && drawnBool == false) {                            // Player hasnt drawn this turn yet
+                // Add card at random index to hand and remove card from cardsInPlayerDeck
+                int randomIndex = (int) (Math.random() * cardsInPlayerDeck.size());
+                Card cardToAdd = cardsInPlayerDeck.get(randomIndex);
+                cardsInPlayerHand.add(cardToAdd); // Add card at randomIndex into hand
+                cardsInPlayerDeck.remove(randomIndex);
+                // Update drawnBool (drawn for the turn)
+                drawnBool = true;
+                drawnStr = "You already drawn this turn.";
+                drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
+                // Change card left text
+                // Update Card UI
+                for (int i = 5; i <= 9; i++) {
+                    if (cardOnScreenDatas.get(i).getCardID() == 37) { // Blank
+                        CardOnScreenData CoSD = cardOnScreenDatas.get(i);
+                        cardOnScreenDatas.get(i).remakeCard(cardToAdd, CoSD.getX(), CoSD.getY(), CoSD.getScale());
+                        break;
+                    }
+                }
+                // Update discard bool
+                drawnBool = true;
+            }
+            // 4) End turn logic (current -> End turn)
+            else if (currData.getCard().getName().equals(("End Turn"))) {
+                // TODO: Attack enemy
+                // 13 vs 10
+                Card card13 = cardOnScreenDatas.get(13).getCard();
+                Card card10 = cardOnScreenDatas.get(10).getCard();
+                if (!card13.getName().equals("Blank") && !card10.getName().equals("Blank")){
+                    card13.setShield(card13.getShield() - card10.getAttack());
+                }
+                else if (!card13.getName().equals("Blank") && card10.getName().equals("Blank")){
+                    enemyHealth -= card13.getAttack();
+                }
+                // 14 vs 11
+                Card card14 = cardOnScreenDatas.get(14).getCard();
+                Card card11 = cardOnScreenDatas.get(11).getCard();
+                if (!card14.getName().equals("Blank") && !card11.getName().equals("Blank")){
+                    card14.setShield(card14.getShield() - card11.getAttack());
+                }
+                else if (!card14.getName().equals("Blank") && card11.getName().equals("Blank")){
+                    enemyHealth -= card14.getAttack();
+                }
+                // 15 vs 12
+                Card card15 = cardOnScreenDatas.get(15).getCard();
+                Card card12 = cardOnScreenDatas.get(12).getCard();
+                if (!card15.getName().equals("Blank") && !card12.getName().equals("Blank")){
+                    card15.setShield(card14.getShield() - card12.getAttack());
+                }
+                else if (!card15.getName().equals("Blank") && card12.getName().equals("Blank")){
+                    enemyHealth -= card15.getAttack();
+                }
+                // Reset drawn bools
+                if (cardsInPlayerDeck.size() < 1){
+                    drawnStr = "No more cards left.";
+                }
+                else {
+                    drawnBool = false;
+                    drawnStr = "You can draw a card.";
+                }
+                drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
+                // Reset appropriate bools
+                playerEnergy = playerRecharge;
+                discardBool = false;
+                // Process the enemy turn logic
+                processEnemyTurn();
+                // Increase turn count
+            }
+            return clicked;
+        }
         });
     }
 
