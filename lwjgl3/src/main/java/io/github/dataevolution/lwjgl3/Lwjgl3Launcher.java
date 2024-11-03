@@ -24,7 +24,7 @@ public class Lwjgl3Launcher {
         configuration.setTitle("Data Evolution");
         //// Vsync limits the frames per second to what your hardware can display, and helps eliminate
         //// screen tearing. This setting doesn't always work on Linux, so the line after is a safeguard.
-        configuration.useVsync(true);
+        configuration.useVsync(false);
         //// Limits FPS to the refresh rate of the currently active monitor, plus 1 to try to match fractional
         //// refresh rates. The Vsync setting above should limit the actual FPS to match the monitor.
         configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
@@ -34,6 +34,8 @@ public class Lwjgl3Launcher {
         configuration.setWindowedMode(1280, 1280);
         //// You can change these files; they are in lwjgl3/src/main/resources/ .
         configuration.setWindowIcon("hashmap.png", "hashmap.png", "hashmap.png", "hashmap.png");
+        configuration.setForegroundFPS(300);
+        configuration.setIdleFPS(10);
         return configuration;
     }
 }
