@@ -27,6 +27,7 @@ import com.badlogic.gdx.Gdx; // Input
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont; // Text
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+
 import java.util.ArrayList;
 import java.util.List; // Util
 
@@ -45,17 +46,11 @@ public class Main extends ApplicationAdapter {
     private float descWidth;
     private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr;
     private int playerHealth, enemyHealth, playerRecharge, enemyRecharge, playerEnergy, enemyEnergy;
-    private BitmapFont font;
-    private Player player;
-    private Player enemy;
 
+    private BitmapFont font;
     // Instantiated upon startup
     @Override
     public void create() {
-        player = new Player();
-        enemy = new Player();
-        player.sortHandCard();
-        enemy.sortHandCard();
         // Set up camera and viewport
         camera = new OrthographicCamera();
         viewport = new FitViewport(600, 600, camera);                   // 600x600 is the virtual world size
@@ -94,12 +89,12 @@ public class Main extends ApplicationAdapter {
         enemyEnergySpr.setScale(0.5f);
         enemyEnergySpr.setPosition(380, 270);
         // Initialize stat variables
-        playerHealth = player.getHealth();
-        enemyHealth = enemy.getHealth();
-        playerEnergy = player.getEnergy();
-        playerRecharge = 0;
-        enemyEnergy = enemy.getEnergy();
-        enemyRecharge = 0;
+        playerHealth = 60;
+        enemyHealth = 40;
+        playerEnergy = 1;
+        playerRecharge = 2;
+        enemyEnergy = 3;
+        enemyRecharge = 4;
         // Set up array of Sprite names and sprites to keep track of the sprites on screen for input handling
         cardOnScreenDatas = new ArrayList<CardOnScreenData>();
         CardInstancesNames = new ArrayList<String>();
@@ -266,6 +261,4 @@ public class Main extends ApplicationAdapter {
     @Override
     public void dispose() {
     }
-
-
 }

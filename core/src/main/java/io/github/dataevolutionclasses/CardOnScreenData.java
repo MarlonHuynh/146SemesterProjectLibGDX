@@ -26,7 +26,7 @@ import java.util.List;
 public class CardOnScreenData {
 
     private static List<Card> cardList;
-    private static HashMap<Integer, Card> indexToCardListMap;
+    private static HashMap<Card, Integer> cardToIntMap;
 
 
     private Card card;
@@ -52,16 +52,52 @@ public class CardOnScreenData {
     private float shieldTextX;
     private float shieldTextY;
 
+    // Constructors
     public CardOnScreenData(int cardListID, float x, float y, float scale){
         remakeCard(cardListID, x, y, scale); // Called to avoid duplicating code
     }
-
+    public CardOnScreenData(Card card, float x, float y, float scale){
+        int id = cardToIntMap.get(card);
+        remakeCard(id, x, y, scale); // Called to avoid duplicating code
+    }
+    // Methods
+    public void remakeCard(Card card, float x, float y, float scale) {
+        int id = cardToIntMap.get(card);
+        remakeCard(id, x, y, scale);
+    }
     public void remakeCard(int cardListID, float x, float y, float scale){
-        this.card = CardOnScreenData.getIndexToCardListMap().get(cardListID);
+        this.card = CardOnScreenData.getCardList().get((cardListID));
         this.cardListID = cardListID;
         this.cardSprite = new Sprite(card.getTexture());
         this.cardbackSprite = new Sprite(new Texture("cardback2.png"));
-        if (card.getName().equals("Draw")){
+        if (card.getStage() == 1 && card.getType().equals("Algorithm")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_algo1.png"));
+        }
+        else if (card.getStage() == 2 && card.getType().equals("Algorithm")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_algo2.png"));
+        }
+        else if (card.getStage() == 3 && card.getType().equals("Algorithm")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_algo3.png"));
+        }
+        else if (card.getStage() == 1 && card.getType().equals("Data Structure")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct1.png"));
+        }
+        else if (card.getStage() == 2 && card.getType().equals("Data Structure")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct2.png"));
+        }
+        else if (card.getStage() == 3 && card.getType().equals("Data Structure")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct3.png"));
+        }
+        else if (card.getStage() == 1 && card.getType().equals("Data Type")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datatype1.png"));
+        }
+        else if (card.getStage() == 2 && card.getType().equals("Data Type")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datatype2.png"));
+        }
+        else if (card.getStage() == 3 && card.getType().equals("Data Type")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datatype3.png"));
+        }
+        else if (card.getName().equals("Draw")){
             this.cardbackSprite = new Sprite(new Texture("cardback3.png"));
         }
         else if (card.getName().equals("Trash")){
@@ -93,45 +129,47 @@ public class CardOnScreenData {
         // Set text sizing and position (doesn't directly draw)
         selectedSprite.setAlpha(0.2f);
         nameFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        nameFont.getData().setScale(scale * 0.70f);
+        nameFont.getData().setScale(scale * 0.65f);
         nameX =  cardX + (midcardX * 0.16f);
-        nameY = cardY + (midcardY * 1.88f);
+        nameY = cardY + (midcardY * 1.92f);
+        nameFont.getData().setLineHeight(nameFont.getLineHeight() * 2.5f);
         descWidth = 130 * scale;
         descLayout = new GlyphLayout();
         descLayout.setText(nameFont, card.getDesc(), Color.BLACK, 130 * scale, Align.left, true);
         descX = cardX + (midcardX * 0.16f);
         descY = cardY + (midcardY * 0.54f);
         numberFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        numberFont.getData().setScale(scale * 0.9f);
+        numberFont.getData().setScale(scale * 0.8f);
         costTextX = cardX + (midcardX * 0.2f);
-        costTextY =  cardY + (midcardY * 1.62f);
+        costTextY =  cardY + (midcardY * 1.7f);
         attackTextX = cardX + (midcardX * 1.64f);
         attackTextY =  cardY + (midcardY * 0.56f);
         shieldTextX = cardX + (midcardX * 1.64f);
         shieldTextY =  cardY + (midcardY * 0.22f);
     }
 
-    // Get/Set static cardList
+    // Static getters
     public static List<Card> getCardList(){
         return cardList;
     }
+
+    // Set static cardList
     public static void staticSetCardList(List<Card>  cardList){
         if (CardOnScreenData.cardList == null){ // Sets only if null
             CardOnScreenData.cardList = cardList;
         }
-        generateIndexToCardlistTuple();
+        generateCardToIntMap();
     }
-    public static void generateIndexToCardlistTuple(){
-        if (CardOnScreenData.indexToCardListMap == null){
-            indexToCardListMap = new HashMap<>();
+    public static void generateCardToIntMap(){
+        if (CardOnScreenData.cardToIntMap == null){
+            cardToIntMap = new HashMap<>();
             for (int i = 0; i < CardOnScreenData.getCardList().size(); i++){
-                indexToCardListMap.put(i, CardOnScreenData.getCardList().get(i));
-                System.out.println("---" + Integer.toString(i)+ ", " + indexToCardListMap.get(i).getName());
+                cardToIntMap.put(CardOnScreenData.getCardList().get(i), i);
             }
         }
     }
-    private static HashMap<Integer, Card> getIndexToCardListMap(){
-        return CardOnScreenData.indexToCardListMap;
+    private static HashMap<Card, Integer> getCardToIntMap(){
+        return CardOnScreenData.cardToIntMap;
     }
 
     // Getters and Setters
@@ -200,4 +238,5 @@ public class CardOnScreenData {
 
     public float getShieldTextY() { return shieldTextY; }
     public void setShieldTextY(float shieldTextY) { this.shieldTextY = shieldTextY; }
+
 }
