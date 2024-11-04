@@ -284,7 +284,11 @@ public void drawAll(){
     // Called every refresh rate for rendering
     @Override
     public void render() {
-        draw();
+        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        stage.act(); //Process any UI events
+        adjustCamera();
+        drawAll();
+        stage.draw(); //Draw the stage (including the slider)
         // Log memory every 100 frames
         frameCounter++;
         if (frameCounter >= 100) {
@@ -297,8 +301,8 @@ public void drawAll(){
     // Called when resizing window
     @Override
     public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true); //Upadte the stage viewport
         viewport.update(width, height);
-        camera.position.set(300, 300, 0); // Recenter camera on resize
         camera.update();
     }
 
@@ -306,6 +310,8 @@ public void drawAll(){
     // Called when exiting
     @Override
     public void dispose() {
+        stage.dispose();
+        scroll.dispose();
         spriteBatch.dispose();
         debugFont.dispose();
         noncardUIFont.dispose();
