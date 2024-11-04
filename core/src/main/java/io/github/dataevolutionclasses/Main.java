@@ -194,16 +194,6 @@ public class Main extends ApplicationAdapter {
         stringBuilder.append("Y: ").append((int)worldCoords.y);
         debugFont.draw(spriteBatch, stringBuilder, 520, 360);
 
-        // Draw non-card text UI
-        debugFont.draw(spriteBatch, drawnTextLayout, 5, 200);
-        stringBuilder.setLength(0);
-        stringBuilder.append("Cards Left: ");
-        stringBuilder.append(cardsInPlayerDeck.size());
-        debugFont.draw(spriteBatch, stringBuilder, 5, 165);
-        stringBuilder.setLength(0);
-        stringBuilder.append("Turn ");
-        stringBuilder.append(turnCount);
-        debugFont.draw(spriteBatch, stringBuilder, 540, 250);
         // Draw healths
         stringBuilder.setLength(0);
         stringBuilder.append(playerHealth);
