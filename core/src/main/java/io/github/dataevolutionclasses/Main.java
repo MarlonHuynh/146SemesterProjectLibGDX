@@ -1,9 +1,3 @@
-/*
-   Creates the gameplay screen of the game and all logic on what will be drawn on the gameplay screen, variables, and input handling.
-   Basically, if it has to do with the gameplay, the code will be here.
-*/
-
-
 package io.github.dataevolutionclasses;
 
 
@@ -194,29 +188,6 @@ public class Main extends ApplicationAdapter {
         stringBuilder.append("Y: ").append((int)worldCoords.y);
         debugFont.draw(spriteBatch, stringBuilder, 520, 360);
 
-//        // Draw healths
-//        stringBuilder.setLength(0);
-//        stringBuilder.append(playerHealth);
-//        playerHealthLayout.setText(noncardUIFont, stringBuilder, Color.BLACK, 100, Align.center, true);
-//        noncardUIFont.draw(spriteBatch, playerHealthLayout, 2, 270);
-//        stringBuilder.setLength(0);
-//        stringBuilder.append(enemyHealth);
-//        enemyHealthLayout.setText(noncardUIFont, stringBuilder, Color.BLACK, 100, Align.center, true);
-//        noncardUIFont.draw(spriteBatch, enemyHealthLayout, 2, 360);
-//        // Draw player energy and recharge
-//        stringBuilder.setLength(0);
-//        stringBuilder.append(playerRecharge);
-//        noncardUIFont.draw(spriteBatch, stringBuilder, 460, 265);
-//        stringBuilder.setLength(0);
-//        stringBuilder.append(playerEnergy);
-//        noncardUIFont.draw(spriteBatch, stringBuilder, 460, 200);
-//        // Draw enemy energy and recharge
-//        stringBuilder.setLength(0);
-//        stringBuilder.append(enemyRecharge);
-//        noncardUIFont.draw(spriteBatch, stringBuilder, 460, 425);
-//        stringBuilder.setLength(0);
-//        stringBuilder.append(enemyEnergy);
-//        noncardUIFont.draw(spriteBatch, stringBuilder, 460, 360);
         // Draw every card on the screen
         for (CardOnScreenData CoSD : cardOnScreenDatas) {
             drawCard(CoSD, spriteBatch);
