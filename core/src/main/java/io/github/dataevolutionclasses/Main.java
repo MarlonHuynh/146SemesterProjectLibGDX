@@ -36,10 +36,10 @@ public class Main extends ApplicationAdapter {
     private ArrayList<CardOnScreenData> cardOnScreenDatas;                              // Houses all information about all cards spots displayed on the screen
     private final ArrayList<Card> cardsInPlayerDeck = new ArrayList<>();                  // Cards in player's deck
     private final ArrayList<Card> cardsInPlayerHand = new ArrayList<>();                  // Cards in player's hand
-    private final ArrayList<Card> cardsInPlayerField = new ArrayList<>();                 // Cards in player's field
+    private final Card[] cardsInPlayerField = new Card[3];                 // Cards in player's field
     private final ArrayList<Card> cardsInEnemyDeck = new ArrayList<>();
     private final ArrayList<Card> cardsInEnemyHand = new ArrayList<>();
-    private final ArrayList<Card> cardsInEnemyField = new ArrayList<>();
+    private final Card[] cardsInEnemyField = new Card[3];
     // UI vars
     private SpriteBatch spriteBatch;
     private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr;
@@ -279,11 +279,12 @@ public class Main extends ApplicationAdapter {
     public void render() {
         draw();
         // Log memory every 100 frames
+        /*
         frameCounter++;
         if (frameCounter >= 100) {
             Gdx.app.log("Memory", "Used: " + Gdx.app.getJavaHeap() + " bytes");
             frameCounter = 0; // Reset counter after logging
-        }
+        }*/
     }
 
     // Called when resizing window
@@ -359,7 +360,7 @@ public class Main extends ApplicationAdapter {
                         playerEnergy -= prevData.getCard().getCost();
                     }
                     // Add card to field array and remove from hand array
-                    cardsInPlayerField.add(prevData.getCard());
+                    cardsInPlayerField[selectedCardNumber - 13] = prevData.getCard();
                     for (int i = 0; i < cardsInPlayerHand.size(); i++) {
                         if (cardsInPlayerHand.get(i).getName().equals(prevData.getCard().getName())) {
                             cardsInPlayerHand.remove(i);
@@ -367,7 +368,9 @@ public class Main extends ApplicationAdapter {
                         }
                     }
                     // Halves attack if puts down an evolution card
-                    prevData.getCard().setAttack( prevData.getCard().getAttack() / 2);
+                    if (prevData.getCard().getStage() != 1) {
+                        prevData.getCard().setAttack(prevData.getCard().getAttack() / 2);
+                    }
                     // Remake the card's UI to be reflective of the swap
                     currData.remakeCard(prevData.getCardID(), currData.getX(), currData.getY(), currData.getScale());
                     prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale()); // ID 37 -> blank card
@@ -389,7 +392,7 @@ public class Main extends ApplicationAdapter {
                         playerEnergy -= prevData.getCard().getCost();
                     }
                     // Add card to field array and remove from hand array
-                    cardsInPlayerField.add(prevData.getCard());
+                    cardsInPlayerField[selectedCardNumber - 13] = prevData.getCard();
                     for (int i = 0; i < cardsInPlayerHand.size(); i++) {
                         if (cardsInPlayerHand.get(i).getName().equals(prevData.getCard().getName())) {
                             cardsInPlayerHand.remove(i);
@@ -449,33 +452,24 @@ public class Main extends ApplicationAdapter {
                 }
                 // 4) End turn logic (current -> End turn)
                 else if (currData.getCard().getName().equals(("End Turn"))) {
-                    // TODO: Attack enemy
-                    // 13 vs 10
-                    Card card13 = cardOnScreenDatas.get(13).getCard();
-                    Card card10 = cardOnScreenDatas.get(10).getCard();
-                    if (!card13.getName().equals("Blank") && !card10.getName().equals("Blank")){
-                        card13.setShield(card13.getShield() - card10.getAttack());
+                    // Attack Enemy
+                    // 13 (Player field slot #1) vs 10 (Enemy field slot #1)
+                    processCardInteraction(0, 13, 10);
+                    // 14 (Player field slot #2) vs 11 (Enemy field slot #2)
+                    processCardInteraction(0, 14, 11);
+                    // 15 (Player field slot #3) vs 12 (Enemy field slot #3)
+                    processCardInteraction(0, 15, 12);
+                    // Checks if a win or lost condition has been reached
+                    if (enemyHealth < 1){ // Enemy lost! You win!
+
                     }
-                    else if (!card13.getName().equals("Blank") && card10.getName().equals("Blank")){
-                        enemyHealth -= card13.getAttack();
+                    else if (playerHealth < 1){ // You lost! Enemy win!
+
                     }
-                    // 14 vs 11
-                    Card card14 = cardOnScreenDatas.get(14).getCard();
-                    Card card11 = cardOnScreenDatas.get(11).getCard();
-                    if (!card14.getName().equals("Blank") && !card11.getName().equals("Blank")){
-                        card14.setShield(card14.getShield() - card11.getAttack());
-                    }
-                    else if (!card14.getName().equals("Blank") && card11.getName().equals("Blank")){
-                        enemyHealth -= card14.getAttack();
-                    }
-                    // 15 vs 12
-                    Card card15 = cardOnScreenDatas.get(15).getCard();
-                    Card card12 = cardOnScreenDatas.get(12).getCard();
-                    if (!card15.getName().equals("Blank") && !card12.getName().equals("Blank")){
-                        card15.setShield(card14.getShield() - card12.getAttack());
-                    }
-                    else if (!card15.getName().equals("Blank") && card12.getName().equals("Blank")){
-                        enemyHealth -= card15.getAttack();
+                    for (int i = 0; i < cardsInPlayerField.length; i++){
+                        if (cardsInPlayerField[i] != null) {
+                            System.out.println("i: " + Integer.toString(i) + ", " + cardsInPlayerField[i].getName());
+                        }
                     }
                     // Reset drawn bools
                     if (cardsInPlayerDeck.isEmpty()){
@@ -486,31 +480,67 @@ public class Main extends ApplicationAdapter {
                         drawnStr = "You can draw a card.";
                     }
                     drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
-                    // Reset appropriate bools
+                    // Change appropriate bools
                     playerEnergy = playerRecharge;
                     discardBool = false;
+                    turnCount++;
                     // Process the enemy turn logic
                     processEnemyTurn();
-                    // Increase turn count
-                    turnCount++;
                 }
                 return clicked;
             }
         });
     }
 
+    private void processCardInteraction(int attackingPlayerInt, int playerIndex, int enemyIndex) {
+        Card playerCard = cardOnScreenDatas.get(playerIndex).getCard();
+        Card enemyCard = cardOnScreenDatas.get(enemyIndex).getCard();
+
+        if (attackingPlayerInt == 0) { // attackingPlayerInt == 0 means it's the player's turn to attack, attackingPlayerInt == 1 means it's the enemy's turn to attack
+            if (!playerCard.getName().equals("Blank") && !enemyCard.getName().equals("Blank")) {
+                playerCard.setShield(playerCard.getShield() - enemyCard.getAttack());
+                enemyCard.setShield(enemyCard.getShield() - playerCard.getAttack());
+                if (playerCard.getShield() < 1){
+                    cardsInPlayerField[13 - playerIndex] = null;
+                    cardOnScreenDatas.get(playerIndex).remakeCard(37, cardOnScreenDatas.get(playerIndex).getX(), cardOnScreenDatas.get(playerIndex).getY(),cardOnScreenDatas.get(playerIndex).getScale());
+                }
+                if (enemyCard.getShield() < 1){
+                    cardsInPlayerField[10 - enemyIndex] = null;
+                    cardOnScreenDatas.get(enemyIndex).remakeCard(37, cardOnScreenDatas.get(enemyIndex).getX(), cardOnScreenDatas.get(enemyIndex).getY(),cardOnScreenDatas.get(enemyIndex).getScale());
+                }
+            } else if (!playerCard.getName().equals("Blank") && enemyCard.getName().equals("Blank")) {
+                enemyHealth -= playerCard.getAttack();
+            }
+        }
+        else if (attackingPlayerInt == 1) {
+            if (!playerCard.getName().equals("Blank") && !enemyCard.getName().equals("Blank")) {
+                playerCard.setShield(playerCard.getShield() - enemyCard.getAttack());
+                enemyCard.setShield(enemyCard.getShield() - playerCard.getAttack());
+                if (playerCard.getShield() < 1){
+                    cardsInPlayerField[13 - playerIndex] = null;
+                    cardOnScreenDatas.get(playerIndex).remakeCard(37, cardOnScreenDatas.get(playerIndex).getX(), cardOnScreenDatas.get(playerIndex).getY(),cardOnScreenDatas.get(playerIndex).getScale());
+                }
+                if (enemyCard.getShield() < 1){
+                    cardsInPlayerField[10 - enemyIndex] = null;
+                    cardOnScreenDatas.get(enemyIndex).remakeCard(37, cardOnScreenDatas.get(enemyIndex).getX(), cardOnScreenDatas.get(enemyIndex).getY(),cardOnScreenDatas.get(enemyIndex).getScale());
+                }
+            } else if (!playerCard.getName().equals("Blank") && enemyCard.getName().equals("Blank")) {
+                playerHealth -= enemyCard.getAttack();
+            }
+        }
+    }
+
     void processEnemyTurn(){
         // TODO: Enemy AI
         // TODO 0.1: Draw a card if able
         if (!drawnEnemyBool && !cardsInEnemyHand.isEmpty() && cardsInEnemyHand.size() < 5){
-            // Add card at random index to hand and remove card from cardsInPlayerDeck
+            // Add card at random index to hand and remove card from cardsInEnemyDeck
             randomIndex = (int) (Math.random() * cardsInEnemyDeck.size());
             cardToAdd = cardsInEnemyDeck.get(randomIndex);
             cardsInEnemyHand.add(cardToAdd); // Add card at randomIndex into hand
             cardsInEnemyDeck.remove(randomIndex);
             // Update drawnBool (drawn for the turn)
             drawnEnemyBool = true;
-            // Change card left text
             // Update Card UI
             for (int i = 0; i <= 4; i++) {
                 if (cardOnScreenDatas.get(i).getCardID() == 37) { // Blank
