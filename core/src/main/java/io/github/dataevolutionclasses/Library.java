@@ -33,8 +33,16 @@ public class Library extends ApplicationAdapter {
     private String costText = "9";                  // Cost text
     private String attackText = "6";                // Attack text
     private String shieldText = "3";                // Shield text
+
+
+
+
+
     private SpriteBatch spriteBatch;
     private Sprite bgSpr;
+
+
+
 
     private Stage stage;
 
@@ -42,22 +50,32 @@ public class Library extends ApplicationAdapter {
 
     @Override
     public void create() {
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(600, 600, camera);
-        camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
 
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
+
         scroll = new Scroll();
         scroll.createSlider(stage); //Add the slider into the stage
+
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(600, 600, camera);                   // 600x600 is the virtual world size
         viewport.apply();
+        camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0); // Center the camera
         // Read and generate cards and place cards into Card list
         CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats2.csv");
         reader.generateCardsFromCSV();
         cardList = reader.getCardList();
-        // Initialize drawBatch
+
+
+
+
+
         spriteBatch = new SpriteBatch();
         bgSpr = new Sprite(new Texture("background.png"));
+
+
+
+
 
         // Initial startup card back image
         Texture cardbackTexture = new Texture("cardback2.png");
@@ -94,17 +112,31 @@ public class Library extends ApplicationAdapter {
         batch.dispose();
         stage.dispose();
         scroll.dispose();
+
+
+
+
         bgSpr.getTexture().dispose();
+
+
+
 
     }
 
     public void drawAll(){
+
+
+
+
+        spriteBatch.setProjectionMatrix(camera.combined);
+        spriteBatch.begin();
+        bgSpr.draw(spriteBatch);
+
+
+
+
         // Clears screen and prepares batch for drawing
         for (int i = 0; i < cardList.size() && i < 35; i++) {
-            spriteBatch.setProjectionMatrix(camera.combined);
-            spriteBatch.begin();
-            bgSpr.draw(spriteBatch);
-
 //            ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 //            SpriteBatch fpsBatch = new SpriteBatch();
 //            fpsBatch.setProjectionMatrix(camera.combined);
