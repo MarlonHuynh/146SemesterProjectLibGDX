@@ -212,7 +212,7 @@ public void drawAll(){
 //        if (selectedCardNumber != -1){
 //            cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(spriteBatch);
 //        }
-    spriteBatch.end();
+//    spriteBatch.end();
     //camera.update();
 
 //        stringBuilder.setLength(0);
