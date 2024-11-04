@@ -43,9 +43,9 @@ public class Library extends ApplicationAdapter {
 
     private SpriteBatch spriteBatch;
     private Sprite bgSpr;
-    private final GlyphLayout drawnTextLayout = new GlyphLayout();
-    private String drawnStr = "You can draw a card";
-    private final StringBuilder stringBuilder = new StringBuilder();
+//    private final GlyphLayout drawnTextLayout = new GlyphLayout();
+//    private String drawnStr = "You can draw a card";
+//    private final StringBuilder stringBuilder = new StringBuilder();
 
 
     private Stage stage;
@@ -79,7 +79,7 @@ public class Library extends ApplicationAdapter {
         debugFont.getData().setScale(0.4f);
         noncardUIFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         noncardUIFont.getData().setScale(1.2f);
-        drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
+//        drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
         // Initialize non-card sprites, with scale and position
         bgSpr = new Sprite(new Texture("background.png"));
 
@@ -138,16 +138,16 @@ public class Library extends ApplicationAdapter {
         ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
         worldCoords.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 
-        stringBuilder.setLength(0);
-        stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
-        debugFont.draw(spriteBatch, stringBuilder, 520, 340);
-        // Draw cursor X, Y
-        stringBuilder.setLength(0);
-        stringBuilder.append("X: ").append((int)worldCoords.x);
-        debugFont.draw(spriteBatch, stringBuilder, 520, 380);
-        stringBuilder.setLength(0);
-        stringBuilder.append("Y: ").append((int)worldCoords.y);
-        debugFont.draw(spriteBatch, stringBuilder, 520, 360);
+//        stringBuilder.setLength(0);
+//        stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
+//        debugFont.draw(spriteBatch, stringBuilder, 520, 340);
+//        // Draw cursor X, Y
+//        stringBuilder.setLength(0);
+//        stringBuilder.append("X: ").append((int)worldCoords.x);
+//        debugFont.draw(spriteBatch, stringBuilder, 520, 380);
+//        stringBuilder.setLength(0);
+//        stringBuilder.append("Y: ").append((int)worldCoords.y);
+//        debugFont.draw(spriteBatch, stringBuilder, 520, 360);
 
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
