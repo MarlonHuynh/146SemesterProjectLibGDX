@@ -194,7 +194,6 @@ public class Main extends ApplicationAdapter {
         stringBuilder.append("Y: ").append((int)worldCoords.y);
         debugFont.draw(spriteBatch, stringBuilder, 520, 360);
         // Draw non-card UI sprites
-        playerHealthSpr.draw(spriteBatch);
         enemyHealthSpr.draw(spriteBatch);
         playerEnergySpr.draw(spriteBatch);
         enemyEnergySpr.draw(spriteBatch);
