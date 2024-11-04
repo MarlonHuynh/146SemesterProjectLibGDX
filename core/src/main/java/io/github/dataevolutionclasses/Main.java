@@ -42,9 +42,10 @@ public class Main extends ApplicationAdapter {
     private final ArrayList<Card> cardsInPlayerHand = new ArrayList<>();                  // Cards in player's hand
     private final ArrayList<Card> cardsInEnemyDeck = new ArrayList<>();
     private final ArrayList<Card> cardsInEnemyHand = new ArrayList<>();
+    private final ArrayList<Card> cardsInEnemyField = new ArrayList<>();
     // UI vars
     private SpriteBatch spriteBatch;
-    private Sprite bgSpr;
+    private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr;
     private BitmapFont debugFont, noncardUIFont;
     private String drawnStr = "You can draw a card";
     private final GlyphLayout drawnTextLayout = new GlyphLayout();
@@ -56,6 +57,7 @@ public class Main extends ApplicationAdapter {
     private int playerHealth, enemyHealth, playerRecharge, enemyRecharge, playerEnergy, enemyEnergy;
     private int turnCount = 0;                      // Turn #
     private int selectedCardNumber = -1;            // Index of cardOnScreenDatas currently selected
+    private int prevSelectedCardNumber = -1;        // Index of cardOnScreenDatas previously selected
     // Debug vars
     private int frameCounter = 0;
 
@@ -88,6 +90,58 @@ public class Main extends ApplicationAdapter {
         drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
         // Initialize non-card sprites, with scale and position
         bgSpr = new Sprite(new Texture("background.png"));
+        playerHealthSpr = new Sprite(new Texture("yourhealth.png"));
+        playerHealthSpr.setScale(0.65f);
+        playerHealthSpr.setPosition(-35, 180);
+        enemyHealthSpr = new Sprite(new Texture("enemyhealth.png"));
+        enemyHealthSpr.setScale(0.65f);
+        enemyHealthSpr.setPosition(-35, 270);
+        playerCloudSpr = new Sprite(new Texture("playercloud.png"));
+        playerCloudSpr.setScale(0.5f);
+        playerCloudSpr.setPosition(380, 180);
+        enemyCloudSpr = new Sprite(new Texture("enemycloud.png"));
+        enemyCloudSpr.setScale(0.5f);
+        enemyCloudSpr.setPosition(380, 340);
+        playerEnergySpr = new Sprite(new Texture("playerenergy.png"));
+        playerEnergySpr.setScale(0.5f);
+        playerEnergySpr.setPosition(380, 110);
+        enemyEnergySpr = new Sprite(new Texture("enemyenergy.png"));
+        enemyEnergySpr.setScale(0.5f);
+        enemyEnergySpr.setPosition(380, 270);
+        // Initialize stat variables
+        playerHealth = 60;
+        enemyHealth = 40;
+        playerEnergy = 0;
+        playerRecharge = 0;
+        enemyEnergy = 0;
+        enemyRecharge = 0;
+        // Create the cards in the player's deck
+        // TODO: Initial deck will be a deck taken from from the library section
+        List<String> strTemp = Arrays.asList(
+            "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort",
+            "Parraykeet","Parraykeet","Parraykeet","Bin. Canary Tree","Bin. Canary Tree","Bal. Canary Tree",
+            "Quetzelqueueotl", "Quetzelqueueotl", "Quetzelqueueotl" );
+        for (String s : strTemp) {
+            cardsInPlayerDeck.add(nameToCardHashmap.get(s));
+        }
+        for (int i = 0; i < 5; i++){ // Take random 5 cards from the player's deck to place in the player's hand and remove from deck
+            int randomIndex = (int) (Math.random() * cardsInPlayerDeck.size());
+            cardsInPlayerHand.add(nameToCardHashmap.get(cardsInPlayerDeck.get(randomIndex).getName()));
+            cardsInPlayerDeck.remove(randomIndex);
+        }
+        // Enemy Deck
+        List<String> strTemp_e = Arrays.asList(
+            "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort",
+            "Parraykeet","Parraykeet","Parraykeet","Bin. Canary Tree","Bin. Canary Tree","Bal. Canary Tree",
+            "Quetzelqueueotl", "Quetzelqueueotl", "Quetzelqueueotl");
+        for (String s : strTemp_e) {
+            cardsInEnemyDeck.add(nameToCardHashmap.get(s));
+        }
+        for (int i = 0; i < 5; i++){
+            int randomIndex = (int) (Math.random() * cardsInEnemyDeck.size());
+            cardsInEnemyHand.add(nameToCardHashmap.get(cardsInEnemyDeck.get(randomIndex).getName()));
+            cardsInEnemyDeck.remove(randomIndex);
+        }
         // Set up array of Sprite names and sprites to keep track of the sprites on screen for input handling
         cardOnScreenDatas = new ArrayList<>();
         // Create all cards on screen
@@ -139,6 +193,13 @@ public class Main extends ApplicationAdapter {
         stringBuilder.setLength(0);
         stringBuilder.append("Y: ").append((int)worldCoords.y);
         debugFont.draw(spriteBatch, stringBuilder, 520, 360);
+        // Draw non-card UI sprites
+        playerHealthSpr.draw(spriteBatch);
+        enemyHealthSpr.draw(spriteBatch);
+        playerEnergySpr.draw(spriteBatch);
+        enemyEnergySpr.draw(spriteBatch);
+        playerCloudSpr.draw(spriteBatch);
+        enemyCloudSpr.draw(spriteBatch);
         // Draw non-card text UI
         debugFont.draw(spriteBatch, drawnTextLayout, 5, 200);
         stringBuilder.setLength(0);
@@ -237,6 +298,12 @@ public class Main extends ApplicationAdapter {
         debugFont.dispose();
         noncardUIFont.dispose();
         bgSpr.getTexture().dispose();
+        playerHealthSpr.getTexture().dispose();
+        enemyHealthSpr.getTexture().dispose();
+        playerCloudSpr.getTexture().dispose();
+        enemyCloudSpr.getTexture().dispose();
+        playerEnergySpr.getTexture().dispose();
+        enemyEnergySpr.getTexture().dispose();
     }
 }
 
