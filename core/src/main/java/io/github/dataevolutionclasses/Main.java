@@ -124,37 +124,37 @@ public class Main extends ApplicationAdapter {
     // Called every frame in render to draw the screen
     // Note: DO NOT MAKE NEW BATCHES OR VARIABLES EVERY FRAME THIS WILL TANK YOUR FPS VERY BADLY!!! 300fps -> 6fps
     public void draw(){
-        // Clears screen and prepares batch for drawing
-        ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
-        // Display FPS counter and position of cursor
-        worldCoords.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-        //camera.unproject(worldCoords);
-        spriteBatch.setProjectionMatrix(camera.combined);
-        spriteBatch.begin();
-        // Draw BG
-        bgSpr.draw(spriteBatch);
-        // Draw debug FPS
-        stringBuilder.setLength(0);
-        stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
-        debugFont.draw(spriteBatch, stringBuilder, 520, 340);
-        // Draw cursor X, Y
-        stringBuilder.setLength(0);
-        stringBuilder.append("X: ").append((int)worldCoords.x);
-        debugFont.draw(spriteBatch, stringBuilder, 520, 380);
-        stringBuilder.setLength(0);
-        stringBuilder.append("Y: ").append((int)worldCoords.y);
-        debugFont.draw(spriteBatch, stringBuilder, 520, 360);
-
-//        // Draw every card on the screen
-//        for (CardOnScreenData CoSD : cardOnScreenDatas) {
-//            drawCard(CoSD, spriteBatch);
-//        }
-//        // Draw Select Sprite if needed
-//        if (selectedCardNumber != -1){
-//            cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(spriteBatch);
-//        }
-        spriteBatch.end();
-        //camera.update();
+//        // Clears screen and prepares batch for drawing
+//        ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
+//        // Display FPS counter and position of cursor
+//        worldCoords.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+//        //camera.unproject(worldCoords);
+//        spriteBatch.setProjectionMatrix(camera.combined);
+//        spriteBatch.begin();
+//        // Draw BG
+//        bgSpr.draw(spriteBatch);
+//        // Draw debug FPS
+//        stringBuilder.setLength(0);
+//        stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
+//        debugFont.draw(spriteBatch, stringBuilder, 520, 340);
+//        // Draw cursor X, Y
+//        stringBuilder.setLength(0);
+//        stringBuilder.append("X: ").append((int)worldCoords.x);
+//        debugFont.draw(spriteBatch, stringBuilder, 520, 380);
+//        stringBuilder.setLength(0);
+//        stringBuilder.append("Y: ").append((int)worldCoords.y);
+//        debugFont.draw(spriteBatch, stringBuilder, 520, 360);
+//
+////        // Draw every card on the screen
+////        for (CardOnScreenData CoSD : cardOnScreenDatas) {
+////            drawCard(CoSD, spriteBatch);
+////        }
+////        // Draw Select Sprite if needed
+////        if (selectedCardNumber != -1){
+////            cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(spriteBatch);
+////        }
+//        spriteBatch.end();
+//        //camera.update();
     }
 //    public void drawCard(CardOnScreenData CoSD, SpriteBatch batch){
 ////        // Draw cardback
@@ -183,8 +183,37 @@ public class Main extends ApplicationAdapter {
 //    }
 public void drawAll(){
 
+    // Clears screen and prepares batch for drawing
     ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
+    // Display FPS counter and position of cursor
     worldCoords.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+    //camera.unproject(worldCoords);
+    spriteBatch.setProjectionMatrix(camera.combined);
+    spriteBatch.begin();
+    // Draw BG
+    bgSpr.draw(spriteBatch);
+    // Draw debug FPS
+    stringBuilder.setLength(0);
+    stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
+    debugFont.draw(spriteBatch, stringBuilder, 520, 340);
+    // Draw cursor X, Y
+    stringBuilder.setLength(0);
+    stringBuilder.append("X: ").append((int)worldCoords.x);
+    debugFont.draw(spriteBatch, stringBuilder, 520, 380);
+    stringBuilder.setLength(0);
+    stringBuilder.append("Y: ").append((int)worldCoords.y);
+    debugFont.draw(spriteBatch, stringBuilder, 520, 360);
+
+//        // Draw every card on the screen
+//        for (CardOnScreenData CoSD : cardOnScreenDatas) {
+//            drawCard(CoSD, spriteBatch);
+//        }
+//        // Draw Select Sprite if needed
+//        if (selectedCardNumber != -1){
+//            cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(spriteBatch);
+//        }
+    spriteBatch.end();
+    //camera.update();
 
 //        stringBuilder.setLength(0);
 //        stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
