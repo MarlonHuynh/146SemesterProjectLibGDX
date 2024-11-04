@@ -123,7 +123,7 @@ public class Main extends ApplicationAdapter {
     }
     // Called every frame in render to draw the screen
     // Note: DO NOT MAKE NEW BATCHES OR VARIABLES EVERY FRAME THIS WILL TANK YOUR FPS VERY BADLY!!! 300fps -> 6fps
-    public void draw(){
+//    public void draw(){
 //        // Clears screen and prepares batch for drawing
 //        ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
 //        // Display FPS counter and position of cursor
@@ -155,7 +155,7 @@ public class Main extends ApplicationAdapter {
 ////        }
 //        spriteBatch.end();
 //        //camera.update();
-    }
+//    }
 //    public void drawCard(CardOnScreenData CoSD, SpriteBatch batch){
 ////        // Draw cardback
 ////        CoSD.getCardbackSprite().draw(batch);
@@ -181,7 +181,7 @@ public class Main extends ApplicationAdapter {
 //
 //
 //    }
-public void drawAll(){
+public void draw(){
 
     // Clears screen and prepares batch for drawing
     ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
@@ -317,7 +317,7 @@ public void drawAll(){
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         stage.act(); //Process any UI events
         adjustCamera();
-        drawAll();
+        draw();
         stage.draw(); //Draw the stage (including the slider)
         // Log memory every 100 frames
         frameCounter++;
