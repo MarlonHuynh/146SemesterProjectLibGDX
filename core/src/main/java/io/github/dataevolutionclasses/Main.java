@@ -115,11 +115,11 @@ public class Main extends ApplicationAdapter {
 //        // Set up array of Sprite names and sprites to keep track of the sprites on screen for input handling
 //        cardOnScreenDatas = new ArrayList<>();
         // Create all cards on screen
-//        cardOnScreenDatas.add(new CardOnScreenData(cardsInEnemyHand.get(0),  viewport.getWorldWidth() * (3.3f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-//        cardOnScreenDatas.add(new CardOnScreenData(cardsInEnemyHand.get(1),  viewport.getWorldWidth() * (5.64f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-//        cardOnScreenDatas.add(new CardOnScreenData(cardsInEnemyHand.get(2),  viewport.getWorldWidth() * (8 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-//        cardOnScreenDatas.add(new CardOnScreenData(cardsInEnemyHand.get(3),  viewport.getWorldWidth() * (10.35f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-//        cardOnScreenDatas.add(new CardOnScreenData(cardsInEnemyHand.get(4),  viewport.getWorldWidth() * (12.7f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardsInEnemyHand.get(0),  viewport.getWorldWidth() * (3.3f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardsInEnemyHand.get(1),  viewport.getWorldWidth() * (5.64f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardsInEnemyHand.get(2),  viewport.getWorldWidth() * (8 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardsInEnemyHand.get(3),  viewport.getWorldWidth() * (10.35f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardsInEnemyHand.get(4),  viewport.getWorldWidth() * (12.7f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
     }
     // Called every frame in render to draw the screen
     // Note: DO NOT MAKE NEW BATCHES OR VARIABLES EVERY FRAME THIS WILL TANK YOUR FPS VERY BADLY!!! 300fps -> 6fps
@@ -214,25 +214,6 @@ public void drawAll(){
 //        }
 //    spriteBatch.end();
     //camera.update();
-
-//        stringBuilder.setLength(0);
-//        stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
-//        debugFont.draw(spriteBatch, stringBuilder, 520, 340);
-//        // Draw cursor X, Y
-//        stringBuilder.setLength(0);
-//        stringBuilder.append("X: ").append((int)worldCoords.x);
-//        debugFont.draw(spriteBatch, stringBuilder, 520, 380);
-//        stringBuilder.setLength(0);
-//        stringBuilder.append("Y: ").append((int)worldCoords.y);
-//        debugFont.draw(spriteBatch, stringBuilder, 520, 360);
-
-//        spriteBatch.setProjectionMatrix(camera.combined);
-//        spriteBatch.begin();
-//        bgSpr.draw(spriteBatch);
-
-
-
-
     // Clears screen and prepares batch for drawing
     for (int i = 0; i < cardList.size() && i < 35; i++) {
 //            ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
