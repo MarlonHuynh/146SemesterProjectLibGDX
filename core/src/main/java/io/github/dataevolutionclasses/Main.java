@@ -118,7 +118,6 @@
 //        enemyEnergy = 0;
 //        enemyRecharge = 0;
 //        // Create the cards in the player's deck
-//        // TODO: Initial deck will be a deck taken from from the library section
 //        List<String> strTemp = Arrays.asList(
 //            "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort",
 //            "Parraykeet","Parraykeet","Parraykeet","Bin. Canary Tree","Bin. Canary Tree","Bal. Canary Tree",
