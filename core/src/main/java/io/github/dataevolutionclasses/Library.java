@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -28,6 +29,8 @@ public class Library extends ApplicationAdapter {
     private Sprite cardbackSprite;                  // Sprite for card back
     private float cardScale = 1f;                   // Card scale (affects all the other text placements according to the card size)
     private BitmapFont font;                        // Font
+    private BitmapFont debugFont, noncardUIFont;
+    private final Vector3 worldCoords = new Vector3();
     private String nameText = "Creature name here"; // Name text
     private String descText = "Left-click to scroll through cards.";    // Description text
     private String costText = "9";                  // Cost text
@@ -40,16 +43,18 @@ public class Library extends ApplicationAdapter {
 
     private SpriteBatch spriteBatch;
     private Sprite bgSpr;
-
-
+    private final GlyphLayout drawnTextLayout = new GlyphLayout();
+    private String drawnStr = "You can draw a card";
+    private final StringBuilder stringBuilder = new StringBuilder();
 
 
     private Stage stage;
-
     private Scroll scroll;
 
     @Override
     public void create() {
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(600, 600, camera);                   // 600x600 is the virtual world size
 
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
@@ -57,10 +62,9 @@ public class Library extends ApplicationAdapter {
         scroll = new Scroll();
         scroll.createSlider(stage); //Add the slider into the stage
 
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(600, 600, camera);                   // 600x600 is the virtual world size
         viewport.apply();
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0); // Center the camera
+        camera.update();
         // Read and generate cards and place cards into Card list
         CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats2.csv");
         reader.generateCardsFromCSV();
@@ -71,6 +75,12 @@ public class Library extends ApplicationAdapter {
 
 
         spriteBatch = new SpriteBatch();
+        debugFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        debugFont.getData().setScale(0.4f);
+        noncardUIFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        noncardUIFont.getData().setScale(1.2f);
+        drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
+        // Initialize non-card sprites, with scale and position
         bgSpr = new Sprite(new Texture("background.png"));
 
 
@@ -125,8 +135,19 @@ public class Library extends ApplicationAdapter {
 
     public void drawAll(){
 
+        ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
+        worldCoords.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 
-
+        stringBuilder.setLength(0);
+        stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
+        debugFont.draw(spriteBatch, stringBuilder, 520, 340);
+        // Draw cursor X, Y
+        stringBuilder.setLength(0);
+        stringBuilder.append("X: ").append((int)worldCoords.x);
+        debugFont.draw(spriteBatch, stringBuilder, 520, 380);
+        stringBuilder.setLength(0);
+        stringBuilder.append("Y: ").append((int)worldCoords.y);
+        debugFont.draw(spriteBatch, stringBuilder, 520, 360);
 
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
