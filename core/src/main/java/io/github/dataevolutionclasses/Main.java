@@ -252,6 +252,7 @@ public void drawAll(){
         //drawCard((i % 3)*50+35, (i/3)*100, 0.3f, cardList.get(i), camera);
 
     }
+    spriteBatch.end();
 //        drawCard(viewport.getWorldWidth()*(3/4f), viewport.getWorldHeight()/2, 1f);
 }
     public void drawCard(float x, float y, float scale, Card card, OrthographicCamera camera){
