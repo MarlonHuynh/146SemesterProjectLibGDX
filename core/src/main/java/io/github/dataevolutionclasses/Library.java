@@ -41,8 +41,8 @@ public class Library extends ApplicationAdapter {
 
 
 
-    private SpriteBatch spriteBatch;
-    private Sprite bgSpr;
+//    private SpriteBatch spriteBatch;
+//    private Sprite bgSpr;
 //    private final GlyphLayout drawnTextLayout = new GlyphLayout();
 //    private String drawnStr = "You can draw a card";
 //    private final StringBuilder stringBuilder = new StringBuilder();
@@ -74,19 +74,20 @@ public class Library extends ApplicationAdapter {
 
 
 
-        spriteBatch = new SpriteBatch();
+//        spriteBatch = new SpriteBatch();
 //        debugFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
 //        debugFont.getData().setScale(0.4f);
 //        noncardUIFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
 //        noncardUIFont.getData().setScale(1.2f);
 ////        drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
 //        // Initialize non-card sprites, with scale and position
-        bgSpr = new Sprite(new Texture("background.png"));
+//        bgSpr = new Sprite(new Texture("background.png"));
 
 
 
 
-
+        Texture background = new Texture("background.png");
+        cardbackSprite = new Sprite(background);
         // Initial startup card back image
         Texture cardbackTexture = new Texture("cardback2.png");
         cardbackSprite = new Sprite(cardbackTexture);
@@ -126,7 +127,7 @@ public class Library extends ApplicationAdapter {
 
 
 
-        bgSpr.getTexture().dispose();
+//        bgSpr.getTexture().dispose();
 
 
 
@@ -150,8 +151,8 @@ public class Library extends ApplicationAdapter {
 //        debugFont.draw(spriteBatch, stringBuilder, 520, 360);
 
 //        spriteBatch.setProjectionMatrix(camera.combined);
-        spriteBatch.begin();
-        bgSpr.draw(spriteBatch);
+//        spriteBatch.begin();
+//        bgSpr.draw(spriteBatch);
 
 
 
