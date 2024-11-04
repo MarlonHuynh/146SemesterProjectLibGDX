@@ -123,14 +123,14 @@ public class Main extends ApplicationAdapter {
             cardsInPlayerHand.add(nameToCardHashmap.get(cardsInPlayerDeck.get(randomIndex).getName()));
             cardsInPlayerDeck.remove(randomIndex);
         }
-        // Enemy Deck
-//        List<String> strTemp_e = Arrays.asList(
-//            "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort",
-//            "Parraykeet","Parraykeet","Parraykeet","Bin. Canary Tree","Bin. Canary Tree","Bal. Canary Tree",
-//            "Quetzelqueueotl", "Quetzelqueueotl", "Quetzelqueueotl");
-//        for (String s : strTemp_e) {
-//            cardsInEnemyDeck.add(nameToCardHashmap.get(s));
-//        }
+        //Enemy Deck
+        List<String> strTemp_e = Arrays.asList(
+            "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort",
+            "Parraykeet","Parraykeet","Parraykeet","Bin. Canary Tree","Bin. Canary Tree","Bal. Canary Tree",
+            "Quetzelqueueotl", "Quetzelqueueotl", "Quetzelqueueotl");
+        for (String s : strTemp_e) {
+            cardsInEnemyDeck.add(nameToCardHashmap.get(s));
+        }
         for (int i = 0; i < 5; i++){
             int randomIndex = (int) (Math.random() * cardsInEnemyDeck.size());
             cardsInEnemyHand.add(nameToCardHashmap.get(cardsInEnemyDeck.get(randomIndex).getName()));
