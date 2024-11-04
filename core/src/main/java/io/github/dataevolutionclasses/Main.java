@@ -36,22 +36,23 @@ public class Main extends ApplicationAdapter {
     private final ArrayList<Card> cardsInPlayerHand = new ArrayList<>();                  // Cards in player's hand
     private final ArrayList<Card> cardsInEnemyDeck = new ArrayList<>();
     private final ArrayList<Card> cardsInEnemyHand = new ArrayList<>();
-    private final ArrayList<Card> cardsInEnemyField = new ArrayList<>();
+//    private final ArrayList<Card> cardsInEnemyField = new ArrayList<>();
     // UI vars
     private SpriteBatch spriteBatch;
-    private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr;
+//    private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr;
+    private Sprite bgSpr;
     private BitmapFont debugFont, noncardUIFont;
     private String drawnStr = "You can draw a card";
     private final GlyphLayout drawnTextLayout = new GlyphLayout();
-    private final GlyphLayout playerHealthLayout = new GlyphLayout();
-    private final GlyphLayout enemyHealthLayout = new GlyphLayout();
+//    private final GlyphLayout playerHealthLayout = new GlyphLayout();
+//    private final GlyphLayout enemyHealthLayout = new GlyphLayout();
     private final Vector3 worldCoords = new Vector3();
     private final StringBuilder stringBuilder = new StringBuilder();
     // Stats vars
-    private int playerHealth, enemyHealth, playerRecharge, enemyRecharge, playerEnergy, enemyEnergy;
-    private int turnCount = 0;                      // Turn #
+//    private int playerHealth, enemyHealth, playerRecharge, enemyRecharge, playerEnergy, enemyEnergy;
+//    private int turnCount = 0;                      // Turn #
     private int selectedCardNumber = -1;            // Index of cardOnScreenDatas currently selected
-    private int prevSelectedCardNumber = -1;        // Index of cardOnScreenDatas previously selected
+//    private int prevSelectedCardNumber = -1;        // Index of cardOnScreenDatas previously selected
     // Debug vars
     private int frameCounter = 0;
 
@@ -228,12 +229,6 @@ public class Main extends ApplicationAdapter {
         debugFont.dispose();
         noncardUIFont.dispose();
         bgSpr.getTexture().dispose();
-//        playerHealthSpr.getTexture().dispose();
-//        enemyHealthSpr.getTexture().dispose();
-//        playerCloudSpr.getTexture().dispose();
-//        enemyCloudSpr.getTexture().dispose();
-//        playerEnergySpr.getTexture().dispose();
-//        enemyEnergySpr.getTexture().dispose();
     }
 }
 
