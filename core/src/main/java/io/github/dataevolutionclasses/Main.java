@@ -84,24 +84,6 @@ public class Main extends ApplicationAdapter {
         drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
         // Initialize non-card sprites, with scale and position
         bgSpr = new Sprite(new Texture("background.png"));
-//        playerHealthSpr = new Sprite(new Texture("yourhealth.png"));
-//        playerHealthSpr.setScale(0.65f);
-//        playerHealthSpr.setPosition(-35, 180);
-//        enemyHealthSpr = new Sprite(new Texture("enemyhealth.png"));
-//        enemyHealthSpr.setScale(0.65f);
-//        enemyHealthSpr.setPosition(-35, 270);
-//        playerCloudSpr = new Sprite(new Texture("playercloud.png"));
-//        playerCloudSpr.setScale(0.5f);
-//        playerCloudSpr.setPosition(380, 180);
-//        enemyCloudSpr = new Sprite(new Texture("enemycloud.png"));
-//        enemyCloudSpr.setScale(0.5f);
-//        enemyCloudSpr.setPosition(380, 340);
-//        playerEnergySpr = new Sprite(new Texture("playerenergy.png"));
-//        playerEnergySpr.setScale(0.5f);
-//        playerEnergySpr.setPosition(380, 110);
-//        enemyEnergySpr = new Sprite(new Texture("enemyenergy.png"));
-//        enemyEnergySpr.setScale(0.5f);
-//        enemyEnergySpr.setPosition(380, 270);
 
         // Create the cards in the player's deck
         List<String> strTemp = Arrays.asList(
@@ -246,12 +228,12 @@ public class Main extends ApplicationAdapter {
         debugFont.dispose();
         noncardUIFont.dispose();
         bgSpr.getTexture().dispose();
-        playerHealthSpr.getTexture().dispose();
-        enemyHealthSpr.getTexture().dispose();
-        playerCloudSpr.getTexture().dispose();
-        enemyCloudSpr.getTexture().dispose();
-        playerEnergySpr.getTexture().dispose();
-        enemyEnergySpr.getTexture().dispose();
+//        playerHealthSpr.getTexture().dispose();
+//        enemyHealthSpr.getTexture().dispose();
+//        playerCloudSpr.getTexture().dispose();
+//        enemyCloudSpr.getTexture().dispose();
+//        playerEnergySpr.getTexture().dispose();
+//        enemyEnergySpr.getTexture().dispose();
     }
 }
 
