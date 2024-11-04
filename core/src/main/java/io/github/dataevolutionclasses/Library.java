@@ -27,8 +27,6 @@ public class Library extends ApplicationAdapter {
     private SpriteBatch batch;                      // SpriteBatch combine multiple Sprites into a texture to be drawn at runtime
     private Sprite cardCreatureSprite;              // Sprite for card creature
     private Sprite cardbackSprite;                  // Sprite for card back
-    private Sprite backgroundSprite;                  // Sprite for card back
-
     private float cardScale = 1f;                   // Card scale (affects all the other text placements according to the card size)
     private BitmapFont font;                        // Font
     private BitmapFont debugFont, noncardUIFont;
@@ -43,7 +41,7 @@ public class Library extends ApplicationAdapter {
 
 
 
-    private SpriteBatch spriteBatch;
+//    private SpriteBatch spriteBatch;
 //    private Sprite bgSpr;
 //    private final GlyphLayout drawnTextLayout = new GlyphLayout();
 //    private String drawnStr = "You can draw a card";
@@ -88,7 +86,6 @@ public class Library extends ApplicationAdapter {
 
 
 
-        backgroundSprite = new Sprite(new Texture("background.png"));
 
         // Initial startup card back image
         Texture cardbackTexture = new Texture("cardback2.png");
@@ -126,7 +123,7 @@ public class Library extends ApplicationAdapter {
         stage.dispose();
         scroll.dispose();
 
-        backgroundSprite.getTexture().dispose();
+
 
 
 //        bgSpr.getTexture().dispose();
@@ -225,7 +222,6 @@ public class Library extends ApplicationAdapter {
         SpriteBatch batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        backgroundSprite.draw(spriteBatch);
         // Find position of card
         // Note: DO NOT USE PIXELS to get your position. Use relative sizing.
         float cardX = (x - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2)); // Bottom left corner x
