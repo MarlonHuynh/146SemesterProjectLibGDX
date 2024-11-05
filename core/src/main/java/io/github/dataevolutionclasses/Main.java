@@ -67,84 +67,40 @@ public class Main extends ApplicationAdapter {
         // Initialize non-card sprites, with scale and position
         bgSpr = new Sprite(new Texture("background.png"));
     }
-    public void drawAll() {
-        // Clears screen and prepares batch for drawing
-        ScreenUtils.clear(245 / 255f, 1250 / 255f, 205 / 255f, 1f);
 
-        // Display FPS counter and position of cursor
-        worldCoords.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-        spriteBatch.setProjectionMatrix(new Matrix4()); // Reset projection to identity for the background
-        spriteBatch.begin();
+    public void drawAll(){
 
-        // Draw BG with identity matrix
-        bgSpr.setSize(viewport.getWorldWidth(), viewport.getWorldHeight()); // Set the background to fit the viewport
-        bgSpr.setPosition(0, 0); // Position the background at the bottom left
-        bgSpr.draw(spriteBatch); // Draw the static background
-        spriteBatch.end();
-
-        spriteBatch.setProjectionMatrix(camera.combined); // Restore projection matrix for cards
-        spriteBatch.begin();
-
-        // Draw debug FPS
-        stringBuilder.setLength(0);
-        stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
-        debugFont.draw(spriteBatch, stringBuilder, 520, 340);
-
-        // Draw cursor X, Y
-        stringBuilder.setLength(0);
-        stringBuilder.append("X: ").append((int)worldCoords.x);
-        debugFont.draw(spriteBatch, stringBuilder, 520, 380);
-        stringBuilder.setLength(0);
-        stringBuilder.append("Y: ").append((int)worldCoords.y);
-        debugFont.draw(spriteBatch, stringBuilder, 520, 360);
-
-        // Draw cards
-        for (int i = 0; i < cardList.size() && i < 35; i++) {
-            if (i % 3 == 0) {
-                drawCard(45, ((35 - i) / 3) * 100 + 50, 0.3f, cardList.get(i), camera);
-            } else if (i % 3 == 1) {
-                drawCard(110, ((35 - i) / 3) * 100 + 50, 0.3f, cardList.get(i), camera);
-            } else if (i % 3 == 2) {
-                drawCard(175, ((35 - i) / 3) * 100 + 50, 0.3f, cardList.get(i), camera);
-            }
+    // Clears screen and prepares batch for drawing
+    ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
+    // Display FPS counter and position of cursor
+    worldCoords.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+    //camera.unproject(worldCoords);
+    spriteBatch.setProjectionMatrix(camera.combined);
+    spriteBatch.begin();
+    // Draw BG
+    bgSpr.draw(spriteBatch);
+    // Draw debug FPS
+    stringBuilder.setLength(0);
+    stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
+    debugFont.draw(spriteBatch, stringBuilder, 520, 340);
+    // Draw cursor X, Y
+    stringBuilder.setLength(0);
+    stringBuilder.append("X: ").append((int)worldCoords.x);
+    debugFont.draw(spriteBatch, stringBuilder, 520, 380);
+    stringBuilder.setLength(0);
+    stringBuilder.append("Y: ").append((int)worldCoords.y);
+    debugFont.draw(spriteBatch, stringBuilder, 520, 360);
+    for (int i = 0; i < cardList.size() && i < 35; i++) {
+        if (i % 3 == 0){
+            drawCard(45, ((35-i) / 3)*100 + 50 /*0/3 = 0*//*3/3 = 1*/, 0.3f, cardList.get(i), camera);
+        } else if (i%3 == 1) {
+            drawCard(110, ((35-i) / 3)*100 + 50 /*1/3 = 0*//*4/3 = 1*/, 0.3f, cardList.get(i), camera);
+        } else if (i%3 == 2) {
+            drawCard(175, ((35-i) / 3)*100 +50 /*2/3 = 0*//*5/3 = 1*/, 0.3f, cardList.get(i), camera);
         }
-
-        spriteBatch.end();
     }
-
-    //public void drawAll(){
-//
-//    // Clears screen and prepares batch for drawing
-//    ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
-//    // Display FPS counter and position of cursor
-//    worldCoords.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-//    //camera.unproject(worldCoords);
-//    spriteBatch.setProjectionMatrix(camera.combined);
-//    spriteBatch.begin();
-//    // Draw BG
-//    bgSpr.draw(spriteBatch);
-//    // Draw debug FPS
-//    stringBuilder.setLength(0);
-//    stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
-//    debugFont.draw(spriteBatch, stringBuilder, 520, 340);
-//    // Draw cursor X, Y
-//    stringBuilder.setLength(0);
-//    stringBuilder.append("X: ").append((int)worldCoords.x);
-//    debugFont.draw(spriteBatch, stringBuilder, 520, 380);
-//    stringBuilder.setLength(0);
-//    stringBuilder.append("Y: ").append((int)worldCoords.y);
-//    debugFont.draw(spriteBatch, stringBuilder, 520, 360);
-//    for (int i = 0; i < cardList.size() && i < 35; i++) {
-//        if (i % 3 == 0){
-//            drawCard(45, ((35-i) / 3)*100 + 50 /*0/3 = 0*//*3/3 = 1*/, 0.3f, cardList.get(i), camera);
-//        } else if (i%3 == 1) {
-//            drawCard(110, ((35-i) / 3)*100 + 50 /*1/3 = 0*//*4/3 = 1*/, 0.3f, cardList.get(i), camera);
-//        } else if (i%3 == 2) {
-//            drawCard(175, ((35-i) / 3)*100 +50 /*2/3 = 0*//*5/3 = 1*/, 0.3f, cardList.get(i), camera);
-//        }
-//    }
-//    spriteBatch.end();
-//}
+    spriteBatch.end();
+}
     public void drawCard(float x, float y, float scale, Card card, OrthographicCamera camera){
         // Initial card back image
         Texture cardbackTexture = new Texture("cardback2.png");
