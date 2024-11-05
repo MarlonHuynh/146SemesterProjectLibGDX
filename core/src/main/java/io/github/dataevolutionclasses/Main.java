@@ -73,13 +73,17 @@ public class Main extends ApplicationAdapter {
 
         // Display FPS counter and position of cursor
         worldCoords.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-        spriteBatch.setProjectionMatrix(camera.combined); // Use camera for card rendering
+        spriteBatch.setProjectionMatrix(new Matrix4()); // Reset projection to identity for the background
         spriteBatch.begin();
 
         // Draw BG with identity matrix
-        spriteBatch.setProjectionMatrix(new Matrix4()); // Reset projection to identity for the background
+        bgSpr.setSize(viewport.getWorldWidth(), viewport.getWorldHeight()); // Set the background to fit the viewport
+        bgSpr.setPosition(0, 0); // Position the background at the bottom left
         bgSpr.draw(spriteBatch); // Draw the static background
+        spriteBatch.end();
+
         spriteBatch.setProjectionMatrix(camera.combined); // Restore projection matrix for cards
+        spriteBatch.begin();
 
         // Draw debug FPS
         stringBuilder.setLength(0);
