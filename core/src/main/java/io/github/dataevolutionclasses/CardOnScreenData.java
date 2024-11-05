@@ -51,19 +51,20 @@ public class CardOnScreenData {
     private float attackTextY;
     private float shieldTextX;
     private float shieldTextY;
+    private float cardX, cardY, midcardX, midcardY;
 
     // Constructors
     public CardOnScreenData(int cardListID, float x, float y, float scale){
         remakeCard(cardListID, x, y, scale); // Called to avoid duplicating code
     }
     public CardOnScreenData(Card card, float x, float y, float scale){
-        int id = cardToIntMap.get(card);
-        remakeCard(id, x, y, scale); // Called to avoid duplicating code
+        cardListID = cardToIntMap.get(card);
+        remakeCard(cardListID, x, y, scale); // Called to avoid duplicating code
     }
     // Methods
     public void remakeCard(Card card, float x, float y, float scale) {
-        int id = cardToIntMap.get(card);
-        remakeCard(id, x, y, scale);
+        cardListID = cardToIntMap.get(card);
+        remakeCard(cardListID, x, y, scale);
     }
     public void remakeCard(int cardListID, float x, float y, float scale){
         this.card = CardOnScreenData.getCardList().get((cardListID));
@@ -118,10 +119,10 @@ public class CardOnScreenData {
         cardbackSprite.setSize(cardbackSprite.getTexture().getWidth() * scale, cardbackSprite.getTexture().getHeight() * scale);
         cardSprite.setSize(cardSprite.getTexture().getWidth() * scale * 1.2f, cardSprite.getTexture().getHeight() * scale * 1.2f);
         // Get position variables
-        float cardX = (x - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2)); // Bottom left corner x
-        float cardY = (y - ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2)); // Bottom left corner y
-        float midcardX = ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2);  // Distance from the card's left edge to middle
-        float midcardY = ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Distance from the card's bottom edge to middle
+        cardX = (x - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2)); // Bottom left corner x
+        cardY = (y - ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2)); // Bottom left corner y
+        midcardX = ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2);  // Distance from the card's left edge to middle
+        midcardY = ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Distance from the card's bottom edge to middle
         // Set sprite position (doesn't directly draw)
         cardbackSprite.setPosition(cardX , cardY);
         selectedSprite.setPosition(cardX - (midcardX * 0.1f), cardY - (midcardY * 0.06f));
