@@ -49,6 +49,37 @@ public class CardReader {
         System.out.println("Printing data: ");
         printCardList();
     }
+    public void generateFirst35CardsFromFile() {
+        // Read CSV file into string list 'data'
+        List<String[]> data = new ArrayList<>();
+        String line;
+        String delimiter = ",";
+        int lineCount = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            while ((line = br.readLine()) != null && lineCount < 36) {
+                String[] values = line.split(delimiter);
+                data.add(values);
+                lineCount++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // Convert string array into Card list
+        for (int i = 1; i < data.size(); i++){
+            for (int j = 0; j + 6 < data.get(i).length; j += 6){
+                Card newCard = new Card(data.get(i)[0], data.get(i)[1],
+                    Integer.parseInt(data.get(i)[2]), Integer.parseInt(data.get(i)[3]),
+                    Integer.parseInt(data.get(i)[4]), Integer.parseInt(data.get(i)[5]),
+                    data.get(i)[6]);
+                cardList.add(newCard);
+            }
+        }
+        // Assign textures to cards (done separately because the CSV file does not have texture paths)
+        assignTexturePathToCard();
+        // Print all card in console for debugging purposes
+        System.out.println("Printing data: ");
+        printCardList();
+    }
     // Returns a copy of the Card list
     public List<Card> getCardList() {
         return cardList;

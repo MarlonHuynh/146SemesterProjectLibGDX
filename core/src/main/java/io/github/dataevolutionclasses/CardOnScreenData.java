@@ -25,8 +25,8 @@ import java.util.List;
 
 public class CardOnScreenData {
 
-    private static List<Card> cardList;
-    private static HashMap<Card, Integer> cardToIntMap;
+    static List<Card> cardList;
+    static HashMap<Card, Integer> cardToIntMap;
 
 
     private Card card;
