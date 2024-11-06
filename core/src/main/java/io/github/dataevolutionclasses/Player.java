@@ -11,12 +11,13 @@ public class Player {
     private ArrayList<Card> handCard;
     private int energy;
     private boolean alreadyTrashed;
+
     public Player() {
         this.deck = new ArrayList<>();
         this.health = 40;
         this.handCard = new ArrayList<Card>(5);
         this.energy = 0;
-        this.alreadyTrashed = true;
+        this.alreadyTrashed = false;
     }
 
     public int getEnergy() {
@@ -51,40 +52,36 @@ public class Player {
         this.alreadyTrashed = alreadyTrashed;
     }
 
+    public void setHandCard(ArrayList<Card> handCard) {
+        this.handCard = handCard;
+    }
+
     //    TrashCard method:
 //      Moi luot (co quyen) duoc trash 1 la tren hand
 //      Trash -> +1 energy
-    public Card trashCard(){
-        if (alreadyTrashed || handCard.size() <= 1){
-            System.out.println("Unable to trash card this round");
+    public Card trashCard(Card card) {
+        // Check if the player has already trashed a card or if there’s only one card left
+        if (alreadyTrashed || handCard.size() <= 1) {
+            System.out.println("Unable to trash card this round.");
             return null;
         }
-        else {
-            Scanner scnr = new Scanner(System.in);
-            System.out.println("Choose one of these card to trash");
-            for (int i = 0; i < handCard.size(); i++) {
-                System.out.println(handCard.get(i).getName());
-            }
-            int choice;
-            // Prevent trolling
-            while (true) {
-                System.out.println("Card you want to trash is:");
-                choice = scnr.nextInt();
-                if (choice > 0 && choice < handCard.size()) {
-                    break;
-                } else {
-                    System.out.println("Try again:");
-                }
-            }
 
-            Card cardtoTrash = handCard.get(choice);
-            handCard.remove(cardtoTrash);
+        // Ensure the card to trash is in hand
+        if (handCard.contains(card)) {
+            handCard.remove(card);
             energy++;
             alreadyTrashed = true;
-            System.out.println("You have just trash " + cardtoTrash.getName());
+            System.out.println("You have just trashed " + card.getName());
             System.out.println("Your energy: " + energy);
-            return cardtoTrash;
+            return card;
+        } else {
+            System.out.println("Card not found in hand, cannot trash.");
+            return null;
         }
+    }
+
+    public void resetTrashStatus() {
+        alreadyTrashed = false;
     }
     // Sort handCards by stages
     // Using quickSort (quickest way to sort)
@@ -103,7 +100,7 @@ public class Player {
                 i++;
                 Card temp = handCard.get(i);
                 handCard.set(i,handCard.get(j));
-                handCard.set(i,temp);
+                handCard.set(j,temp);
             }
         }
         Card temp = handCard.get(i+1);
@@ -112,10 +109,7 @@ public class Player {
         return i+1;
     }
     public void sortHandCard(){
-        if(handCard.isEmpty()){
-            return;
-        }
-        else {
+        if(!handCard.isEmpty()){
             quickSortByStages(0,handCard.size()-1);
         }
     }

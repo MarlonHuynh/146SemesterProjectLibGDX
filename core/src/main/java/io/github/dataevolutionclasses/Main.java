@@ -63,9 +63,11 @@ public class Main extends ApplicationAdapter {
     // Debug vars
     private int frameCounter = 0;
 
+
     // Instantiated upon startup
     @Override
     public void create() {
+
         // Set up camera, viewport, and input processor
         camera = new OrthographicCamera();
         viewport = new FitViewport(600, 600, camera);                       // 600x600 is the virtual world size
@@ -495,32 +497,132 @@ public class Main extends ApplicationAdapter {
         });
     }
 
-    void processEnemyTurn(){
-        // TODO: Enemy AI
-        // TODO 0.1: Draw a card if able
-        if (!drawnEnemyBool && !cardsInEnemyHand.isEmpty() && cardsInEnemyHand.size() < 5){
-            // Add card at random index to hand and remove card from cardsInPlayerDeck
+    void processEnemyTurn() {
+        // 0.1: Draw a card if able at the start of each turn
+        if (cardsInEnemyHand.size() < 5 && !cardsInEnemyDeck.isEmpty()) {
             int randomIndex = (int) (Math.random() * cardsInEnemyDeck.size());
-            Card cardToAdd = cardsInEnemyDeck.get(randomIndex);
-            cardsInEnemyHand.add(cardToAdd); // Add card at randomIndex into hand
-            cardsInEnemyDeck.remove(randomIndex);
-            // Update drawnBool (drawn for the turn)
-            drawnEnemyBool = true;
-            // Change card left text
-            // Update Card UI
+            Card cardToAdd = cardsInEnemyDeck.remove(randomIndex);
+            cardsInEnemyHand.add(cardToAdd);
+
+            // Update enemy hand UI
             for (int i = 0; i <= 4; i++) {
-                if (cardOnScreenDatas.get(i).getCardID() == 37) { // Blank
-                    CardOnScreenData CoSD = cardOnScreenDatas.get(i);
-                    cardOnScreenDatas.get(i).remakeCard(cardToAdd, CoSD.getX(), CoSD.getY(), CoSD.getScale());
+                if (cardOnScreenDatas.get(i).getCardID() == 37) { // Blank card
+                    CardOnScreenData slotData = cardOnScreenDatas.get(i);
+                    slotData.remakeCard(cardToAdd, slotData.getX(), slotData.getY(), slotData.getScale());
                     break;
                 }
             }
-            // Update discard bool
-            drawnBool = true;
         }
-        // TODO 0.2: Place down a basic card or evolve if enough energy (Prioritize evolving cards)
-        // TODO 0.3: If not enough energy, discard least valuable card (Prioritize duplicate cards or cards of the same stage)
-        // TODO 0.4: Place down a card if evolve enough energy
-        // TODO 0.5: Draw a card if able and end turn
+
+        boolean cardEvolved = false;
+
+        // 0.2: Prioritize evolving cards first if enough energy is available
+        for (int i = 0; i < cardsInEnemyHand.size(); i++) {
+            Card card = cardsInEnemyHand.get(i);
+            // check if the card can evolve an card on field or not
+            for (CardOnScreenData fieldSlot : cardOnScreenDatas.subList(10, 13)) { // Enemy field slots
+                Card fieldCard = fieldSlot.getCard();
+                // if the cards are same type
+                // if field card's stage is -1 compared to hand card's stage
+                // if have enough energy (>= card on hand cost)
+                if (fieldCard.getStage() + 1 == card.getStage() && fieldCard.getType().equals(card.getType()) && enemyEnergy >= card.getCost()) {
+                    enemyEnergy -= card.getCost(); // -energy that cost
+                    fieldCard.setAttack(fieldCard.getAttack() + card.getAttack());
+                    fieldSlot.remakeCard(card, fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
+                    cardsInEnemyHand.remove(i);
+                    cardEvolved = true;
+                    i--; // Adjust index since we removed an item
+                    break;
+                }
+            }
+            // Case when we normal place a card
+            if (cardEvolved) {
+                i--; // Adjust index since we removed an item
+            }
+            // If the card was not evolved, try to place it on the field
+            else if (enemyEnergy >= card.getCost()) {
+                boolean placed = false;
+                for (CardOnScreenData fieldSlot : cardOnScreenDatas.subList(10, 13)) {
+                    if (fieldSlot.getCard().getName().equals("Blank")) {
+                        enemyEnergy -= card.getCost();
+
+                        // Check if the card is a Stage 2 or 3 card
+                        if (card.getStage() > 1) {
+                            // Reduce attack and shield by half if directly placing a high-stage card
+                            card.setAttack(card.getAttack() / 2);
+                            card.setShield(card.getShield() / 2);
+                        }
+
+                        // Place the card on the field
+                        fieldSlot.remakeCard(card, fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
+                        cardsInEnemyHand.remove(i);
+                        placed = true;
+                        break;
+                    }
+                }
+                if (placed) {
+                    i--; // Adjust index since we removed an item
+                }
+            }
+        }
+
+        // 0.3: Discard highest-cost card if low on energy,
+        // let make low on energy is 5
+        if (enemyEnergy < 5 && !cardsInEnemyHand.isEmpty()) {
+            // highestCostCard will be the car with the highest cost to be placed
+            Card highestCostCard = null;
+            int indexToDiscard = -1;
+            // check the highest cost card
+            for (int j = 0; j < cardsInEnemyHand.size(); j++) {
+                Card card = cardsInEnemyHand.get(j);
+                if (highestCostCard == null || card.getCost() > highestCostCard.getCost()) {
+                    highestCostCard = card;
+                    indexToDiscard = j;
+                }
+            }
+            // when the highest card was found
+            if (indexToDiscard != -1) {
+                cardsInEnemyHand.remove(indexToDiscard);
+                enemyEnergy += 1;       // Increase enemy energy
+                enemyRecharge += 1;     // Increase enemy recharge
+
+                // Update hand slot to blank
+                for (CardOnScreenData handSlot : cardOnScreenDatas.subList(0, 4)) {
+                    if (handSlot.getCard() == highestCostCard) {
+                        handSlot.remakeCard(37, handSlot.getX(), handSlot.getY(), handSlot.getScale()); // 37 as blank card ID
+                        break;
+                    }
+                }
+            }
+        }
+
+        // 0.5: Enemy attacks player cards or directly attacks player health if no player card is on field
+        for (int i = 10; i <= 12; i++) {
+            Card enemyCard = cardOnScreenDatas.get(i).getCard();
+            int playerCardIndex = i + 3; // Match indices for player cards
+
+            if (!enemyCard.getName().equals("Blank")) {
+                Card playerCard = cardOnScreenDatas.get(playerCardIndex).getCard();
+
+                if (!playerCard.getName().equals("Blank")) {
+                    // Attack and update shield
+                    playerCard.setShield(playerCard.getShield() - enemyCard.getAttack());
+
+                    // Remove card from field if shield < 0
+                    if (playerCard.getShield() < 0) {
+                        cardOnScreenDatas.get(playerCardIndex).remakeCard(37, cardOnScreenDatas.get(playerCardIndex).getX(), cardOnScreenDatas.get(playerCardIndex).getY(), cardOnScreenDatas.get(playerCardIndex).getScale());
+                    }
+                } else {
+                    // No player card in slot; attack player directly
+                    playerHealth -= enemyCard.getAttack();
+                }
+            }
+        }
+
+        // Reset drawn status and energy, increment turn count
+        drawnEnemyBool = false;
+        enemyEnergy = enemyRecharge;
+        turnCount++;
     }
+
 }
