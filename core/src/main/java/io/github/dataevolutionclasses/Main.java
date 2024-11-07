@@ -28,8 +28,6 @@ import java.util.Arrays;
 import java.util.List; // Util
 import java.util.stream.Collectors;
 
-import static io.github.dataevolutionclasses.CardOnScreenData.cardToIntMap;
-
 public class Main extends ApplicationAdapter {
     // Window vars
     private OrthographicCamera camera;              // Camera
@@ -72,7 +70,6 @@ public class Main extends ApplicationAdapter {
         cardList = reader.getCardList();
         viewCardList = new ArrayList<>(cardList);
 
-
         CardOnScreenData.staticSetCardList(cardList);   // Sets the static cardList in CardOnScreenData so it knows which cardList to reference
         // Set up array of Sprite names and sprites to keep track of the sprites on screen for input handling
         cardOnScreenDatas = new ArrayList<>();
@@ -101,7 +98,7 @@ public class Main extends ApplicationAdapter {
         TextButton sortByCostButton = new TextButton("Sort by Cost", skin);
         TextButton sortByHealthButton = new TextButton("Sort by Shield", skin);
         TextButton sortByAttackButton = new TextButton("Sort by Attack", skin);
-        TextButton unsort = new TextButton("Remove sorting", skin);
+        TextButton unsorted = new TextButton("Remove sorting", skin);
 
         // Add button listeners (you can implement sorting later)
         sortByNameButton.addListener(new ChangeListener() {
@@ -144,7 +141,7 @@ public class Main extends ApplicationAdapter {
             }
         });
 
-        unsort.addListener(new ChangeListener() {
+        unsorted.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
                 viewCardList = cardList;
@@ -162,7 +159,7 @@ public class Main extends ApplicationAdapter {
         menuTable.row();
         menuTable.add(sortByAttackButton).fillX().pad(10);
         menuTable.row();
-        menuTable.add(unsort).fillX().pad(10);
+        menuTable.add(unsorted).fillX().pad(10);
         // Add the table to the UI stage
         uiStage.addActor(menuTable);
     }
@@ -190,8 +187,8 @@ public class Main extends ApplicationAdapter {
 
         ArrayList<CardOnScreenData>  cardOnScreenDatas = new ArrayList<>();
         for (int i = 0; i < viewCardList.size() && i < 35; i++) {
-            int x = (i % 3) * 65 + 45; //45
-            int y = ((35-i) / 3)*100 + 50; //90
+            int x = (i % 3) * 100 + 55; //45
+            int y = ((35-i) / 3)* 140 + 50; //90
             cardOnScreenDatas.add(new CardOnScreenData(viewCardList.get(i), x, y, 0.45f));
         }
         // Draw each card on screen
@@ -224,7 +221,7 @@ public class Main extends ApplicationAdapter {
         }
     }
     public void adjustCamera() {
-        float cardHeight = 110;  // Assume each card has a height of 150 units
+        float cardHeight = 150;  // Assume each card has a height of 150 units
         float totalHeight = cardHeight * 11;
         float visibleHeight = viewport.getWorldHeight();
 
