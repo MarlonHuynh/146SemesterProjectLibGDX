@@ -506,11 +506,11 @@ public class Main extends ApplicationAdapter {
                 playerCard.setShield(playerCard.getShield() - enemyCard.getAttack());
                 enemyCard.setShield(enemyCard.getShield() - playerCard.getAttack());
                 if (playerCard.getShield() < 1){
-                    cardsInPlayerField[13 - playerIndex] = null;
+                    cardsInPlayerField[playerIndex - 13] = null;
                     cardOnScreenDatas.get(playerIndex).remakeCard(37, cardOnScreenDatas.get(playerIndex).getX(), cardOnScreenDatas.get(playerIndex).getY(),cardOnScreenDatas.get(playerIndex).getScale());
                 }
                 if (enemyCard.getShield() < 1){
-                    cardsInPlayerField[10 - enemyIndex] = null;
+                    cardsInPlayerField[enemyIndex - 10] = null;
                     cardOnScreenDatas.get(enemyIndex).remakeCard(37, cardOnScreenDatas.get(enemyIndex).getX(), cardOnScreenDatas.get(enemyIndex).getY(),cardOnScreenDatas.get(enemyIndex).getScale());
                 }
             } else if (!playerCard.getName().equals("Blank") && enemyCard.getName().equals("Blank")) {
@@ -522,11 +522,11 @@ public class Main extends ApplicationAdapter {
                 enemyCard.setShield(enemyCard.getShield() - playerCard.getAttack());
                 playerCard.setShield(playerCard.getShield() - enemyCard.getAttack());
                 if (playerCard.getShield() < 1){
-                    cardsInPlayerField[13 - playerIndex] = null;
+                    cardsInPlayerField[playerIndex - 13] = null;
                     cardOnScreenDatas.get(playerIndex).remakeCard(37, cardOnScreenDatas.get(playerIndex).getX(), cardOnScreenDatas.get(playerIndex).getY(),cardOnScreenDatas.get(playerIndex).getScale());
                 }
                 if (enemyCard.getShield() < 1){
-                    cardsInPlayerField[10 - enemyIndex] = null;
+                    cardsInPlayerField[enemyIndex - 10] = null;
                     cardOnScreenDatas.get(enemyIndex).remakeCard(37, cardOnScreenDatas.get(enemyIndex).getX(), cardOnScreenDatas.get(enemyIndex).getY(),cardOnScreenDatas.get(enemyIndex).getScale());
                 }
             } else if (!enemyCard.getName().equals("Blank") && playerCard.getName().equals("Blank")) {
@@ -570,6 +570,7 @@ public class Main extends ApplicationAdapter {
                             && enemyEnergy >= handCard.getCost()) {
                             enemyEnergy -= handCard.getCost();
                             handCard.setAttack(fieldCard.getAttack() + handCard.getAttack());
+                            // Remake field card
                             fieldSlot.remakeCard(handCard, fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
 
                             // Remove handCard from hand
@@ -582,6 +583,7 @@ public class Main extends ApplicationAdapter {
                             enemyEnergy -= handCard.getCost();
                             if (handCard.getStage() > 1)
                                 handCard.setAttack(handCard.getAttack() / 2);
+                            // Remake field card
                             fieldSlot.remakeCard(handCard, fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
 
                             // Remove handCard from hand
