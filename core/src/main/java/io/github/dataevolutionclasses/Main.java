@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List; // Util
+import com.badlogic.gdx.Gdx;
 
 public class Main extends ApplicationAdapter {
     // Window vars
@@ -137,9 +138,8 @@ public class Main extends ApplicationAdapter {
         }
         // Enemy Deck
         List<String> strTemp_e = Arrays.asList(
-            "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort",
-            "Parraykeet","Parraykeet","Parraykeet","Bin. Canary Tree","Bin. Canary Tree","Bal. Canary Tree",
-            "Quetzelqueueotl", "Quetzelqueueotl", "Quetzelqueueotl");
+            "Bubble Sort", "Seelection Sort", "Eelnsertion Sort", "Surgeon Sort", "Shell Sort", "Quickfish Sort", "A-Starfish", "Bucket O' Fish", "Raydix Sort", "Parraykeet", "Sphinx List", "Bin. Canary Tree", "Quack Stack", "Hawkmap", "Quetzelqueueotl", "Grifminmax Heap", "Hippograph", "Bal. Canary Tree"
+        );
         for (String s : strTemp_e) {
             cardsInEnemyDeck.add(nameToCardHashmap.get(s));
         }
@@ -483,9 +483,12 @@ public class Main extends ApplicationAdapter {
                     // Change appropriate bools
                     playerEnergy = playerRecharge;
                     discardBool = false;
-                    turnCount++;
                     // Process the enemy turn logic
-                    processEnemyTurn();
+                    processEnemyTurnTimed();
+                    // Reset drawn status and energy, increment turn count
+                    drawnEnemyBool = false;
+                    enemyEnergy = enemyRecharge;
+                    turnCount++;
                 }
                 return clicked;
             }
@@ -513,9 +516,9 @@ public class Main extends ApplicationAdapter {
             }
         }
         else if (attackingPlayerInt == 1) {
-            if (!playerCard.getName().equals("Blank") && !enemyCard.getName().equals("Blank")) {
-                playerCard.setShield(playerCard.getShield() - enemyCard.getAttack());
+            if (!enemyCard.getName().equals("Blank") && !playerCard.getName().equals("Blank")) {
                 enemyCard.setShield(enemyCard.getShield() - playerCard.getAttack());
+                playerCard.setShield(playerCard.getShield() - enemyCard.getAttack());
                 if (playerCard.getShield() < 1){
                     cardsInPlayerField[13 - playerIndex] = null;
                     cardOnScreenDatas.get(playerIndex).remakeCard(37, cardOnScreenDatas.get(playerIndex).getX(), cardOnScreenDatas.get(playerIndex).getY(),cardOnScreenDatas.get(playerIndex).getScale());
@@ -524,36 +527,137 @@ public class Main extends ApplicationAdapter {
                     cardsInPlayerField[10 - enemyIndex] = null;
                     cardOnScreenDatas.get(enemyIndex).remakeCard(37, cardOnScreenDatas.get(enemyIndex).getX(), cardOnScreenDatas.get(enemyIndex).getY(),cardOnScreenDatas.get(enemyIndex).getScale());
                 }
-            } else if (!playerCard.getName().equals("Blank") && enemyCard.getName().equals("Blank")) {
+            } else if (!enemyCard.getName().equals("Blank") && playerCard.getName().equals("Blank")) {
                 playerHealth -= enemyCard.getAttack();
             }
         }
     }
 
-    void processEnemyTurn(){
-        // TODO: Enemy AI
-        // TODO 0.1: Draw a card if able
-        if (!drawnEnemyBool && !cardsInEnemyHand.isEmpty() && cardsInEnemyHand.size() < 5){
-            // Add card at random index to hand and remove card from cardsInEnemyDeck
-            randomIndex = (int) (Math.random() * cardsInEnemyDeck.size());
-            cardToAdd = cardsInEnemyDeck.get(randomIndex);
-            cardsInEnemyHand.add(cardToAdd); // Add card at randomIndex into hand
-            cardsInEnemyDeck.remove(randomIndex);
-            // Update drawnBool (drawn for the turn)
-            drawnEnemyBool = true;
-            // Update Card UI
-            for (int i = 0; i <= 4; i++) {
-                if (cardOnScreenDatas.get(i).getCardID() == 37) { // Blank
-                    cardOnScreenDatas.get(i).remakeCard(cardToAdd, cardOnScreenDatas.get(i).getX(), cardOnScreenDatas.get(i).getY(), cardOnScreenDatas.get(i).getScale());
-                    break;
+    public void processEnemyTurnTimed() {
+        // Task 1: Draw a card if able at the start of each turn
+        Gdx.app.postRunnable(() -> {
+            if (cardsInEnemyHand.size() < 5 && !cardsInEnemyDeck.isEmpty()) {
+                int randomIndex = (int) (Math.random() * cardsInEnemyDeck.size());
+                Card cardToAdd = cardsInEnemyDeck.get(randomIndex);
+                cardsInEnemyHand.add(cardToAdd);
+                cardsInEnemyDeck.remove(randomIndex);
+
+                // Update enemy hand UI
+                for (int i = 0; i <= 4; i++) {
+                    if (cardOnScreenDatas.get(i).getCardID() == 37) { // Blank card
+                        cardOnScreenDatas.get(i).remakeCard(cardToAdd, cardOnScreenDatas.get(i).getX(), cardOnScreenDatas.get(i).getY(), cardOnScreenDatas.get(i).getScale());
+                        break;
+                    }
                 }
+                System.out.println("Card drawn and added to enemy hand.");
             }
-            // Update discard bool
-            drawnBool = true;
-        }
-        // TODO 0.2: Place down a basic card or evolve if enough energy (Prioritize evolving cards)
-        // TODO 0.3: If not enough energy, discard least valuable card (Prioritize duplicate cards or cards of the same stage)
-        // TODO 0.4: Place down a card if evolve enough energy
-        // TODO 0.5: Draw a card if able and end turn
+
+            // Task 2: Prioritize evolving cards first if enough energy is available
+            delayAndExecute(() -> {
+                for (int i = 0; i < cardsInEnemyHand.size(); i++) {
+                    Card handCard = cardsInEnemyHand.get(i);
+                    for (int j = 10; j < 13; j++) { // Enemy field slots
+                        CardOnScreenData fieldSlot = cardOnScreenDatas.get(j);
+                        Card fieldCard = fieldSlot.getCard();
+
+                        // Evolution
+                        if (fieldCard.getStage() - 1 == handCard.getStage()
+                            && fieldCard.getType().equals(handCard.getType())
+                            && enemyEnergy >= handCard.getCost()) {
+                            enemyEnergy -= handCard.getCost();
+                            handCard.setAttack(fieldCard.getAttack() + handCard.getAttack());
+                            fieldSlot.remakeCard(handCard, fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
+
+                            // Remove handCard from hand
+                            cardsInEnemyHand.remove(handCard);
+
+                            // Remake hand card into blank
+                            cardOnScreenDatas.get(i).remakeCard(37, cardOnScreenDatas.get(i).getX(), cardOnScreenDatas.get(i).getY(), cardOnScreenDatas.get(i).getScale());
+                            break;
+                        } else if (enemyEnergy >= handCard.getCost() && fieldSlot.getCard().getName().equals("Blank")) {
+                            enemyEnergy -= handCard.getCost();
+                            if (handCard.getStage() > 1)
+                                handCard.setAttack(handCard.getAttack() / 2);
+                            fieldSlot.remakeCard(handCard, fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
+
+                            // Remove handCard from hand
+                            cardsInEnemyHand.remove(handCard);
+
+                            // Remake hand card into blank
+                            cardOnScreenDatas.get(i).remakeCard(37, cardOnScreenDatas.get(i).getX(), cardOnScreenDatas.get(i).getY(), cardOnScreenDatas.get(i).getScale());
+                            break;
+                        }
+                    }
+                }
+                System.out.println("Evolving or placing cards completed.");
+
+                // Task 3: Discard highest-cost card if low on energy
+                delayAndExecute(() -> {
+                    if (!cardsInEnemyHand.isEmpty()) {
+                        Card highestCostCard = cardsInEnemyHand.get(0);
+                        int indexToDiscard = 0;
+
+                        for (int j = 1; j < cardsInEnemyHand.size(); j++) {
+                            if (cardsInEnemyHand.get(j).getCost() > highestCostCard.getCost()) {
+                                highestCostCard = cardsInEnemyHand.get(j);
+                                indexToDiscard = j;
+                            }
+                        }
+
+                        if (indexToDiscard != -1) {
+                            enemyEnergy++;
+                            enemyRecharge++;
+                            for (int k = 0; k < 5; k++) {
+                                if (cardOnScreenDatas.get(k).getCard().getName().equals(cardsInEnemyHand.get(indexToDiscard).getName())) {
+                                    cardOnScreenDatas.get(k).remakeCard(37, cardOnScreenDatas.get(k).getX(), cardOnScreenDatas.get(k).getY(), cardOnScreenDatas.get(k).getScale());
+                                    break;
+                                }
+                            }
+                            cardsInEnemyHand.remove(indexToDiscard);
+                            System.out.println("Discarded highest-cost card.");
+                        }
+                    }
+
+                    // Task 4: Attack Player
+                    delayAndExecute(() -> {
+                        processCardInteraction(1, 13, 10);
+                        processCardInteraction(1, 14, 11);
+                        processCardInteraction(1, 15, 12);
+
+                        if (enemyHealth < 1) {
+                            System.out.println("Enemy lost! You win!");
+                        } else if (playerHealth < 1) {
+                            System.out.println("You lost! Enemy wins!");
+                        }
+
+                        for (int i = 0; i < cardsInPlayerField.length; i++) {
+                            if (cardsInPlayerField[i] != null) {
+                                System.out.println("i: " + i + ", " + cardsInPlayerField[i].getName());
+                            }
+                        }
+                        System.out.println("Enemy turn processing complete.");
+                    }, 1000); // 1-second delay before Task 4
+
+                }, 1000); // 1-second delay before Task 3
+
+            }, 1000); // 1-second delay before Task 2
+
+        });
     }
+
+    // Helper method to introduce delay between tasks
+    private void delayAndExecute(Runnable task, int delay) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Gdx.app.postRunnable(task);
+        }).start();
+    }
+
+
+
+
 }
