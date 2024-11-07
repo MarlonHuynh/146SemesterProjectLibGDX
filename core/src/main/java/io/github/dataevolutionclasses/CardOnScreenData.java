@@ -70,34 +70,7 @@ public class CardOnScreenData {
         this.cardListID = cardListID;
         this.cardSprite = new Sprite(card.getTexture());
         this.cardbackSprite = new Sprite(new Texture("cardback2.png"));
-        if (card.getStage() == 1 && card.getType().equals("Algorithm")){
-            this.cardbackSprite = new Sprite(new Texture("cardback_algo1.png"));
-        }
-        else if (card.getStage() == 2 && card.getType().equals("Algorithm")){
-            this.cardbackSprite = new Sprite(new Texture("cardback_algo2.png"));
-        }
-        else if (card.getStage() == 3 && card.getType().equals("Algorithm")){
-            this.cardbackSprite = new Sprite(new Texture("cardback_algo3.png"));
-        }
-        else if (card.getStage() == 1 && card.getType().equals("Data Structure")){
-            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct1.png"));
-        }
-        else if (card.getStage() == 2 && card.getType().equals("Data Structure")){
-            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct2.png"));
-        }
-        else if (card.getStage() == 3 && card.getType().equals("Data Structure")){
-            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct3.png"));
-        }
-        else if (card.getStage() == 1 && card.getType().equals("Data Type")){
-            this.cardbackSprite = new Sprite(new Texture("cardback_datatype1.png"));
-        }
-        else if (card.getStage() == 2 && card.getType().equals("Data Type")){
-            this.cardbackSprite = new Sprite(new Texture("cardback_datatype2.png"));
-        }
-        else if (card.getStage() == 3 && card.getType().equals("Data Type")){
-            this.cardbackSprite = new Sprite(new Texture("cardback_datatype3.png"));
-        }
-        else if (card.getName().equals("Draw")){
+        if (card.getName().equals("Draw")){
             this.cardbackSprite = new Sprite(new Texture("cardback3.png"));
         }
         else if (card.getName().equals("Trash")){
@@ -129,19 +102,18 @@ public class CardOnScreenData {
         // Set text sizing and position (doesn't directly draw)
         selectedSprite.setAlpha(0.2f);
         nameFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        nameFont.getData().setScale(scale * 0.65f);
+        nameFont.getData().setScale(scale * 0.70f);
         nameX =  cardX + (midcardX * 0.16f);
-        nameY = cardY + (midcardY * 1.92f);
-        nameFont.getData().setLineHeight(nameFont.getLineHeight() * 2.5f);
+        nameY = cardY + (midcardY * 1.88f);
         descWidth = 130 * scale;
         descLayout = new GlyphLayout();
-        descLayout.setText(nameFont, card.getDesc(), Color.BLACK, 130 * scale, Align.left, true);
+        descLayout.setText(nameFont, card.getDesc(), Color.BLACK, 140 * scale, Align.left, true);
         descX = cardX + (midcardX * 0.16f);
         descY = cardY + (midcardY * 0.54f);
         numberFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        numberFont.getData().setScale(scale * 0.8f);
+        numberFont.getData().setScale(scale * 0.9f);
         costTextX = cardX + (midcardX * 0.2f);
-        costTextY =  cardY + (midcardY * 1.7f);
+        costTextY =  cardY + (midcardY * 1.62f);
         attackTextX = cardX + (midcardX * 1.64f);
         attackTextY =  cardY + (midcardY * 0.56f);
         shieldTextX = cardX + (midcardX * 1.64f);
