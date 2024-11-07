@@ -247,7 +247,7 @@ public class Main extends ApplicationAdapter {
         adjustCamera();
         drawAll();
         stage.draw(); //Draw the stage (including the slider)
-//        // Draw the UI stage for the menu
+        // Draw the UI stage for the menu
         uiStage.act();
         uiStage.draw(); // Draw the UI menu
         // Log memory every 100 frames
