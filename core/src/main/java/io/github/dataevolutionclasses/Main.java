@@ -61,6 +61,7 @@ public class Main extends ApplicationAdapter {
     private int turnCount = 0;                      // Turn #
     private int selectedCardNumber = -1;            // Index of cardOnScreenDatas currently selected
     private int prevSelectedCardNumber = -1;        // Index of cardOnScreenDatas previously selected
+    private boolean isEnemyTurn = false;
     // Helper vars
     private int randomIndex;
     private boolean clicked;
@@ -318,8 +319,8 @@ public class Main extends ApplicationAdapter {
                 // ---------- Check which card was clicked ----------
                 // Convert screen coordinates to world coordinates
                 worldCoords = viewport.unproject(new Vector3(screenX, screenY, 0));
-                // Ignore input if outside the 600x600 game area
-                if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600)
+                // Ignore input if outside the 600x600 game area or if its the enemy turn
+                if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600 || isEnemyTurn)
                     return false;
 
                 for (int i = 0; i < cardOnScreenDatas.size(); i++) {
@@ -536,6 +537,7 @@ public class Main extends ApplicationAdapter {
     public void processEnemyTurnTimed() {
         // Task 1: Draw a card if able at the start of each turn
         Gdx.app.postRunnable(() -> {
+            isEnemyTurn = true;
             if (cardsInEnemyHand.size() < 5 && !cardsInEnemyDeck.isEmpty()) {
                 int randomIndex = (int) (Math.random() * cardsInEnemyDeck.size());
                 Card cardToAdd = cardsInEnemyDeck.get(randomIndex);
@@ -636,6 +638,7 @@ public class Main extends ApplicationAdapter {
                             }
                         }
                         System.out.println("Enemy turn processing complete.");
+                        isEnemyTurn = false;
                     }, 1000); // 1-second delay before Task 4
 
                 }, 1000); // 1-second delay before Task 3
