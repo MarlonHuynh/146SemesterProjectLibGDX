@@ -46,9 +46,11 @@ public class Main extends ApplicationAdapter {
     private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr;
     private BitmapFont debugFont, noncardUIFont;
     private String drawnStr = "You can draw a card";
+    private String enemyActionStr = "Last enemy action will be displayed here.";
     private final GlyphLayout drawnTextLayout = new GlyphLayout();
     private final GlyphLayout playerHealthLayout = new GlyphLayout();
     private final GlyphLayout enemyHealthLayout = new GlyphLayout();
+    private final GlyphLayout enemyActionLayout = new GlyphLayout();
     private Vector3 worldCoords = new Vector3();
     private final StringBuilder stringBuilder = new StringBuilder();
     // Stats vars
@@ -96,6 +98,7 @@ public class Main extends ApplicationAdapter {
         noncardUIFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         noncardUIFont.getData().setScale(1.2f);
         drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
+        enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
         // Initialize non-card sprites, with scale and position
         bgSpr = new Sprite(new Texture("background.png"));
         playerHealthSpr = new Sprite(new Texture("yourhealth.png"));
@@ -229,17 +232,17 @@ public class Main extends ApplicationAdapter {
         // Draw player energy and recharge
         stringBuilder.setLength(0);
         stringBuilder.append(playerRecharge);
-        noncardUIFont.draw(spriteBatch, stringBuilder, 460, 265);
+        noncardUIFont.draw(spriteBatch, stringBuilder, 450, 265);
         stringBuilder.setLength(0);
         stringBuilder.append(playerEnergy);
-        noncardUIFont.draw(spriteBatch, stringBuilder, 460, 200);
+        noncardUIFont.draw(spriteBatch, stringBuilder, 450, 200);
         // Draw enemy energy and recharge
         stringBuilder.setLength(0);
         stringBuilder.append(enemyRecharge);
-        noncardUIFont.draw(spriteBatch, stringBuilder, 460, 425);
+        noncardUIFont.draw(spriteBatch, stringBuilder, 450, 425);
         stringBuilder.setLength(0);
         stringBuilder.append(enemyEnergy);
-        noncardUIFont.draw(spriteBatch, stringBuilder, 460, 360);
+        noncardUIFont.draw(spriteBatch, stringBuilder, 450, 360);
         // Draw every card on the screen
         for (CardOnScreenData CoSD : cardOnScreenDatas) {
             drawCard(CoSD, spriteBatch);
@@ -248,6 +251,7 @@ public class Main extends ApplicationAdapter {
         if (selectedCardNumber != -1){
             cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(spriteBatch);
         }
+        debugFont.draw(spriteBatch, enemyActionLayout, 10, 440);
         spriteBatch.end();
         //camera.update();
     }
@@ -454,11 +458,8 @@ public class Main extends ApplicationAdapter {
                 // 4) End turn logic (current -> End turn)
                 else if (currData.getCard().getName().equals(("End Turn"))) {
                     // Attack Enemy
-                    // 13 (Player field slot #1) vs 10 (Enemy field slot #1)
                     processCardInteraction(0, 13, 10);
-                    // 14 (Player field slot #2) vs 11 (Enemy field slot #2)
                     processCardInteraction(0, 14, 11);
-                    // 15 (Player field slot #3) vs 12 (Enemy field slot #3)
                     processCardInteraction(0, 15, 12);
                     // Checks if a win or lost condition has been reached
                     if (enemyHealth < 1){ // Enemy lost! You win!
@@ -551,7 +552,8 @@ public class Main extends ApplicationAdapter {
                         break;
                     }
                 }
-                System.out.println("Card drawn and added to enemy hand.");
+                enemyActionStr = "Card drawn and added to enemy hand.";
+                enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
             }
 
             // Task 2: Prioritize evolving cards first if enough energy is available
@@ -591,7 +593,8 @@ public class Main extends ApplicationAdapter {
                         }
                     }
                 }
-                System.out.println("Evolving or placing cards completed.");
+                enemyActionStr = "Evolving or placing cards completed.";
+                enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
 
                 // Task 3: Discard highest-cost card if low on energy
                 delayAndExecute(() -> {
@@ -616,7 +619,8 @@ public class Main extends ApplicationAdapter {
                                 }
                             }
                             cardsInEnemyHand.remove(indexToDiscard);
-                            System.out.println("Discarded highest-cost card.");
+                            enemyActionStr = "Discarded highest-value card.";
+                            enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
                         }
                     }
 
@@ -637,13 +641,15 @@ public class Main extends ApplicationAdapter {
                                 System.out.println("i: " + i + ", " + cardsInPlayerField[i].getName());
                             }
                         }
-                        System.out.println("Enemy turn processing complete.");
+                        enemyActionStr = "Enemy turn complete. It is your turn.";
+                        enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
+
                         isEnemyTurn = false;
-                    }, 1000); // 1-second delay before Task 4
+                    }, 1500); // delay before Task 4
 
-                }, 1000); // 1-second delay before Task 3
+                }, 1500); // delay before Task 3
 
-            }, 1000); // 1-second delay before Task 2
+            }, 1500); // delay before Task 2
 
         });
     }
