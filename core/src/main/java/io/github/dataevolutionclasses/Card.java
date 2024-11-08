@@ -50,6 +50,7 @@ public class Card {
         shield = -1;
         desc = "NullDesc";
     }
+
     // Getters
     public Texture getTexture(){
         return texture;
