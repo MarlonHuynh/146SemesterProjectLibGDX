@@ -136,7 +136,7 @@ public class CardOnScreenData {
         nameFont.getData().setLineHeight(nameFont.getLineHeight() * 2.5f);
         descWidth = 130 * scale;
         descLayout = new GlyphLayout();
-        descLayout.setText(nameFont, card.getDesc(), Color.BLACK, 130 * scale, Align.left, true);
+        descLayout.setText(nameFont, card.getDesc(), Color.BLACK, 140 * scale, Align.left, true);
         descX = cardX + (midcardX * 0.16f);
         descY = cardY + (midcardY * 0.54f);
         numberFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
