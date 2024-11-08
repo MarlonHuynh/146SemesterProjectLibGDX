@@ -133,23 +133,36 @@ public class Main extends ApplicationAdapter {
             "Parraykeet","Parraykeet","Parraykeet","Bin. Canary Tree","Bin. Canary Tree","Bal. Canary Tree",
             "Quetzelqueueotl", "Quetzelqueueotl", "Quetzelqueueotl" );
         for (String s : strTemp) {
-            cardsInPlayerDeck.add(nameToCardHashmap.get(s));
+            Card card = nameToCardHashmap.get(s);
+            if (card != null) {
+                cardsInPlayerDeck.add(card);
+            } else {
+                System.out.println("Card not found in nameToCardHashmap: " + s);
+            }
         }
+
         for (int i = 0; i < 5; i++){ // Take random 5 cards from the player's deck to place in the player's hand and remove from deck
             int randomIndex = (int) (Math.random() * cardsInPlayerDeck.size());
-            cardsInPlayerHand.add(nameToCardHashmap.get(cardsInPlayerDeck.get(randomIndex).getName()));
+            cardsInPlayerHand.add(nameToCardHashmap.get((cardsInPlayerDeck.get(randomIndex).getName())));
             cardsInPlayerDeck.remove(randomIndex);
         }
         // Enemy Deck
         List<String> strTemp_e = Arrays.asList(
-            "Bubble Sort", "Seelection Sort", "Eelnsertion Sort", "Surgeon Sort", "Shell Sort", "Quickfish Sort", "A-Starfish", "Bucket O' Fish", "Raydix Sort", "Parraykeet", "Sphinx List", "Bin. Canary Tree", "Quack Stack", "Hawkmap", "Quetzelqueueotl", "Grifminmax Heap", "Hippograph", "Bal. Canary Tree"
-        );
+            "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort",
+            "Parraykeet","Parraykeet","Parraykeet","Bin. Canary Tree","Bin. Canary Tree","Bal. Canary Tree",
+            "Quetzelqueueotl", "Quetzelqueueotl", "Quetzelqueueotl" );
         for (String s : strTemp_e) {
-            cardsInEnemyDeck.add(nameToCardHashmap.get(s));
+            Card card = nameToCardHashmap.get(s);
+            if (card != null) {
+                cardsInEnemyDeck.add(card);
+            } else {
+                System.out.println("Card not found in nameToCardHashmap: " + s);
+            }
         }
         for (int i = 0; i < 5; i++){
             randomIndex = (int) (Math.random() * cardsInEnemyDeck.size());
-            cardsInEnemyHand.add(nameToCardHashmap.get(cardsInEnemyDeck.get(randomIndex).getName()));
+            cardsInEnemyHand.add((nameToCardHashmap.get(cardsInEnemyDeck.get(randomIndex).getName())).deepCopy());
+            System.out.println(Integer.toString(i) + " " + cardsInEnemyHand.get(i).getName());
             cardsInEnemyDeck.remove(randomIndex);
         }
         // Set up array of Sprite names and sprites to keep track of the sprites on screen for input handling
