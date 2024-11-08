@@ -1,24 +1,9 @@
 package io.github.dataevolutionclasses;
 
-import com.badlogic.gdx.ApplicationAdapter; // Rendering
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.Gdx; // Input
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.BitmapFont; // Text
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List; // Util
 
 public class DeckList<Deck> extends Main
@@ -38,10 +23,10 @@ public class DeckList<Deck> extends Main
 
 
     // Create first deck
-    ArrayList<Card> deck1 = new ArrayList<>();
-        deck1.add();
-        deck1.addCard(new Card("Quick Sort", "O"));
-        deck1.addCard(new Card("MergeSort", "1"));
+    List<String> deck1 = Arrays.asList(
+        "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort",
+        "Parraykeet","Parraykeet","Parraykeet","Bin. Canary Tree","Bin. Canary Tree","Bal. Canary Tree",
+        "Quetzelqueueotl", "Quetzelqueueotl", "Quetzelqueueotl" );
 
     // Add the first deck to the list of decks
         decks.add(deck1);
