@@ -31,7 +31,7 @@ public class Main extends ApplicationAdapter {
     private OrthographicCamera camera;              // Camera
     private FitViewport viewport;                   // Viewport
     // Storage vars
-    private List<Card> cardList;                                                        // Master Card Storage (Do not change)
+    public List<Card> cardList;                                                        // Master Card Storage (Do not change)
     private final HashMap<String, Card> nameToCardHashmap = new HashMap<>();            // Master Card Storage (Do not change)
     private final HashMap<String, Integer> nameToIntHashmap = new HashMap<>();          // Master Card Storage (Do not change)
     private ArrayList<CardOnScreenData> cardOnScreenDatas;                              // Houses all information about all cards spots displayed on the screen

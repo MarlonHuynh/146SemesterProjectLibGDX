@@ -4,6 +4,7 @@
 
 package io.github.dataevolution.lwjgl3;
 
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import io.github.dataevolutionclasses.DeckList;
@@ -16,7 +17,7 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new DeckList(), getDefaultConfiguration());
+        return new Lwjgl3Application( new DeckList(), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
