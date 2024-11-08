@@ -524,7 +524,7 @@ public class Main extends ApplicationAdapter {
                 // TODO: Rework enemy AI
                 /* TODO: Discard priority suggestion:
                    When to discard?
-                    -> Enemy should discard when they can't place anything using their turn and when they have a card in their hand.
+                    -> Enemy should discard when they can't place anything using their turn and always discard when their hand is full and deck still has card (so that they can draw).
                         -> Reasoning: They want to gain energy to place other cards, therefore the only action when you can't play any card is to discard
                     -> Energy should avoid when >= 6 energy reached and entirely when >= 10 energy reached (max energy cost possible)
                         -> Reasoning: 6 energy is usually a threshold for stage 2s and 10 for stage 3s.
@@ -555,7 +555,7 @@ public class Main extends ApplicationAdapter {
                         if (cardsInEnemyHand.size() == 5){
                             coin = 1;
                         }
-                        if (indexToDiscard != -1 && coin == 0) {
+                        if (indexToDiscard != -1 && coin == 1) {
                             enemyEnergy++;
                             enemyRecharge++;
                             for (int k = 0; k < 5; k++) {
