@@ -479,7 +479,6 @@ public class Main extends ApplicationAdapter {
                 enemyActionStr = "Card drawn and added to enemy hand.";
                 enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
             }
-
             // Task 2: Prioritize evolving cards first if enough energy is available
             delayAndExecute(() -> {
                 for (int i = 0; i < cardsInEnemyHand.size(); i++) { // Loops through every card in hand
@@ -522,6 +521,21 @@ public class Main extends ApplicationAdapter {
                 }
                 enemyActionStr = "Evolving or placing cards completed.";
                 enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
+                // TODO: Rework enemy AI
+                /* TODO: Discard priority suggestion:
+                   When to discard?
+                    -> Enemy should discard when they can't place anything using their turn and when they have a card in their hand.
+                        -> Reasoning: They want to gain energy to place other cards, therefore the only action when you can't play any card is to discard
+                    -> Energy should avoid when >= 6 energy reached and entirely when >= 10 energy reached (max energy cost possible)
+                        -> Reasoning: 6 energy is usually a threshold for stage 2s and 10 for stage 3s.
+                   If its applicable to discard, discard in the following priority:
+                   -> Basics if field is full
+                        -> Reasoning: You don't need more basics if your field is full of them, and likely stronger as you probably evolved them
+                   -> Higher stages of different type than of basics on field (Be very reluctant of discarding higher stages of same type as fielded card)
+                        -> Reasoning: Simulates enemy building for a certain type stage 3 for their endgame strategy
+                   -> Duplicates (from higher stages to lower stages)
+                        -> Reasoning: You don't need a lot of duplicates most of the time
+                */
                 // Task 3: Discard highest-cost card if low on energy
                 delayAndExecute(() -> {
                     if (!cardsInEnemyHand.isEmpty()) {
@@ -535,7 +549,13 @@ public class Main extends ApplicationAdapter {
                                 indexToDiscard = j;
                             }
                         }
-                        if (indexToDiscard != -1) {
+                        // 50 50 to discard (not a great solution to discarding all higher tier cards, but it will do for now until the discard rework)
+                        int coin = (int) (Math.random() * 2);
+                        // If hand is full always discard
+                        if (cardsInEnemyHand.size() == 5){
+                            coin = 1;
+                        }
+                        if (indexToDiscard != -1 && coin == 0) {
                             enemyEnergy++;
                             enemyRecharge++;
                             for (int k = 0; k < 5; k++) {
