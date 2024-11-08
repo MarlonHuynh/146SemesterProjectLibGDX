@@ -599,18 +599,21 @@ public class Main extends ApplicationAdapter {
                 enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
 
                 // Task 3: Discard highest-cost card if low on energy
+                // TODO: Rework so that discards only happen mainly when hand is full or when not enough energy to place cards.
+                // TODO: Prioritizing discards duplicate higher stage cards.
+                // TODO: Prioritize higher stage cards of different type (that we don't have stage 1's for is next.)
                 delayAndExecute(() -> {
                     if (!cardsInEnemyHand.isEmpty()) {
                         Card highestCostCard = cardsInEnemyHand.get(0);
                         int indexToDiscard = 0;
-
+                        // Find highest cost card
                         for (int j = 1; j < cardsInEnemyHand.size(); j++) {
                             if (cardsInEnemyHand.get(j).getCost() > highestCostCard.getCost()) {
                                 highestCostCard = cardsInEnemyHand.get(j);
                                 indexToDiscard = j;
                             }
                         }
-
+                        // Discard if applicable
                         if (indexToDiscard != -1) {
                             enemyEnergy++;
                             enemyRecharge++;
