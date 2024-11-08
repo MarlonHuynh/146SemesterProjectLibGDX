@@ -64,4 +64,6 @@ ui/font.fnt
 ui/uiskin.atlas
 ui/uiskin.json
 ui/uiskin.png
+youlose.png
 yourhealth.png
+youwin.png

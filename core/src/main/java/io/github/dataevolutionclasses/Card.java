@@ -50,7 +50,20 @@ public class Card {
         shield = -1;
         desc = "NullDesc";
     }
-
+    // Deep copy method
+    public Card deepCopy() {
+        Texture newTexture = this.texture != null ? new Texture(this.texture.toString()) : null;
+        return new Card(
+            newTexture,
+            this.name,
+            this.type,
+            this.stage,
+            this.cost,
+            this.attack,
+            this.shield,
+            this.desc
+        );
+    }
     // Getters
     public Texture getTexture(){
         return texture;
