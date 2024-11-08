@@ -32,18 +32,18 @@ public class Main extends ApplicationAdapter {
     private FitViewport viewport;                   // Viewport
     // Storage vars
     private List<Card> cardList;                                                        // Master Card Storage (Do not change)
-    private final HashMap<String, Card> nameToCardHashmap = new HashMap<>();      // Master Card Storage (Do not change)
-    private final HashMap<String, Integer> nameToIntHashmap = new HashMap<>(); // Master Card Storage (Do not change)
+    private final HashMap<String, Card> nameToCardHashmap = new HashMap<>();            // Master Card Storage (Do not change)
+    private final HashMap<String, Integer> nameToIntHashmap = new HashMap<>();          // Master Card Storage (Do not change)
     private ArrayList<CardOnScreenData> cardOnScreenDatas;                              // Houses all information about all cards spots displayed on the screen
-    private final ArrayList<Card> cardsInPlayerDeck = new ArrayList<>();                  // Cards in player's deck
-    private final ArrayList<Card> cardsInPlayerHand = new ArrayList<>();                  // Cards in player's hand
-    private final Card[] cardsInPlayerField = new Card[3];                 // Cards in player's field
-    private final ArrayList<Card> cardsInEnemyDeck = new ArrayList<>();
+    private final ArrayList<Card> cardsInPlayerDeck = new ArrayList<>();                // Cards in player's deck
+    private final ArrayList<Card> cardsInPlayerHand = new ArrayList<>();                // Cards in player's hand
+    private final Card[] cardsInPlayerField = new Card[3];                              // Cards in player's field
+    private final ArrayList<Card> cardsInEnemyDeck = new ArrayList<>();                 // See above, with enemy.
     private final ArrayList<Card> cardsInEnemyHand = new ArrayList<>();
     private final Card[] cardsInEnemyField = new Card[3];
     // UI vars
     private SpriteBatch spriteBatch;
-    private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr;
+    private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr, loseSpr, winSpr;
     private BitmapFont debugFont, noncardUIFont;
     private String drawnStr = "You can draw a card";
     private String enemyActionStr = "Last enemy action will be displayed here.";
@@ -57,13 +57,15 @@ public class Main extends ApplicationAdapter {
     private int playerHealth, enemyHealth, playerRecharge, enemyRecharge, playerEnergy, enemyEnergy;
     // Game State vars
     private boolean drawnBool = false;              // Keeps track of whether player has drawn or not yet
-    private boolean discardBool = false;
-    private boolean drawnEnemyBool = false;
+    private boolean discardBool = false;            // Keeps track of whether player has discarded or not yet
+    private boolean drawnEnemyBool = false;         // See above, with enemy
     private final boolean discardEnemyBool = false;
     private int turnCount = 0;                      // Turn #
     private int selectedCardNumber = -1;            // Index of cardOnScreenDatas currently selected
     private int prevSelectedCardNumber = -1;        // Index of cardOnScreenDatas previously selected
-    private boolean isEnemyTurn = false;
+    private boolean isEnemyTurn = false;            // Prevents input from being processed when it's the enemy's turn
+    private boolean winLoseActive = false;          // Determines whether a win or lost state has occurred yet
+    private boolean win = false;                    // Determines whether the game end is a win or loss
     // Helper vars
     private int randomIndex;
     private boolean clicked;
@@ -119,6 +121,10 @@ public class Main extends ApplicationAdapter {
         enemyEnergySpr = new Sprite(new Texture("enemyenergy.png"));
         enemyEnergySpr.setScale(0.5f);
         enemyEnergySpr.setPosition(380, 270);
+        loseSpr = new Sprite(new Texture("youlose.png"));
+        loseSpr.setPosition(50, 200);
+        winSpr = new Sprite(new Texture("youwin.png"));
+        winSpr.setPosition(50, 200);
         // Initialize stat variables
         playerHealth = 60;
         enemyHealth = 40;
@@ -130,39 +136,33 @@ public class Main extends ApplicationAdapter {
         // TODO: Initial deck will be a deck taken from from the library section
         List<String> strTemp = Arrays.asList(
             "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort",
-            "Parraykeet","Parraykeet","Parraykeet","Bin. Canary Tree","Bin. Canary Tree","Bal. Canary Tree",
-            "Quetzelqueueotl", "Quetzelqueueotl", "Quetzelqueueotl" );
+            "Parraykeet","Parraykeet","Quack Stack", "Bin. Canary Tree", "Bin. Canary Tree", "Bal. Canary Tree");
         for (String s : strTemp) {
             Card card = nameToCardHashmap.get(s);
             if (card != null) {
                 cardsInPlayerDeck.add(card);
-            } else {
-                System.out.println("Card not found in nameToCardHashmap: " + s);
             }
         }
-
-        for (int i = 0; i < 5; i++){ // Take random 5 cards from the player's deck to place in the player's hand and remove from deck
+        // Generate hand by taking 5 cards from deck
+        for (int i = 0; i < 5; i++){
             int randomIndex = (int) (Math.random() * cardsInPlayerDeck.size());
-            cardsInPlayerHand.add(nameToCardHashmap.get((cardsInPlayerDeck.get(randomIndex).getName())));
+            cardsInPlayerHand.add(nameToCardHashmap.get((cardsInPlayerDeck.get(randomIndex).getName())).deepCopy());
             cardsInPlayerDeck.remove(randomIndex);
         }
         // Enemy Deck
         List<String> strTemp_e = Arrays.asList(
             "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort",
-            "Parraykeet","Parraykeet","Parraykeet","Bin. Canary Tree","Bin. Canary Tree","Bal. Canary Tree",
-            "Quetzelqueueotl", "Quetzelqueueotl", "Quetzelqueueotl" );
+            "Parraykeet","Parraykeet","Quack Stack", "Bin. Canary Tree", "Bin. Canary Tree", "Bal. Canary Tree");
         for (String s : strTemp_e) {
             Card card = nameToCardHashmap.get(s);
             if (card != null) {
                 cardsInEnemyDeck.add(card);
-            } else {
-                System.out.println("Card not found in nameToCardHashmap: " + s);
             }
         }
+        // Generate hand by taking 5 cards from deck
         for (int i = 0; i < 5; i++){
             randomIndex = (int) (Math.random() * cardsInEnemyDeck.size());
             cardsInEnemyHand.add((nameToCardHashmap.get(cardsInEnemyDeck.get(randomIndex).getName())).deepCopy());
-            System.out.println(Integer.toString(i) + " " + cardsInEnemyHand.get(i).getName());
             cardsInEnemyDeck.remove(randomIndex);
         }
         // Set up array of Sprite names and sprites to keep track of the sprites on screen for input handling
@@ -192,6 +192,39 @@ public class Main extends ApplicationAdapter {
         cardOnScreenDatas.add(new CardOnScreenData(35, viewport.getWorldWidth() * (1f / 16f), viewport.getWorldHeight() * (1.5f / 16f), 0.4f));
         cardOnScreenDatas.add(new CardOnScreenData(36, viewport.getWorldWidth() * (15f / 16f), viewport.getWorldHeight() * (1.5f / 16f), 0.4f));
         cardOnScreenDatas.add(new CardOnScreenData(38, viewport.getWorldWidth() * (15f / 16f), viewport.getWorldHeight() * (4.75f / 16f), 0.4f));
+    }
+    // Called every refresh rate for rendering
+    @Override
+    public void render() {
+        draw();
+        // Log memory every 100 frames
+        /*
+        frameCounter++;
+        if (frameCounter >= 100) {
+            Gdx.app.log("Memory", "Used: " + Gdx.app.getJavaHeap() + " bytes");
+            frameCounter = 0; // Reset counter after logging
+        }*/
+    }
+    // Called when resizing window
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height);
+        camera.position.set(300, 300, 0); // Recenter camera on resize
+        camera.update();
+    }
+    // Called when exiting
+    @Override
+    public void dispose() {
+        spriteBatch.dispose();
+        debugFont.dispose();
+        noncardUIFont.dispose();
+        bgSpr.getTexture().dispose();
+        playerHealthSpr.getTexture().dispose();
+        enemyHealthSpr.getTexture().dispose();
+        playerCloudSpr.getTexture().dispose();
+        enemyCloudSpr.getTexture().dispose();
+        playerEnergySpr.getTexture().dispose();
+        enemyEnergySpr.getTexture().dispose();
     }
     // Called every frame in render to draw the screen
     // Note: DO NOT MAKE NEW BATCHES OR VARIABLES EVERY FRAME THIS WILL TANK YOUR FPS VERY BADLY!!! 300fps -> 6fps
@@ -261,10 +294,17 @@ public class Main extends ApplicationAdapter {
             drawCard(CoSD, spriteBatch);
         }
         // Draw Select Sprite if needed
-        if (selectedCardNumber != -1){
+        if (selectedCardNumber != -1)
             cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(spriteBatch);
-        }
         debugFont.draw(spriteBatch, enemyActionLayout, 10, 440);
+        if (winLoseActive){
+            if (win){
+                winSpr.draw(spriteBatch);
+            }
+            else{
+                loseSpr.draw(spriteBatch);
+            }
+        }
         spriteBatch.end();
         //camera.update();
     }
@@ -290,42 +330,6 @@ public class Main extends ApplicationAdapter {
             stringBuilder.append(CoSD.getCard().getShield());
             CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getShieldTextX(), CoSD.getShieldTextY());
         }
-    }
-
-    // Called every refresh rate for rendering
-    @Override
-    public void render() {
-        draw();
-        // Log memory every 100 frames
-        /*
-        frameCounter++;
-        if (frameCounter >= 100) {
-            Gdx.app.log("Memory", "Used: " + Gdx.app.getJavaHeap() + " bytes");
-            frameCounter = 0; // Reset counter after logging
-        }*/
-    }
-
-    // Called when resizing window
-    @Override
-    public void resize(int width, int height) {
-        viewport.update(width, height);
-        camera.position.set(300, 300, 0); // Recenter camera on resize
-        camera.update();
-    }
-
-    // Called when exiting
-    @Override
-    public void dispose() {
-        spriteBatch.dispose();
-        debugFont.dispose();
-        noncardUIFont.dispose();
-        bgSpr.getTexture().dispose();
-        playerHealthSpr.getTexture().dispose();
-        enemyHealthSpr.getTexture().dispose();
-        playerCloudSpr.getTexture().dispose();
-        enemyCloudSpr.getTexture().dispose();
-        playerEnergySpr.getTexture().dispose();
-        enemyEnergySpr.getTexture().dispose();
     }
 
     public void createInputProcessor(){
@@ -360,8 +364,9 @@ public class Main extends ApplicationAdapter {
                 // If nothing has been clicked and nothing has been clicked, no additional logic needed so returns
                 if (prevSelectedCardNumber == -1 && selectedCardNumber == -1 )
                     return clicked;
-
+                // -----------------------------------------------------------------------------------------------
                 // ---------- Perform actions based on what was clicked and what was previously clicked ----------
+                // -----------------------------------------------------------------------------------------------
                 CardOnScreenData currData = cardOnScreenDatas.get(selectedCardNumber);
                 CardOnScreenData prevData = cardOnScreenDatas.get(prevSelectedCardNumber);
                 // 1) Fielding Card logic (prev -> card in hand, curr -> player field blank)
@@ -374,9 +379,9 @@ public class Main extends ApplicationAdapter {
                 && selectedCardNumber >= 13 && selectedCardNumber <= 15             // Current select is in bottom field (player field)
                 && prevData.getCard().getCost() <= playerEnergy) {                  // Player has enough money to place card
                     // Subtract cost from energy if applicable
-                    if (playerEnergy >= prevData.getCard().getCost()) {
+                    if (playerEnergy >= prevData.getCard().getCost())
                         playerEnergy -= prevData.getCard().getCost();
-                    }
+
                     // Add card to field array and remove from hand array
                     cardsInPlayerField[selectedCardNumber - 13] = prevData.getCard();
                     for (int i = 0; i < cardsInPlayerHand.size(); i++) {
@@ -385,12 +390,12 @@ public class Main extends ApplicationAdapter {
                             break;
                         }
                     }
-                    // Halves attack if puts down an evolution card
+                    // Halves attack if puts down an higher stage card
                     if (prevData.getCard().getStage() != 1) {
                         prevData.getCard().setAttack(prevData.getCard().getAttack() / 2);
                     }
                     // Remake the card's UI to be reflective of the swap
-                    currData.remakeCard(prevData.getCardID(), currData.getX(), currData.getY(), currData.getScale());
+                    currData.remakeCard(prevData.getCard(), currData.getX(), currData.getY(), currData.getScale());
                     prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale()); // ID 37 -> blank card
                 }
 
@@ -420,10 +425,9 @@ public class Main extends ApplicationAdapter {
                     // Add prevolution attack to current card's attack
                     prevData.getCard().setAttack(prevData.getCard().getAttack() + currData.getCard().getAttack());
                     // Remake the card's UI to be reflective of the swap
-                    currData.remakeCard(prevData.getCardID(), currData.getX(), currData.getY(), currData.getScale());
+                    currData.remakeCard(prevData.getCard(), currData.getX(), currData.getY(), currData.getScale());
                     prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale()); // ID 37 -> blank card
                 }
-
                 // 2) Trash Card logic (prev -> card in hand, curr -> trash)
                 else if (prevSelectedCardNumber >= 5 && prevSelectedCardNumber <= 9 // CONDITIONS: Previous select is in player hand
                 && !prevData.getCard().getName().equals("Blank")                // Previous select is not blank card
@@ -436,7 +440,7 @@ public class Main extends ApplicationAdapter {
                             break;
                         }
                     }
-                    // Remake Card UI
+                    // Remake Card UI (set to blank)
                     prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale());
                     // Change energy vars
                     playerEnergy++;
@@ -448,10 +452,10 @@ public class Main extends ApplicationAdapter {
                 else if (currData.getCard().getName().equals("Draw")    // CONDITIONS: Current select is trash
                 && cardsInPlayerHand.size() < 5                     // Less than 5 cards in hand
                 && !cardsInPlayerDeck.isEmpty()                     // Deck size is greater than 0
-                && !drawnBool) {                            // Player hasnt drawn this turn yet
+                && !drawnBool) {                                    // Player hasnt drawn this turn yet
                     // Add card at random index to hand and remove card from cardsInPlayerDeck
                     randomIndex = (int) (Math.random() * cardsInPlayerDeck.size());
-                    cardToAdd = cardsInPlayerDeck.get(randomIndex);
+                    cardToAdd = cardsInPlayerDeck.get(randomIndex).deepCopy();
                     cardsInPlayerHand.add(cardToAdd); // Add card at randomIndex into hand
                     cardsInPlayerDeck.remove(randomIndex);
                     // Update drawnBool (drawn for the turn)
@@ -474,18 +478,6 @@ public class Main extends ApplicationAdapter {
                     processCardInteraction(0, 13, 10);
                     processCardInteraction(0, 14, 11);
                     processCardInteraction(0, 15, 12);
-                    // Checks if a win or lost condition has been reached
-                    if (enemyHealth < 1){ // Enemy lost! You win!
-
-                    }
-                    else if (playerHealth < 1){ // You lost! Enemy win!
-
-                    }
-                    for (int i = 0; i < cardsInPlayerField.length; i++){
-                        if (cardsInPlayerField[i] != null) {
-                            System.out.println("i: " + Integer.toString(i) + ", " + cardsInPlayerField[i].getName());
-                        }
-                    }
                     // Reset drawn bools
                     if (cardsInPlayerDeck.isEmpty()){
                         drawnStr = "No more cards left.";
@@ -495,12 +487,11 @@ public class Main extends ApplicationAdapter {
                         drawnStr = "You can draw a card.";
                     }
                     drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
-                    // Change appropriate bools
-                    playerEnergy = playerRecharge;
-                    discardBool = false;
                     // Process the enemy turn logic
                     processEnemyTurnTimed();
                     // Reset drawn status and energy, increment turn count
+                    playerEnergy = playerRecharge;
+                    discardBool = false;
                     drawnEnemyBool = false;
                     enemyEnergy = enemyRecharge;
                     turnCount++;
@@ -510,11 +501,137 @@ public class Main extends ApplicationAdapter {
         });
     }
 
+    public void processEnemyTurnTimed() {
+        // Task 1: Draw a card if able at the start of each turn
+        Gdx.app.postRunnable(() -> {
+            isEnemyTurn = true;
+            if (cardsInEnemyHand.size() < 5 && !cardsInEnemyDeck.isEmpty()) {
+                // Selects random card to add to enemy hand
+                int randomIndex = (int) (Math.random() * cardsInEnemyDeck.size());
+                Card cardToAdd = cardsInEnemyDeck.get(randomIndex).deepCopy();
+                cardsInEnemyHand.add(cardToAdd);
+                cardsInEnemyDeck.remove(randomIndex);
+                // Update enemy hand UI
+                for (int i = 0; i <= 4; i++) {
+                    if (cardOnScreenDatas.get(i).getCardID() == 37) { // Blank card
+                        cardOnScreenDatas.get(i).remakeCard(cardToAdd, cardOnScreenDatas.get(i).getX(), cardOnScreenDatas.get(i).getY(), cardOnScreenDatas.get(i).getScale());
+                        break;
+                    }
+                }
+                enemyActionStr = "Card drawn and added to enemy hand.";
+                enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
+            }
+
+            // Task 2: Prioritize evolving cards first if enough energy is available
+            delayAndExecute(() -> {
+                for (int i = 0; i < cardsInEnemyHand.size(); i++) { // Loops through every card in hand
+                    Card handCard = cardsInEnemyHand.get(i);
+                    for (int j = 10; j < 13; j++) { // Loops through every field slot
+                        CardOnScreenData fieldSlot = cardOnScreenDatas.get(j);
+                        Card fieldCard = fieldSlot.getCard();
+                        // Evolution is possible, evolve card
+                        if (fieldCard.getStage() - 1 == handCard.getStage()
+                            && fieldCard.getType().equals(handCard.getType())
+                            && enemyEnergy >= handCard.getCost()) {
+                            // Decrease energy and adds attack and shield
+                            enemyEnergy -= handCard.getCost();
+                            handCard.setAttack(fieldCard.getAttack() + handCard.getAttack());
+                            handCard.setShield(fieldCard.getShield() + handCard.getShield());
+                            // Remake field card
+                            fieldSlot.remakeCard(handCard, fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
+                            // Remove handCard from hand
+                            cardsInEnemyHand.remove(handCard);
+                            // Remake hand card into blank
+                            cardOnScreenDatas.get(i).remakeCard(37, cardOnScreenDatas.get(i).getX(), cardOnScreenDatas.get(i).getY(), cardOnScreenDatas.get(i).getScale());
+                            break;
+                        }
+                        // Evolution not possible, settles for placing card on blank
+                        else if (enemyEnergy >= handCard.getCost() && fieldSlot.getCard().getName().equals("Blank")) {
+                            // Decrease energy
+                            enemyEnergy -= handCard.getCost();
+                            // Halves attack if places higher stage card raw
+                            if (handCard.getStage() > 1)
+                                handCard.setAttack(handCard.getAttack() / 2);
+                            // Remake field card
+                            fieldSlot.remakeCard(handCard, fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
+                            // Remove handCard from hand
+                            cardsInEnemyHand.remove(handCard);
+                            // Remake hand card into blank
+                            cardOnScreenDatas.get(i).remakeCard(37, cardOnScreenDatas.get(i).getX(), cardOnScreenDatas.get(i).getY(), cardOnScreenDatas.get(i).getScale());
+                            break;
+                        }
+                    }
+                }
+                enemyActionStr = "Evolving or placing cards completed.";
+                enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
+                // Task 3: Discard highest-cost card if low on energy
+                delayAndExecute(() -> {
+                    if (!cardsInEnemyHand.isEmpty()) {
+                        // Get first available card
+                        Card highestCostCard = cardsInEnemyHand.get(0);
+                        int indexToDiscard = 0;
+                        // Find highest cost card
+                        for (int j = 1; j < cardsInEnemyHand.size(); j++) {
+                            if (cardsInEnemyHand.get(j).getCost() > highestCostCard.getCost()) {
+                                highestCostCard = cardsInEnemyHand.get(j);
+                                indexToDiscard = j;
+                            }
+                        }
+                        if (indexToDiscard != -1) {
+                            enemyEnergy++;
+                            enemyRecharge++;
+                            for (int k = 0; k < 5; k++) {
+                                if (cardOnScreenDatas.get(k).getCard().getName().equals(cardsInEnemyHand.get(indexToDiscard).getName())) {
+                                    cardOnScreenDatas.get(k).remakeCard(37, cardOnScreenDatas.get(k).getX(), cardOnScreenDatas.get(k).getY(), cardOnScreenDatas.get(k).getScale());
+                                    break;
+                                }
+                            }
+                            cardsInEnemyHand.remove(indexToDiscard);
+                            enemyActionStr = "Discarded highest-value card.";
+                            enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
+                        }
+                    }
+                    // Task 4: Attack Player
+                    delayAndExecute(() -> {
+                        processCardInteraction(1, 13, 10);
+                        processCardInteraction(1, 14, 11);
+                        processCardInteraction(1, 15, 12);
+                        enemyActionStr = "Enemy turn complete. It is your turn.";
+                        enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
+                        isEnemyTurn = false;
+                    }, 1000); // delay before Task 4
+
+                }, 1000); // delay before Task 3
+
+            }, 1000); // delay before Task 2
+
+        });
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
+    // --------------------------           HELPER METHODS          --------------------------------
+    // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
+
+    // Helper method to introduce delay between tasks
+    private void delayAndExecute(Runnable task, int delay) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Gdx.app.postRunnable(task);
+        }).start();
+    }
+
+    // Helper method to process card battle interations
+    // attackingPlayerInt == 0 means it's the player's turn to attack, attackingPlayerInt == 1 means it's the enemy's turn to attack
     private void processCardInteraction(int attackingPlayerInt, int playerIndex, int enemyIndex) {
         Card playerCard = cardOnScreenDatas.get(playerIndex).getCard();
         Card enemyCard = cardOnScreenDatas.get(enemyIndex).getCard();
-
-        if (attackingPlayerInt == 0) { // attackingPlayerInt == 0 means it's the player's turn to attack, attackingPlayerInt == 1 means it's the enemy's turn to attack
+        if (attackingPlayerInt == 0) {
             if (!playerCard.getName().equals("Blank") && !enemyCard.getName().equals("Blank")) {
                 playerCard.setShield(playerCard.getShield() - enemyCard.getAttack());
                 enemyCard.setShield(enemyCard.getShield() - playerCard.getAttack());
@@ -546,142 +663,14 @@ public class Main extends ApplicationAdapter {
                 playerHealth -= enemyCard.getAttack();
             }
         }
+        // Determine win or lose if applicable
+        if (enemyHealth < 1) {
+            win = true;
+            winLoseActive = true;
+        } else if (playerHealth < 1) {
+            win = false;
+            winLoseActive = true;
+        }
     }
-
-    public void processEnemyTurnTimed() {
-        // Task 1: Draw a card if able at the start of each turn
-        Gdx.app.postRunnable(() -> {
-            isEnemyTurn = true;
-            if (cardsInEnemyHand.size() < 5 && !cardsInEnemyDeck.isEmpty()) {
-                int randomIndex = (int) (Math.random() * cardsInEnemyDeck.size());
-                Card cardToAdd = cardsInEnemyDeck.get(randomIndex);
-                cardsInEnemyHand.add(cardToAdd);
-                cardsInEnemyDeck.remove(randomIndex);
-
-                // Update enemy hand UI
-                for (int i = 0; i <= 4; i++) {
-                    if (cardOnScreenDatas.get(i).getCardID() == 37) { // Blank card
-                        cardOnScreenDatas.get(i).remakeCard(cardToAdd, cardOnScreenDatas.get(i).getX(), cardOnScreenDatas.get(i).getY(), cardOnScreenDatas.get(i).getScale());
-                        break;
-                    }
-                }
-                enemyActionStr = "Card drawn and added to enemy hand.";
-                enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
-            }
-
-            // Task 2: Prioritize evolving cards first if enough energy is available
-            delayAndExecute(() -> {
-                for (int i = 0; i < cardsInEnemyHand.size(); i++) {
-                    Card handCard = cardsInEnemyHand.get(i);
-                    for (int j = 10; j < 13; j++) { // Enemy field slots
-                        CardOnScreenData fieldSlot = cardOnScreenDatas.get(j);
-                        Card fieldCard = fieldSlot.getCard();
-
-                        // Evolution
-                        if (fieldCard.getStage() - 1 == handCard.getStage()
-                            && fieldCard.getType().equals(handCard.getType())
-                            && enemyEnergy >= handCard.getCost()) {
-                            enemyEnergy -= handCard.getCost();
-                            handCard.setAttack(fieldCard.getAttack() + handCard.getAttack());
-                            // Remake field card
-                            fieldSlot.remakeCard(handCard, fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
-
-                            // Remove handCard from hand
-                            cardsInEnemyHand.remove(handCard);
-
-                            // Remake hand card into blank
-                            cardOnScreenDatas.get(i).remakeCard(37, cardOnScreenDatas.get(i).getX(), cardOnScreenDatas.get(i).getY(), cardOnScreenDatas.get(i).getScale());
-                            break;
-                        } else if (enemyEnergy >= handCard.getCost() && fieldSlot.getCard().getName().equals("Blank")) {
-                            enemyEnergy -= handCard.getCost();
-                            if (handCard.getStage() > 1)
-                                handCard.setAttack(handCard.getAttack() / 2);
-                            // Remake field card
-                            fieldSlot.remakeCard(handCard, fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
-
-                            // Remove handCard from hand
-                            cardsInEnemyHand.remove(handCard);
-
-                            // Remake hand card into blank
-                            cardOnScreenDatas.get(i).remakeCard(37, cardOnScreenDatas.get(i).getX(), cardOnScreenDatas.get(i).getY(), cardOnScreenDatas.get(i).getScale());
-                            break;
-                        }
-                    }
-                }
-                enemyActionStr = "Evolving or placing cards completed.";
-                enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
-
-                // Task 3: Discard highest-cost card if low on energy
-                delayAndExecute(() -> {
-                    if (!cardsInEnemyHand.isEmpty()) {
-                        Card highestCostCard = cardsInEnemyHand.get(0);
-                        int indexToDiscard = 0;
-
-                        for (int j = 1; j < cardsInEnemyHand.size(); j++) {
-                            if (cardsInEnemyHand.get(j).getCost() > highestCostCard.getCost()) {
-                                highestCostCard = cardsInEnemyHand.get(j);
-                                indexToDiscard = j;
-                            }
-                        }
-
-                        if (indexToDiscard != -1) {
-                            enemyEnergy++;
-                            enemyRecharge++;
-                            for (int k = 0; k < 5; k++) {
-                                if (cardOnScreenDatas.get(k).getCard().getName().equals(cardsInEnemyHand.get(indexToDiscard).getName())) {
-                                    cardOnScreenDatas.get(k).remakeCard(37, cardOnScreenDatas.get(k).getX(), cardOnScreenDatas.get(k).getY(), cardOnScreenDatas.get(k).getScale());
-                                    break;
-                                }
-                            }
-                            cardsInEnemyHand.remove(indexToDiscard);
-                            enemyActionStr = "Discarded highest-value card.";
-                            enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
-                        }
-                    }
-
-                    // Task 4: Attack Player
-                    delayAndExecute(() -> {
-                        processCardInteraction(1, 13, 10);
-                        processCardInteraction(1, 14, 11);
-                        processCardInteraction(1, 15, 12);
-
-                        if (enemyHealth < 1) {
-                            System.out.println("Enemy lost! You win!");
-                        } else if (playerHealth < 1) {
-                            System.out.println("You lost! Enemy wins!");
-                        }
-
-                        for (int i = 0; i < cardsInPlayerField.length; i++) {
-                            if (cardsInPlayerField[i] != null) {
-                                System.out.println("i: " + i + ", " + cardsInPlayerField[i].getName());
-                            }
-                        }
-                        enemyActionStr = "Enemy turn complete. It is your turn.";
-                        enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
-
-                        isEnemyTurn = false;
-                    }, 1500); // delay before Task 4
-
-                }, 1500); // delay before Task 3
-
-            }, 1500); // delay before Task 2
-
-        });
-    }
-
-    // Helper method to introduce delay between tasks
-    private void delayAndExecute(Runnable task, int delay) {
-        new Thread(() -> {
-            try {
-                Thread.sleep(delay);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Gdx.app.postRunnable(task);
-        }).start();
-    }
-
-
-
 
 }
