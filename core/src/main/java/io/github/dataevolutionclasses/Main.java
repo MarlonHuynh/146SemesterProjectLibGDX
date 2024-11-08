@@ -95,43 +95,22 @@ public class Main extends ApplicationAdapter {
         // Initialize drawBatch
         spriteBatch = new SpriteBatch();
         // Initialize non-card Fonts and text
-        debugFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        debugFont.getData().setScale(0.4f);
-        noncardUIFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        noncardUIFont.getData().setScale(1.2f);
+        debugFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt")); debugFont.getData().setScale(0.4f);
+        noncardUIFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt")); noncardUIFont.getData().setScale(1.2f);
         drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
         enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
         // Initialize non-card sprites, with scale and position
         bgSpr = new Sprite(new Texture("background.png"));
-        playerHealthSpr = new Sprite(new Texture("yourhealth.png"));
-        playerHealthSpr.setScale(0.65f);
-        playerHealthSpr.setPosition(-35, 180);
-        enemyHealthSpr = new Sprite(new Texture("enemyhealth.png"));
-        enemyHealthSpr.setScale(0.65f);
-        enemyHealthSpr.setPosition(-35, 270);
-        playerCloudSpr = new Sprite(new Texture("playercloud.png"));
-        playerCloudSpr.setScale(0.5f);
-        playerCloudSpr.setPosition(380, 180);
-        enemyCloudSpr = new Sprite(new Texture("enemycloud.png"));
-        enemyCloudSpr.setScale(0.5f);
-        enemyCloudSpr.setPosition(380, 340);
-        playerEnergySpr = new Sprite(new Texture("playerenergy.png"));
-        playerEnergySpr.setScale(0.5f);
-        playerEnergySpr.setPosition(380, 110);
-        enemyEnergySpr = new Sprite(new Texture("enemyenergy.png"));
-        enemyEnergySpr.setScale(0.5f);
-        enemyEnergySpr.setPosition(380, 270);
-        loseSpr = new Sprite(new Texture("youlose.png"));
-        loseSpr.setPosition(50, 200);
-        winSpr = new Sprite(new Texture("youwin.png"));
-        winSpr.setPosition(50, 200);
+        playerHealthSpr = new Sprite(new Texture("yourhealth.png")); playerHealthSpr.setScale(0.65f); playerHealthSpr.setPosition(-35, 180);
+        enemyHealthSpr = new Sprite(new Texture("enemyhealth.png")); enemyHealthSpr.setScale(0.65f); enemyHealthSpr.setPosition(-35, 270);
+        playerCloudSpr = new Sprite(new Texture("playercloud.png")); playerCloudSpr.setScale(0.5f); playerCloudSpr.setPosition(380, 180);
+        enemyCloudSpr = new Sprite(new Texture("enemycloud.png")); enemyCloudSpr.setScale(0.5f); enemyCloudSpr.setPosition(380, 340);
+        playerEnergySpr = new Sprite(new Texture("playerenergy.png")); playerEnergySpr.setScale(0.5f); playerEnergySpr.setPosition(380, 110);
+        enemyEnergySpr = new Sprite(new Texture("enemyenergy.png")); enemyEnergySpr.setScale(0.5f); enemyEnergySpr.setPosition(380, 270);
+        loseSpr = new Sprite(new Texture("youlose.png")); loseSpr.setPosition(50, 200);
+        winSpr = new Sprite(new Texture("youwin.png")); winSpr.setPosition(50, 200);
         // Initialize stat variables
-        playerHealth = 60;
-        enemyHealth = 40;
-        playerEnergy = 0;
-        playerRecharge = 0;
-        enemyEnergy = 0;
-        enemyRecharge = 0;
+        playerHealth = 60; enemyHealth = 40; playerEnergy = 0; playerRecharge = 0; enemyEnergy = 0; enemyRecharge = 0;
         // Create the cards in the player's deck
         // TODO: Initial deck will be a deck taken from from the library section
         List<String> strTemp = Arrays.asList(
@@ -139,9 +118,8 @@ public class Main extends ApplicationAdapter {
             "Parraykeet","Parraykeet","Quack Stack", "Bin. Canary Tree", "Bin. Canary Tree", "Bal. Canary Tree");
         for (String s : strTemp) {
             Card card = nameToCardHashmap.get(s);
-            if (card != null) {
+            if (card != null)
                 cardsInPlayerDeck.add(card);
-            }
         }
         // Generate hand by taking 5 cards from deck
         for (int i = 0; i < 5; i++){
@@ -155,9 +133,8 @@ public class Main extends ApplicationAdapter {
             "Parraykeet","Parraykeet","Quack Stack", "Bin. Canary Tree", "Bin. Canary Tree", "Bal. Canary Tree");
         for (String s : strTemp_e) {
             Card card = nameToCardHashmap.get(s);
-            if (card != null) {
+            if (card != null)
                 cardsInEnemyDeck.add(card);
-            }
         }
         // Generate hand by taking 5 cards from deck
         for (int i = 0; i < 5; i++){
@@ -239,15 +216,12 @@ public class Main extends ApplicationAdapter {
         // Draw BG
         bgSpr.draw(spriteBatch);
         // Draw debug FPS
-        stringBuilder.setLength(0);
-        stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
+        stringBuilder.setLength(0); stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
         debugFont.draw(spriteBatch, stringBuilder, 520, 340);
         // Draw cursor X, Y
-        stringBuilder.setLength(0);
-        stringBuilder.append("X: ").append((int)worldCoords.x);
+        stringBuilder.setLength(0); stringBuilder.append("X: ").append((int)worldCoords.x);
         debugFont.draw(spriteBatch, stringBuilder, 520, 380);
-        stringBuilder.setLength(0);
-        stringBuilder.append("Y: ").append((int)worldCoords.y);
+        stringBuilder.setLength(0); stringBuilder.append("Y: ").append((int)worldCoords.y);
         debugFont.draw(spriteBatch, stringBuilder, 520, 360);
         // Draw non-card UI sprites
         playerHealthSpr.draw(spriteBatch);
@@ -258,41 +232,32 @@ public class Main extends ApplicationAdapter {
         enemyCloudSpr.draw(spriteBatch);
         // Draw non-card text UI
         debugFont.draw(spriteBatch, drawnTextLayout, 5, 200);
-        stringBuilder.setLength(0);
-        stringBuilder.append("Cards Left: ");
+        stringBuilder.setLength(0); stringBuilder.append("Cards Left: ");
         stringBuilder.append(cardsInPlayerDeck.size());
         debugFont.draw(spriteBatch, stringBuilder, 5, 165);
-        stringBuilder.setLength(0);
-        stringBuilder.append("Turn ");
+        stringBuilder.setLength(0); stringBuilder.append("Turn ");
         stringBuilder.append(turnCount);
         debugFont.draw(spriteBatch, stringBuilder, 540, 250);
         // Draw healths
-        stringBuilder.setLength(0);
-        stringBuilder.append(playerHealth);
+        stringBuilder.setLength(0); stringBuilder.append(playerHealth);
         playerHealthLayout.setText(noncardUIFont, stringBuilder, Color.BLACK, 100, Align.center, true);
         noncardUIFont.draw(spriteBatch, playerHealthLayout, 2, 270);
-        stringBuilder.setLength(0);
-        stringBuilder.append(enemyHealth);
+        stringBuilder.setLength(0); stringBuilder.append(enemyHealth);
         enemyHealthLayout.setText(noncardUIFont, stringBuilder, Color.BLACK, 100, Align.center, true);
         noncardUIFont.draw(spriteBatch, enemyHealthLayout, 2, 360);
         // Draw player energy and recharge
-        stringBuilder.setLength(0);
-        stringBuilder.append(playerRecharge);
+        stringBuilder.setLength(0); stringBuilder.append(playerRecharge);
         noncardUIFont.draw(spriteBatch, stringBuilder, 450, 265);
-        stringBuilder.setLength(0);
-        stringBuilder.append(playerEnergy);
+        stringBuilder.setLength(0); stringBuilder.append(playerEnergy);
         noncardUIFont.draw(spriteBatch, stringBuilder, 450, 200);
         // Draw enemy energy and recharge
-        stringBuilder.setLength(0);
-        stringBuilder.append(enemyRecharge);
+        stringBuilder.setLength(0); stringBuilder.append(enemyRecharge);
         noncardUIFont.draw(spriteBatch, stringBuilder, 450, 425);
-        stringBuilder.setLength(0);
-        stringBuilder.append(enemyEnergy);
+        stringBuilder.setLength(0); stringBuilder.append(enemyEnergy);
         noncardUIFont.draw(spriteBatch, stringBuilder, 450, 360);
         // Draw every card on the screen
-        for (CardOnScreenData CoSD : cardOnScreenDatas) {
+        for (CardOnScreenData CoSD : cardOnScreenDatas)
             drawCard(CoSD, spriteBatch);
-        }
         // Draw Select Sprite if needed
         if (selectedCardNumber != -1)
             cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(spriteBatch);
@@ -301,9 +266,8 @@ public class Main extends ApplicationAdapter {
             if (win){
                 winSpr.draw(spriteBatch);
             }
-            else{
+            else
                 loseSpr.draw(spriteBatch);
-            }
         }
         spriteBatch.end();
         //camera.update();
@@ -318,16 +282,13 @@ public class Main extends ApplicationAdapter {
             CoSD.getNameFont().draw(batch, CoSD.getCard().getName(), CoSD.getNameX(), CoSD.getNameY());
             CoSD.getNameFont().draw(batch, CoSD.getDescLayout(), CoSD.getDescX(), CoSD.getDescY());
             // Draw cost
-            stringBuilder.setLength(0);
-            stringBuilder.append(CoSD.getCard().getCost());
+            stringBuilder.setLength(0); stringBuilder.append(CoSD.getCard().getCost());
             CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getCostTextX(), CoSD.getCostTextY());
             // Draw attack
-            stringBuilder.setLength(0);
-            stringBuilder.append(CoSD.getCard().getAttack());
+            stringBuilder.setLength(0); stringBuilder.append(CoSD.getCard().getAttack());
             CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getAttackTextX(), CoSD.getAttackTextY());
             // Draw shield
-            stringBuilder.setLength(0);
-            stringBuilder.append(CoSD.getCard().getShield());
+            stringBuilder.setLength(0); stringBuilder.append(CoSD.getCard().getShield());
             CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getShieldTextX(), CoSD.getShieldTextY());
         }
     }
@@ -343,7 +304,6 @@ public class Main extends ApplicationAdapter {
                 // Ignore input if outside the 600x600 game area or if its the enemy turn
                 if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600 || isEnemyTurn)
                     return false;
-
                 for (int i = 0; i < cardOnScreenDatas.size(); i++) {
                     if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y) || cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                         // Update selection variables accordingly to what was clicked and what was previously clicked
@@ -381,7 +341,6 @@ public class Main extends ApplicationAdapter {
                     // Subtract cost from energy if applicable
                     if (playerEnergy >= prevData.getCard().getCost())
                         playerEnergy -= prevData.getCard().getCost();
-
                     // Add card to field array and remove from hand array
                     cardsInPlayerField[selectedCardNumber - 13] = prevData.getCard();
                     for (int i = 0; i < cardsInPlayerHand.size(); i++) {
@@ -398,7 +357,6 @@ public class Main extends ApplicationAdapter {
                     currData.remakeCard(prevData.getCard(), currData.getX(), currData.getY(), currData.getScale());
                     prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale()); // ID 37 -> blank card
                 }
-
                 // 1.1) Fielding card logic for EVOLUTION
                 else if (!prevData.getCard().getName().equals("Blank")                       // CONDITIONS: Previous select is not blank card
                 && !prevData.getCard().getName().equals("Trash")
@@ -672,5 +630,4 @@ public class Main extends ApplicationAdapter {
             winLoseActive = true;
         }
     }
-
 }
