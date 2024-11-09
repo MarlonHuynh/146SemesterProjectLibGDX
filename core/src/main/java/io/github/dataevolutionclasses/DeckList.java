@@ -1,7 +1,9 @@
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -16,7 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List; // Util
 
-public class DeckList extends ApplicationAdapter
+public class DeckList extends ScreenAdapter
 {
     public List<Card> deck;
     public static List<Card> cardList;
@@ -31,6 +33,10 @@ public class DeckList extends ApplicationAdapter
     private Sprite cardCreatureSprite;              // Sprite for card creature
     private BitmapFont font;                        // Font
     private float cardScale = 1f;                   // Card scale (affects all the other text placements according to the card size)
+    private Game game;
+    public DeckList(Game game) {
+        this.game = game;
+    }
 
     public void draw()
     {
@@ -59,7 +65,6 @@ public class DeckList extends ApplicationAdapter
         font.getData().setScale(cardScale * 0.5f);
     }
 
-    @Override
     public void create()
     {
         // Initialize drawBatch
