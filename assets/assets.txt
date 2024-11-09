@@ -1,4 +1,8 @@
 background.png
+btn_exit.png
+btn_help.png
+btn_lib.png
+btn_play.png
 cardback.png
 cardback2.png
 cardback3.png
