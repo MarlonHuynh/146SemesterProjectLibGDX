@@ -5,7 +5,7 @@
 
 package io.github.dataevolutionclasses;
 
-import com.badlogic.gdx.ApplicationAdapter; // Rendering
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -15,8 +15,6 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.Gdx; // Input
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont; // Text
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
@@ -24,9 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List; // Util
-import com.badlogic.gdx.Gdx;
 
-public class Main extends ApplicationAdapter {
+public class Gameplay extends ScreenAdapter {
     // Window vars
     private OrthographicCamera camera;              // Camera
     private FitViewport viewport;                   // Viewport
@@ -73,9 +70,14 @@ public class Main extends ApplicationAdapter {
     // Debug vars
     private int frameCounter = 0;
 
+    private Game game;
+    public Gameplay(Game game) {
+        this.game = game;
+    }
+
     // Instantiated upon startup
     @Override
-    public void create() {
+    public void show() {
         // Set up camera, viewport, and input processor
         camera = new OrthographicCamera();
         viewport = new FitViewport(600, 600, camera);                       // 600x600 is the virtual world size
@@ -130,7 +132,7 @@ public class Main extends ApplicationAdapter {
         // Enemy Deck
         List<String> strTemp_e = Arrays.asList(
             "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort",
-            "Parraykeet","Parraykeet","Quack Stack", "Bin. Canary Tree", "Bin. Canary Tree", "Bal. Canary Tree");
+            "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort");
         for (String s : strTemp_e) {
             Card card = nameToCardHashmap.get(s);
             if (card != null)
@@ -172,7 +174,8 @@ public class Main extends ApplicationAdapter {
     }
     // Called every refresh rate for rendering
     @Override
-    public void render() {
+    public void render(float delta) {
+        super.render(delta);
         draw();
         // Log memory every 100 frames
         /*
@@ -481,13 +484,14 @@ public class Main extends ApplicationAdapter {
             }
             // Task 2: Prioritize evolving cards first if enough energy is available
             delayAndExecute(() -> {
+                boolean placed = false;
                 for (int i = 0; i < cardsInEnemyHand.size(); i++) { // Loops through every card in hand
                     Card handCard = cardsInEnemyHand.get(i);
                     for (int j = 10; j < 13; j++) { // Loops through every field slot
                         CardOnScreenData fieldSlot = cardOnScreenDatas.get(j);
                         Card fieldCard = fieldSlot.getCard();
                         // Evolution is possible, evolve card
-                        if (fieldCard.getStage() - 1 == handCard.getStage()
+                        if (fieldCard.getStage() == handCard.getStage() + 1
                             && fieldCard.getType().equals(handCard.getType())
                             && enemyEnergy >= handCard.getCost()) {
                             // Decrease energy and adds attack and shield
@@ -500,6 +504,7 @@ public class Main extends ApplicationAdapter {
                             cardsInEnemyHand.remove(handCard);
                             // Remake hand card into blank
                             cardOnScreenDatas.get(i).remakeCard(37, cardOnScreenDatas.get(i).getX(), cardOnScreenDatas.get(i).getY(), cardOnScreenDatas.get(i).getScale());
+                            placed = true;
                             break;
                         }
                         // Evolution not possible, settles for placing card on blank
@@ -515,6 +520,7 @@ public class Main extends ApplicationAdapter {
                             cardsInEnemyHand.remove(handCard);
                             // Remake hand card into blank
                             cardOnScreenDatas.get(i).remakeCard(37, cardOnScreenDatas.get(i).getX(), cardOnScreenDatas.get(i).getY(), cardOnScreenDatas.get(i).getScale());
+                            placed = true;
                             break;
                         }
                     }
@@ -537,7 +543,25 @@ public class Main extends ApplicationAdapter {
                         -> Reasoning: You don't need a lot of duplicates most of the time
                 */
                 // Task 3: Discard highest-cost card if low on energy
+                boolean finalPlaced = placed;
                 delayAndExecute(() -> {
+                    // Determine if field is full
+                    boolean full = true;
+                    for (Card fieldCard : cardsInEnemyField){
+                        if (fieldCard == null){
+                            full = false;
+                            break;
+                        }
+                    }
+                    // If full field discard lowest value card
+                    if (full){
+                       discardLowestValueEnemyHand();
+                    }
+                    // Else if hand full, can't place cards, and recharge less than 10
+                    else if (cardsInEnemyHand.size() > 4 && finalPlaced == false && enemyRecharge < 10){
+                        discardLowestValueEnemyHand();
+                    }
+                    /*
                     if (!cardsInEnemyHand.isEmpty()) {
                         // Get first available card
                         Card highestCostCard = cardsInEnemyHand.get(0);
@@ -568,7 +592,7 @@ public class Main extends ApplicationAdapter {
                             enemyActionStr = "Discarded highest-value card.";
                             enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
                         }
-                    }
+                    }*/
                     // Task 4: Attack Player
                     delayAndExecute(() -> {
                         processCardInteraction(1, 13, 10);
@@ -648,6 +672,32 @@ public class Main extends ApplicationAdapter {
         } else if (playerHealth < 1) {
             win = false;
             winLoseActive = true;
+        }
+    }
+
+    void discardLowestValueEnemyHand(){
+        // Get first available card
+        Card lowestValueCard = cardsInEnemyHand.get(0);
+        int indexToDiscard = -1;
+        // Find highest cost card
+        for (int j = 1; j < cardsInEnemyHand.size(); j++) {
+            if (cardsInEnemyHand.get(j).getCost() < lowestValueCard.getCost()) {
+                lowestValueCard = cardsInEnemyHand.get(j);
+                indexToDiscard = j;
+            }
+        }
+        if (indexToDiscard != -1) {
+            enemyEnergy++;
+            enemyRecharge++;
+            for (int k = 0; k < 5; k++) {
+                if (cardOnScreenDatas.get(k).getCard().getName().equals(cardsInEnemyHand.get(indexToDiscard).getName())) {
+                    cardOnScreenDatas.get(k).remakeCard(37, cardOnScreenDatas.get(k).getX(), cardOnScreenDatas.get(k).getY(), cardOnScreenDatas.get(k).getScale());
+                    break;
+                }
+            }
+            cardsInEnemyHand.remove(indexToDiscard);
+            enemyActionStr = "Discarded highest-value card.";
+            enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
         }
     }
 }
