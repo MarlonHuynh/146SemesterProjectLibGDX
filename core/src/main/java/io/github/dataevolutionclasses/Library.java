@@ -105,6 +105,9 @@ public class Library extends ScreenAdapter {
         defaultFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         defaultFont.getData().setScale(0.4f);
         deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);
+        defaultFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        defaultFont.getData().setScale(0.4f);
+        deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);
     }
     @Override
     public void render(float delta) {
@@ -121,6 +124,7 @@ public class Library extends ScreenAdapter {
 
         bgSpr.draw(spriteBatch);
         playersDeckIcon.draw(spriteBatch);
+
 
         for (CardOnScreenData CoSD : cardOnScreenDatas)
             drawCard(CoSD, spriteBatch);
@@ -178,6 +182,7 @@ public class Library extends ScreenAdapter {
                 }
                 for (int i = 0; i < cardOnScreenDatas.size(); i++) {
                     if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y) || cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                        System.out.println("Selected");
                         // Update selection variables accordingly to what was clicked and what was previously clicked
                         selectedCardNumber = i;
                         clicked = true;
