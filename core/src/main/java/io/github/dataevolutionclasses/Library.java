@@ -31,6 +31,7 @@ public class Library extends ScreenAdapter {
     private StringBuilder stringBuilder = new StringBuilder();
     private boolean clicked = false;
     private Vector3 worldCoords = new Vector3();
+    private int selectedCardNumber = -1;
     //
     private Game game;
     public Library(Game game) {
@@ -45,6 +46,7 @@ public class Library extends ScreenAdapter {
         viewport.apply();
         camera.position.set(300, 300, 0);  // Center at 600x600 middle
         camera.update();
+        createInputProcessor();
         // Pop storage
         CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats2.csv");
         reader.generateCardsFromCSV();
@@ -75,8 +77,6 @@ public class Library extends ScreenAdapter {
         // Sprite
         spriteBatch = new SpriteBatch();
         bgSpr = new Sprite(new Texture("background.png"));
-        // make Inp processor
-        createInputProcessor();
     }
     @Override
     public void render(float delta) {
@@ -94,6 +94,8 @@ public class Library extends ScreenAdapter {
         bgSpr.draw(spriteBatch);
         for (CardOnScreenData CoSD : cardOnScreenDatas)
             drawCard(CoSD, spriteBatch);
+        if (selectedCardNumber != -1)
+            cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(spriteBatch);
 
         spriteBatch.end();
     }
@@ -130,15 +132,23 @@ public class Library extends ScreenAdapter {
 
     }
 
-
     public void createInputProcessor(){
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                int indexClicked = -1;
+                worldCoords = viewport.unproject(new Vector3(screenX, screenY, 0));
                 clicked = false;
                 if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600)
                     return false;
+                for (int i = 0; i < cardOnScreenDatas.size(); i++) {
+                    if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y) || cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                        System.out.println("Selected");
+                        // Update selection variables accordingly to what was clicked and what was previously clicked
+                        selectedCardNumber = i;
+                        clicked = true;
+                        break;
+                    }
+                }
                 return clicked;
             }
         });
