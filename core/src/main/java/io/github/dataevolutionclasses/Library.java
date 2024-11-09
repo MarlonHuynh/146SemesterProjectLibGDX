@@ -36,6 +36,10 @@ public class Library extends ScreenAdapter {
     private String deckStr = "Deck: ";
     private GlyphLayout deckLayout = new GlyphLayout();
     private BitmapFont defaultFont;
+
+    // Sprite for Player Deck button
+    private Sprite playersDeckIcon;
+
     //
     private StringBuilder stringBuilder = new StringBuilder();
     private boolean clicked = false;
@@ -93,6 +97,11 @@ public class Library extends ScreenAdapter {
         // Sprite
         spriteBatch = new SpriteBatch();
         bgSpr = new Sprite(new Texture("background.png"));
+
+        // Sprite for player deck
+        playersDeckIcon = new Sprite(new Texture("youlose.png"));
+        playersDeckIcon.setPosition(500, 500);
+
         defaultFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         defaultFont.getData().setScale(0.4f);
         deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);
@@ -111,6 +120,7 @@ public class Library extends ScreenAdapter {
         spriteBatch.begin();
 
         bgSpr.draw(spriteBatch);
+        playersDeckIcon.draw(spriteBatch);
 
         for (CardOnScreenData CoSD : cardOnScreenDatas)
             drawCard(CoSD, spriteBatch);
@@ -161,6 +171,11 @@ public class Library extends ScreenAdapter {
                 clicked = false;
                 if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600)
                     return false;
+                //To click onto the sprite of the playerDeckList
+                if (worldCoords.x < 600 && worldCoords.x > 700 || worldCoords.y < 600 || worldCoords.y > 700)
+                {
+
+                }
                 for (int i = 0; i < cardOnScreenDatas.size(); i++) {
                     if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y) || cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                         // Update selection variables accordingly to what was clicked and what was previously clicked
