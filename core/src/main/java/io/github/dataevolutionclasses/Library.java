@@ -6,6 +6,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -31,6 +36,11 @@ public class Library extends ScreenAdapter {
     private StringBuilder stringBuilder = new StringBuilder();
     private boolean clicked = false;
     private Vector3 worldCoords = new Vector3();
+    //Player Library
+    private Stage stage;
+    private Skin skin;
+    private TextButton button;
+
     //
     private Game game;
     public Library(Game game) {
@@ -148,5 +158,32 @@ public class Library extends ScreenAdapter {
                 return clicked;
             }
         });
+    }
+
+    public void playerDeck()
+    {
+        stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
+
+        // Load the skin from assets (uiskin.json should be in the assets folder)
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        // Create a button with the label "Click Me"
+        button = new TextButton("Click Me", skin);
+
+        // Position the button in the center of the screen
+        button.setPosition(Gdx.graphics.getWidth() / 2 - button.getWidth() / 2,
+            Gdx.graphics.getHeight() / 2 - button.getHeight() / 2);
+
+        // Add a listener to handle click events
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Button clicked!");
+            }
+        });
+
+        // Add the button to the stage
+        stage.addActor(button);
     }
 }

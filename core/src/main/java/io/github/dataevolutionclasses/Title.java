@@ -116,7 +116,7 @@ public class Title extends ScreenAdapter {
                     game.setScreen(new Gameplay(game));
                 }
                 else if (indexClicked == 1){
-                    game.setScreen(new DeckList(game));
+                    game.setScreen(new ButtonTest(game));
                 }
                 else if (indexClicked == 2){
 
