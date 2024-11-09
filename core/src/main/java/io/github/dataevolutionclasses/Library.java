@@ -1,6 +1,7 @@
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -90,6 +91,12 @@ public class Library extends ScreenAdapter {
     }
     @Override
     public void render(float delta) {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // Draw the stage
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
         super.render(delta);
         draw();
     }
@@ -137,7 +144,8 @@ public class Library extends ScreenAdapter {
     // Called when exiting
     @Override
     public void dispose() {
-
+        stage.dispose();
+        skin.dispose();
     }
 
 
@@ -150,6 +158,27 @@ public class Library extends ScreenAdapter {
                 if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600)
                     return false;
                 return clicked;
+            }
+        });
+        // Create the stage
+        stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
+
+        // Load the skin from assets (uiskin.json should be in the assets folder)
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        // Create a button with the label "Click Me"
+        button = new TextButton("Click Me", skin);
+
+        // Position the button in the center of the screen
+        button.setPosition(Gdx.graphics.getWidth() / 2 - button.getWidth() / 2,
+            Gdx.graphics.getHeight() / 2 - button.getHeight() / 2);
+
+        // Add a listener to handle click events
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Button clicked!");
             }
         });
     }
