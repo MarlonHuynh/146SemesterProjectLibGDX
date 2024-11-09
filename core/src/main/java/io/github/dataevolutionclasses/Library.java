@@ -64,30 +64,24 @@ public class Library extends ScreenAdapter {
             nameToIntHashmap.put(cardList.get(i).getName(), i);
         }
         CardOnScreenData.staticSetCardList(cardList);
-        // Enemy's hand (Index 0-4)
-        cardOnScreenDatas.add(new CardOnScreenData(37,  viewport.getWorldWidth() * (3.3f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(37,  viewport.getWorldWidth() * (5.64f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(37,  viewport.getWorldWidth() * (8 / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(37,  viewport.getWorldWidth() * (10.35f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(37,  viewport.getWorldWidth() * (12.7f / 16f), viewport.getWorldHeight() * (14 / 16f), 0.45f));
-        //  Player's hand (Index 5-9)
-        cardOnScreenDatas.add(new CardOnScreenData(37,  viewport.getWorldWidth() * (3.3f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(37,  viewport.getWorldWidth() * (5.64f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(37,  viewport.getWorldWidth() * (8 / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(37,  viewport.getWorldWidth() * (10.35f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(37,  viewport.getWorldWidth() * (12.7f / 16f), viewport.getWorldHeight() * (1.8f / 16f), 0.45f));
-        // Field top (enemy) (Index 10-12)
-        cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (4.2f / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
-        cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
-        cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (9.8f / 16f), viewport.getWorldHeight() * (10.1f / 16f), 0.5f));
-        // Field bottom (player) (Index 13-15)
-        cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (4.2f / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
-        cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (7 / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
-        cardOnScreenDatas.add(new CardOnScreenData(37, viewport.getWorldWidth() * (9.8f / 16f), viewport.getWorldHeight() * (5.9f / 16f), 0.5f));
-        // Deck draw (Index 16), Trash (Index 17), and End Turn (Index 18)
-        cardOnScreenDatas.add(new CardOnScreenData(35, viewport.getWorldWidth() * (1f / 16f), viewport.getWorldHeight() * (1.5f / 16f), 0.4f));
-        cardOnScreenDatas.add(new CardOnScreenData(36, viewport.getWorldWidth() * (15f / 16f), viewport.getWorldHeight() * (1.5f / 16f), 0.4f));
-        cardOnScreenDatas.add(new CardOnScreenData(38, viewport.getWorldWidth() * (15f / 16f), viewport.getWorldHeight() * (4.75f / 16f),0.4f));
+
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(0), 80, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(1), 190, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(2), 300, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(3), 410, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(4), 530, 400, 0.45f));
+
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(5), 80, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(6), 190, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(7),300, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(8), 410, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(9), 530, 250, 0.45f));
+
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(10), 80, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(11), 190, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(12), 300, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(13), 410, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(14), 530, 100, 0.45f));
         // Sprite
         spriteBatch = new SpriteBatch();
         bgSpr = new Sprite(new Texture("background.png"));

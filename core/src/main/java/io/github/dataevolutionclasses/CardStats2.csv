@@ -9,7 +9,7 @@ A-Starfish,Algorithm,3,6,7,7,Used to find the shortest path
 Bucket O' Fish,Algorithm,3,7,8,8,Has O(n) complexity
 Raydix Sort,Algorithm,3,0,4,4,Has O(n) complexity
 Parraykeet,Data Structure,1,2,1,3,Has a fixed size
-Sphinx List,Data structure,1,2,2,3,Access items sequentially
+Sphinx List,Data Structure,1,2,2,3,Access items sequentially
 Bin. Canary Tree,Data Structure,2,4,3,4,Has a left and right child
 Quack Stack,Data Structure,2,5,4,5,Stack push and pop items
 Hawkmap,Data Structure,2,5,2,7,Stores data in keys and value pairs
