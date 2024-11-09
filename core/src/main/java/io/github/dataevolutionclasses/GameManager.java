@@ -17,7 +17,7 @@ public class GameManager extends Game implements ApplicationListener {
     }
 
     public void render() {
-        super.render(); // important!!!
+        super.render(); 
     }
 
     public void dispose(){
