@@ -1,11 +1,15 @@
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -22,11 +26,16 @@ public class Library extends ScreenAdapter {
     private List<Card> cardList;                                                        // Master Card Storage (Do not change)
     private final HashMap<String, Card> nameToCardHashmap = new HashMap<>();            // Master Card Storage (Do not change)
     private final HashMap<String, Integer> nameToIntHashmap = new HashMap<>();          // Master Card Storage (Do not change)
+    private List<Card> cardOnPage;
+    private ArrayList<Card> cardInDeck;
     private ArrayList<CardOnScreenData> cardOnScreenDatas = new ArrayList<>();
     // Spr
     private SpriteBatch spriteBatch;
     private Sprite bgSpr, playBtn, libBtn, helpBtn, exitBtn, titleSpr;
     private ArrayList<Sprite> btnList = new ArrayList<>();
+    private String deckStr = "Deck: ";
+    private GlyphLayout deckLayout = new GlyphLayout();
+    private BitmapFont defaultFont;
     //
     private StringBuilder stringBuilder = new StringBuilder();
     private boolean clicked = false;
@@ -57,26 +66,36 @@ public class Library extends ScreenAdapter {
         }
         CardOnScreenData.staticSetCardList(cardList);
 
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(0), 80, 400, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(1), 190, 400, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(2), 300, 400, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(3), 410, 400, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(4), 530, 400, 0.45f));
+        cardOnPage = new ArrayList<>();
+        for (int i = 0; i < 15; i ++){
+            cardOnPage.add(cardList.get(i).deepCopy());
+        }
 
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(5), 80, 250, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(6), 190, 250, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(7),300, 250, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(8), 410, 250, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(9), 530, 250, 0.45f));
+        cardInDeck = new ArrayList<Card>();
 
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(10), 80, 100, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(11), 190, 100, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(12), 300, 100, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(13), 410, 100, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardList.get(14), 530, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(0), 80, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(1), 190, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(2), 300, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(3), 410, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(4), 530, 400, 0.45f));
+
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(5), 80, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(6), 190, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(7),300, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(8), 410, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(9), 530, 250, 0.45f));
+
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(10), 80, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(11), 190, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(12), 300, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(13), 410, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(14), 530, 100, 0.45f));
         // Sprite
         spriteBatch = new SpriteBatch();
         bgSpr = new Sprite(new Texture("background.png"));
+        defaultFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        defaultFont.getData().setScale(0.4f);
+        deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);
     }
     @Override
     public void render(float delta) {
@@ -92,10 +111,12 @@ public class Library extends ScreenAdapter {
         spriteBatch.begin();
 
         bgSpr.draw(spriteBatch);
+
         for (CardOnScreenData CoSD : cardOnScreenDatas)
             drawCard(CoSD, spriteBatch);
         if (selectedCardNumber != -1)
             cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(spriteBatch);
+        defaultFont.draw(spriteBatch, deckLayout, 10, 550);
 
         spriteBatch.end();
     }
@@ -142,10 +163,12 @@ public class Library extends ScreenAdapter {
                     return false;
                 for (int i = 0; i < cardOnScreenDatas.size(); i++) {
                     if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y) || cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
-                        System.out.println("Selected");
                         // Update selection variables accordingly to what was clicked and what was previously clicked
                         selectedCardNumber = i;
                         clicked = true;
+                        cardInDeck.add(cardList.get(selectedCardNumber));
+                        deckStr += cardList.get(selectedCardNumber).getName() + ", ";
+                        deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);
                         break;
                     }
                 }
