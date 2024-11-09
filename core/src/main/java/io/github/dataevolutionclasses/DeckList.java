@@ -33,6 +33,7 @@ public class DeckList extends ScreenAdapter
     private Sprite cardCreatureSprite;              // Sprite for card creature
     private BitmapFont font;                        // Font
     private float cardScale = 1f;                   // Card scale (affects all the other text placements according to the card size)
+
     private Game game;
     public DeckList(Game game) {
         this.game = game;
