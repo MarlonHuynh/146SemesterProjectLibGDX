@@ -88,17 +88,14 @@ public class Library extends ScreenAdapter {
         // Sprite
         spriteBatch = new SpriteBatch();
         bgSpr = new Sprite(new Texture("background.png"));
+        // Sprite for button change
+        spriteBatch = new SpriteBatch();
+        bgSpr = new Sprite(new Texture("youlose.png"));
         // make Inp processor
         createInputProcessor();
     }
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        // Draw the stage
-        stage.act(Gdx.graphics.getDeltaTime());
-        stage.draw();
         super.render(delta);
         draw();
     }
@@ -172,53 +169,6 @@ public class Library extends ScreenAdapter {
                 return clicked;
             }
         });
-        // Create the stage
-        stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
-
-        // Load the skin from assets (uiskin.json should be in the assets folder)
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
-
-        // Create a button with the label "Click Me"
-        button = new TextButton("Click Me", skin);
-
-        // Position the button in the center of the screen
-        button.setPosition(Gdx.graphics.getWidth() / 2 - button.getWidth() / 2,
-            Gdx.graphics.getHeight() / 2 - button.getHeight() / 2);
-
-        // Add a listener to handle click events
-        button.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Button clicked!");
-            }
-        });
     }
 
-    public void playerDeck()
-    {
-        stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
-
-        // Load the skin from assets (uiskin.json should be in the assets folder)
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
-
-        // Create a button with the label "Click Me"
-        button = new TextButton("Click Me", skin);
-
-        // Position the button in the center of the screen
-        button.setPosition(Gdx.graphics.getWidth() / 2 - button.getWidth() / 2,
-            Gdx.graphics.getHeight() / 2 - button.getHeight() / 2);
-
-        // Add a listener to handle click events
-        button.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Button clicked!");
-            }
-        });
-
-        // Add the button to the stage
-        stage.addActor(button);
-    }
 }

@@ -54,7 +54,7 @@ public class ButtonTest extends ScreenAdapter {
         // Add the button to the stage
         stage.addActor(button);
     }
-    
+
     public void render() {
         // Clear the screen
         Gdx.gl.glClearColor(0, 0, 0, 1);
