@@ -115,9 +115,9 @@ public class Title extends ScreenAdapter {
                 if (indexClicked == 0){ // Play
                     game.setScreen(new Gameplay(game));
                 }
-                else if (indexClicked == 1){
-                    game.setScreen(new Library(game));
-                }
+//                else if (indexClicked == 1){
+//                    game.setScreen(new Library(game));
+//                }
                 else if (indexClicked == 2){
 
                 }

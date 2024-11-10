@@ -1,3 +1,4 @@
+youlose.png
 ui/font-window.fnt
 ui/dpcomic.ttf
 ui/dpcomic.bmp
@@ -10,6 +11,7 @@ ui/uiskin.png
 ui/uiskin.json
 ui/dpcomic_0.tga
 enemycloud.png
+youwin.png
 playercloud.png
 cardsprites/balancedbinarytree.png
 cardsprites/shellsort.png
@@ -44,16 +46,20 @@ cardsprites/minmaxheap.png
 cardsprites/word.png
 discard.png
 background.png
+btn_lib.png
 yourhealth.png
 libgdx.png
 enemyenergy.png
+btn_play.png
 enemyhealth.png
 cardback4.png
+btn_help.png
 endturn.png
 cardback_datastruct2.png
 cardback_datatype2.png
 cardback3.png
 CardbackBlank.png
+btn_exit.png
 cardback2.png
 cardback.png
 cardback_datatype3.png
