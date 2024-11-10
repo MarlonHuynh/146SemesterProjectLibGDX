@@ -40,7 +40,7 @@ public class Gameplay extends ScreenAdapter {
     private final Card[] cardsInEnemyField = new Card[3];
     // UI vars
     private SpriteBatch spriteBatch;
-    private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr, loseSpr, winSpr;
+    private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr, loseSpr, winSpr, backSpr;
     private BitmapFont debugFont, noncardUIFont;
     private String drawnStr = "You can draw a card";
     private String enemyActionStr = "Last enemy action will be displayed here.";
@@ -111,6 +111,9 @@ public class Gameplay extends ScreenAdapter {
         enemyEnergySpr = new Sprite(new Texture("enemyenergy.png")); enemyEnergySpr.setScale(0.5f); enemyEnergySpr.setPosition(380, 270);
         loseSpr = new Sprite(new Texture("youlose.png")); loseSpr.setPosition(50, 200);
         winSpr = new Sprite(new Texture("youwin.png")); winSpr.setPosition(50, 200);
+        backSpr = new Sprite(new Texture("btn_back.png"));
+        backSpr.setScale(0.35f);
+        backSpr.setPosition(-60, 550);
         // Initialize stat variables
         playerHealth = 60; enemyHealth = 40; playerEnergy = 0; playerRecharge = 0; enemyEnergy = 0; enemyRecharge = 0;
         // Create the cards in the player's deck
@@ -233,6 +236,7 @@ public class Gameplay extends ScreenAdapter {
         enemyEnergySpr.draw(spriteBatch);
         playerCloudSpr.draw(spriteBatch);
         enemyCloudSpr.draw(spriteBatch);
+        backSpr.draw(spriteBatch);
         // Draw non-card text UI
         debugFont.draw(spriteBatch, drawnTextLayout, 5, 200);
         stringBuilder.setLength(0); stringBuilder.append("Cards Left: ");
@@ -323,6 +327,9 @@ public class Gameplay extends ScreenAdapter {
                             break;
                         }
                     }
+                }
+                if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    game.setScreen(new Title(game));
                 }
                 // If nothing has been clicked and nothing has been clicked, no additional logic needed so returns
                 if (prevSelectedCardNumber == -1 && selectedCardNumber == -1 )

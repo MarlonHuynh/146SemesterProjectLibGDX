@@ -43,7 +43,7 @@ public class Title extends ScreenAdapter {
         camera.update();
         // Sprite
         spriteBatch = new SpriteBatch();
-        bgSpr = new Sprite(new Texture("background.png"));
+        bgSpr = new Sprite(new Texture("bg_orange.png"));
         playBtn = new Sprite(new Texture("btn_play.png"));
         playBtn.setPosition(200, 400);
         libBtn = new Sprite(new Texture("btn_lib.png"));
@@ -122,7 +122,7 @@ public class Title extends ScreenAdapter {
 
                 }
                 else if (indexClicked == 3){
-
+                    Gdx.app.exit();
                 }
 
                 return clicked;

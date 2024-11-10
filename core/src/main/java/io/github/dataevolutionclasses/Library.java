@@ -31,7 +31,7 @@ public class Library extends ScreenAdapter {
     private ArrayList<CardOnScreenData> cardOnScreenDatas = new ArrayList<>();
     // Spr
     private SpriteBatch spriteBatch;
-    private Sprite bgSpr, playBtn, libBtn, helpBtn, exitBtn, titleSpr;
+    private Sprite bgSpr, backSpr;
     private ArrayList<Sprite> btnList = new ArrayList<>();
     private String deckStr = "Deck: ";
     private GlyphLayout deckLayout = new GlyphLayout();
@@ -95,7 +95,10 @@ public class Library extends ScreenAdapter {
         bgSpr = new Sprite(new Texture("background.png"));
         defaultFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         defaultFont.getData().setScale(0.4f);
-        deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);
+        deckLayout.setText(defaultFont, deckStr, Color.RED, 600, Align.left, true);
+        backSpr = new Sprite(new Texture("btn_back.png"));
+        backSpr.setScale(0.5f);
+        backSpr.setPosition(-30, 550);
     }
     @Override
     public void render(float delta) {
@@ -111,6 +114,7 @@ public class Library extends ScreenAdapter {
         spriteBatch.begin();
 
         bgSpr.draw(spriteBatch);
+        backSpr.draw(spriteBatch);
 
         for (CardOnScreenData CoSD : cardOnScreenDatas)
             drawCard(CoSD, spriteBatch);
@@ -168,10 +172,14 @@ public class Library extends ScreenAdapter {
                         clicked = true;
                         cardInDeck.add(cardList.get(selectedCardNumber));
                         deckStr += cardList.get(selectedCardNumber).getName() + ", ";
-                        deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);
+                        deckLayout.setText(defaultFont, deckStr, Color.RED, 600, Align.left, true);
                         break;
                     }
                 }
+                if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    game.setScreen(new Title(game));
+                }
+
                 return clicked;
             }
         });
