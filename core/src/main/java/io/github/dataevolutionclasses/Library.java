@@ -84,84 +84,84 @@ public class Library extends ApplicationAdapter {
         // Initialize non-card sprites, with scale and position
         bgSpr = new Sprite(new Texture("background.png"));
         // Initialize UI Stage and Skin
-//        uiStage = new Stage(new ScreenViewport());
-//        Gdx.input.setInputProcessor(uiStage);
-//        skin = new Skin(Gdx.files.internal("uiskin.json")); // Ensure you have a skin file
-//
-//        // Create the menu and buttons
-//        Table menuTable = new Table();
-//        menuTable.setFillParent(true);
-//        menuTable.top().right(); // Align to the top-right corner
-//
-//        TextButton sortByNameButton = new TextButton("Sort by Name", skin);
-//        TextButton sortByStageButton = new TextButton("Sort by Stage", skin);
-//        TextButton sortByCostButton = new TextButton("Sort by Cost", skin);
-//        TextButton sortByHealthButton = new TextButton("Sort by Shield", skin);
-//        TextButton sortByAttackButton = new TextButton("Sort by Attack", skin);
-//        TextButton unsorted = new TextButton("Remove sorting", skin);
-//
-//        // Add button listeners (you can implement sorting later)
-//        sortByNameButton.addListener(new ChangeListener() {
-//            @Override
-//            public void changed(ChangeEvent event, Actor actor) {
-//                // Sort by Name logic
-//                viewCardList = CardSorter.sortByName(cardList);
-//            }
-//        });
-//        sortByStageButton.addListener(new ChangeListener() {
-//            @Override
-//            public void changed(ChangeEvent event, Actor actor) {
-//                // Sort by Stage logic
-//                viewCardList = CardSorter.sortByStage(cardList);
-//                System.out.println("Sorting by Stage");
-//            }
-//        });
-//        sortByCostButton.addListener(new ChangeListener() {
-//            @Override
-//            public void changed(ChangeEvent event, Actor actor) {
-//                // Sort by Cost logic
-//                viewCardList = CardSorter.sortByCost(cardList);
-//                System.out.println("Sorting by Cost");
-//            }
-//        });
-//        sortByHealthButton.addListener(new ChangeListener() {
-//            @Override
-//            public void changed(ChangeEvent event, Actor actor) {
-//                // Sort by Health logic
-//                viewCardList = CardSorter.sortByShield(cardList);
-//                System.out.println("Sorting by Shield");
-//            }
-//        });
-//        sortByAttackButton.addListener(new ChangeListener() {
-//            @Override
-//            public void changed(ChangeEvent event, Actor actor) {
-//                // Sort by Attack logic
-//                viewCardList = CardSorter.sortByAttack(cardList);
-//                System.out.println("Sorting by Attack");
-//            }
-//        });
-//
-//        unsorted.addListener(new ChangeListener() {
-//            @Override
-//            public void changed(ChangeEvent changeEvent, Actor actor) {
-//                viewCardList = cardList;
-//            }
-//        });
-//
-//        // Add buttons to the table in a vertical layout
-//        menuTable.add(sortByNameButton).fillX().pad(10); // Pad for spacing
-//        menuTable.row(); // Move to the next row
-//        menuTable.add(sortByStageButton).fillX().pad(10);
-//        menuTable.row();
-//        menuTable.add(sortByCostButton).fillX().pad(10);
-//        menuTable.row();
-//        menuTable.add(sortByHealthButton).fillX().pad(10);
-//        menuTable.row();
-//        menuTable.add(sortByAttackButton).fillX().pad(10);
-//        menuTable.row();
-//        menuTable.add(unsorted).fillX().pad(10);
-//        // Add the table to the UI stage
-//        uiStage.addActor(menuTable);
+        uiStage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(uiStage);
+        skin = new Skin(Gdx.files.internal("uiskin.json")); // Ensure you have a skin file
+
+        // Create the menu and buttons
+        Table menuTable = new Table();
+        menuTable.setFillParent(true);
+        menuTable.top().right(); // Align to the top-right corner
+
+        TextButton sortByNameButton = new TextButton("Sort by Name", skin);
+        TextButton sortByStageButton = new TextButton("Sort by Stage", skin);
+        TextButton sortByCostButton = new TextButton("Sort by Cost", skin);
+        TextButton sortByHealthButton = new TextButton("Sort by Shield", skin);
+        TextButton sortByAttackButton = new TextButton("Sort by Attack", skin);
+        TextButton unsorted = new TextButton("Remove sorting", skin);
+
+        // Add button listeners (you can implement sorting later)
+        sortByNameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // Sort by Name logic
+                viewCardList = CardSorter.sortByName(cardList);
+            }
+        });
+        sortByStageButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // Sort by Stage logic
+                viewCardList = CardSorter.sortByStage(cardList);
+                System.out.println("Sorting by Stage");
+            }
+        });
+        sortByCostButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // Sort by Cost logic
+                viewCardList = CardSorter.sortByCost(cardList);
+                System.out.println("Sorting by Cost");
+            }
+        });
+        sortByHealthButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // Sort by Health logic
+                viewCardList = CardSorter.sortByShield(cardList);
+                System.out.println("Sorting by Shield");
+            }
+        });
+        sortByAttackButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // Sort by Attack logic
+                viewCardList = CardSorter.sortByAttack(cardList);
+                System.out.println("Sorting by Attack");
+            }
+        });
+
+        unsorted.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                viewCardList = cardList;
+            }
+        });
+
+        // Add buttons to the table in a vertical layout
+        menuTable.add(sortByNameButton).fillX().pad(10); // Pad for spacing
+        menuTable.row(); // Move to the next row
+        menuTable.add(sortByStageButton).fillX().pad(10);
+        menuTable.row();
+        menuTable.add(sortByCostButton).fillX().pad(10);
+        menuTable.row();
+        menuTable.add(sortByHealthButton).fillX().pad(10);
+        menuTable.row();
+        menuTable.add(sortByAttackButton).fillX().pad(10);
+        menuTable.row();
+        menuTable.add(unsorted).fillX().pad(10);
+        // Add the table to the UI stage
+        uiStage.addActor(menuTable);
     }
     public void drawAll(){
         // Clears screen and prepares batch for drawing
@@ -248,8 +248,8 @@ public class Library extends ApplicationAdapter {
         drawAll();
         stage.draw(); //Draw the stage (including the slider)
         // Draw the UI stage for the menu
-//        uiStage.act();
-//        uiStage.draw(); // Draw the UI menu
+        uiStage.act();
+        uiStage.draw(); // Draw the UI menu
         // Log memory every 100 frames
         frameCounter++;
         if (frameCounter >= 100) {
