@@ -6,6 +6,7 @@
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -69,6 +70,8 @@ public class Gameplay extends ScreenAdapter {
     private Card cardToAdd;
     // Debug vars
     private int frameCounter = 0;
+    // button sound effect
+    private Sound buttonSound = buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
 
     private Game game;
     public Gameplay(Game game) {
@@ -329,6 +332,7 @@ public class Gameplay extends ScreenAdapter {
                     }
                 }
                 if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    buttonSound.play();
                     game.setScreen(new Title(game));
                 }
                 // If nothing has been clicked and nothing has been clicked, no additional logic needed so returns
