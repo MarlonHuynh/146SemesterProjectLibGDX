@@ -9,7 +9,7 @@ A-Starfish,Algorithm,3,6,7,7,Used to find the shortest path
 Bucket O' Fish,Algorithm,3,7,8,8,Has O(n) complexity
 Raydix Sort,Algorithm,3,0,4,4,Has O(n) complexity
 Parraykeet,Data Structure,1,2,1,3,Has a fixed size
-Sphinx List,Data Structure,1,2,2,3,Access items sequentially
+Sphinx List,Data structure,1,2,2,3,Access items sequentially
 Bin. Canary Tree,Data Structure,2,4,3,4,Has a left and right child
 Quack Stack,Data Structure,2,5,4,5,Stack push and pop items
 Hawkmap,Data Structure,2,5,2,7,Stores data in keys and value pairs
@@ -19,22 +19,3 @@ Hippograph,Data structure,3,8,4,9,Holds data in vertices and edges
 Bal. Canary Tree,Data Structure,3,7,4,7,Has a max height of log n
 Bitbug,Data Type,1,2,2,2,A bit can be either 1 or 0
 Stringer Bee,Data Type,1,2,2,3,String store text data
-Int Ant,Data Type,1,2,3,1,Integers store number data
-Beetlean,Data Type,1,2,3,2,Can either be true or false
-Pointerpede,Data Type,2,3,4,3,Stores memory address of a variable
-Bytebug,Data Type,2,4,5,4,A byte is 8 bits long
-Tupletick,Data Type,2,5,6,5,A pair of data types
-Wordbug,Data Type,3,10,8,8,A word is 16 bits long
-Referant,Data Type,3,9,10,6,An alias for an existing variable
-Allocate memory,Spell,-1,2,-1,-1,Adds 2 shield to creature
-Allocate more memory,Spell,-1,3,-1,-1,Adds 4 shield to creature
-Overclock,Spell,-1,2,-1,-1,Adds 2 attack to creature
-Superoverclock,Spell,-1,3,-1,-1,Adds 4 attack to creature
-Recover data,Spell,-1,2,-1,-1,Adds 5 health to player
-Backup data,Spell,-1,3,-1,-1,Adds 10 health to player
-Send Bug,Spell,-1,1,-1,-1,Subtract 2 health from target
-Send Malware,Spell,-1,2,-1,-1,Subtract 3 health from target
-Draw,Special,-1,-1,-1,-1,NullText IF SEEN ERROR OCCURED
-Trash,Special,-1,-1,-1,-1,NullText IF SEEN ERROR OCCURED
-Blank,Special,-1,-1,-1,-1,NullText IF SEEN ERROR OCCURED
-End Turn,Special,-1,-1,-1,-1,NullText IF SEEN ERROR OCCURED

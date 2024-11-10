@@ -25,8 +25,9 @@ import java.util.List;
 
 public class CardOnScreenData {
 
-    static List<Card> cardList;
-    static HashMap<Card, Integer> cardToIntMap;
+    private static List<Card> cardList;
+    private static HashMap<Card, Integer> cardToIntMap;
+    private static HashMap<String, Integer> nameToIntMap;
 
 
     private Card card;
@@ -51,26 +52,48 @@ public class CardOnScreenData {
     private float attackTextY;
     private float shieldTextX;
     private float shieldTextY;
+    private float cardX, cardY, midcardX, midcardY;
 
     // Constructors
     public CardOnScreenData(int cardListID, float x, float y, float scale){
         remakeCard(cardListID, x, y, scale); // Called to avoid duplicating code
     }
     public CardOnScreenData(Card card, float x, float y, float scale){
-        int id = cardToIntMap.get(card);
-        remakeCard(id, x, y, scale); // Called to avoid duplicating code
+        remakeCard(card, x, y, scale); // Called to avoid duplicating code
     }
-    // Methods
-    public void remakeCard(Card card, float x, float y, float scale) {
-        int id = cardToIntMap.get(card);
-        remakeCard(id, x, y, scale);
-    }
-    public void remakeCard(int cardListID, float x, float y, float scale){
-        this.card = CardOnScreenData.getCardList().get((cardListID));
-        this.cardListID = cardListID;
+    public void remakeCard(Card card, float x, float y, float scale){
+        this.card = card;
+        this.cardListID = nameToIntMap.get(card.getName());
         this.cardSprite = new Sprite(card.getTexture());
         this.cardbackSprite = new Sprite(new Texture("cardback2.png"));
-        if (card.getName().equals("Draw")){
+        if (card.getStage() == 1 && card.getType().equals("Algorithm")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_algo1.png"));
+        }
+        else if (card.getStage() == 2 && card.getType().equals("Algorithm")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_algo2.png"));
+        }
+        else if (card.getStage() == 3 && card.getType().equals("Algorithm")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_algo3.png"));
+        }
+        else if (card.getStage() == 1 && card.getType().equals("Data Structure")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct1.png"));
+        }
+        else if (card.getStage() == 2 && card.getType().equals("Data Structure")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct2.png"));
+        }
+        else if (card.getStage() == 3 && card.getType().equals("Data Structure")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct3.png"));
+        }
+        else if (card.getStage() == 1 && card.getType().equals("Data Type")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datatype1.png"));
+        }
+        else if (card.getStage() == 2 && card.getType().equals("Data Type")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datatype2.png"));
+        }
+        else if (card.getStage() == 3 && card.getType().equals("Data Type")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datatype3.png"));
+        }
+        else if (card.getName().equals("Draw")){
             this.cardbackSprite = new Sprite(new Texture("cardback3.png"));
         }
         else if (card.getName().equals("Trash")){
@@ -91,10 +114,10 @@ public class CardOnScreenData {
         cardbackSprite.setSize(cardbackSprite.getTexture().getWidth() * scale, cardbackSprite.getTexture().getHeight() * scale);
         cardSprite.setSize(cardSprite.getTexture().getWidth() * scale * 1.2f, cardSprite.getTexture().getHeight() * scale * 1.2f);
         // Get position variables
-        float cardX = (x - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2)); // Bottom left corner x
-        float cardY = (y - ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2)); // Bottom left corner y
-        float midcardX = ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2);  // Distance from the card's left edge to middle
-        float midcardY = ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Distance from the card's bottom edge to middle
+        cardX = (x - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2)); // Bottom left corner x
+        cardY = (y - ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2)); // Bottom left corner y
+        midcardX = ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2);  // Distance from the card's left edge to middle
+        midcardY = ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Distance from the card's bottom edge to middle
         // Set sprite position (doesn't directly draw)
         cardbackSprite.setPosition(cardX , cardY);
         selectedSprite.setPosition(cardX - (midcardX * 0.1f), cardY - (midcardY * 0.06f));
@@ -102,18 +125,101 @@ public class CardOnScreenData {
         // Set text sizing and position (doesn't directly draw)
         selectedSprite.setAlpha(0.2f);
         nameFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        nameFont.getData().setScale(scale * 0.70f);
+        nameFont.getData().setScale(scale * 0.65f);
         nameX =  cardX + (midcardX * 0.16f);
-        nameY = cardY + (midcardY * 1.88f);
+        nameY = cardY + (midcardY * 1.92f);
+        nameFont.getData().setLineHeight(nameFont.getLineHeight() * 2.5f);
         descWidth = 130 * scale;
         descLayout = new GlyphLayout();
         descLayout.setText(nameFont, card.getDesc(), Color.BLACK, 140 * scale, Align.left, true);
         descX = cardX + (midcardX * 0.16f);
         descY = cardY + (midcardY * 0.54f);
         numberFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        numberFont.getData().setScale(scale * 0.9f);
+        numberFont.getData().setScale(scale * 0.8f);
         costTextX = cardX + (midcardX * 0.2f);
-        costTextY =  cardY + (midcardY * 1.62f);
+        costTextY =  cardY + (midcardY * 1.7f);
+        attackTextX = cardX + (midcardX * 1.64f);
+        attackTextY =  cardY + (midcardY * 0.56f);
+        shieldTextX = cardX + (midcardX * 1.64f);
+        shieldTextY =  cardY + (midcardY * 0.22f);
+    }
+    public void remakeCard(int cardListID, float x, float y, float scale){
+        this.card = CardOnScreenData.getCardList().get((cardListID));
+        this.cardListID = cardListID;
+        this.cardSprite = new Sprite(card.getTexture());
+        this.cardbackSprite = new Sprite(new Texture("cardback2.png"));
+        if (card.getStage() == 1 && card.getType().equals("Algorithm")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_algo1.png"));
+        }
+        else if (card.getStage() == 2 && card.getType().equals("Algorithm")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_algo2.png"));
+        }
+        else if (card.getStage() == 3 && card.getType().equals("Algorithm")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_algo3.png"));
+        }
+        else if (card.getStage() == 1 && card.getType().equals("Data Structure")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct1.png"));
+        }
+        else if (card.getStage() == 2 && card.getType().equals("Data Structure")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct2.png"));
+        }
+        else if (card.getStage() == 3 && card.getType().equals("Data Structure")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct3.png"));
+        }
+        else if (card.getStage() == 1 && card.getType().equals("Data Type")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datatype1.png"));
+        }
+        else if (card.getStage() == 2 && card.getType().equals("Data Type")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datatype2.png"));
+        }
+        else if (card.getStage() == 3 && card.getType().equals("Data Type")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datatype3.png"));
+        }
+        else if (card.getName().equals("Draw")){
+            this.cardbackSprite = new Sprite(new Texture("cardback3.png"));
+        }
+        else if (card.getName().equals("Trash")){
+            this.cardbackSprite = new Sprite(new Texture("discard.png"));
+        }
+        else if (card.getName().equals("Blank")){
+            this.cardbackSprite = new Sprite(new Texture("CardbackBlank.png"));
+        }
+        else if (card.getName().equals("End Turn")){
+            this.cardbackSprite = new Sprite(new Texture("endturn.png"));
+        }
+        this.selectedSprite = new Sprite(new Texture("CardbackHighlight.png"));
+        this.x = x;
+        this.y = y;
+        this.scale = scale;
+        // Set card sizing (doesn't directly draw)
+        selectedSprite.setSize(selectedSprite.getTexture().getWidth() * scale, selectedSprite.getTexture().getHeight() * scale);
+        cardbackSprite.setSize(cardbackSprite.getTexture().getWidth() * scale, cardbackSprite.getTexture().getHeight() * scale);
+        cardSprite.setSize(cardSprite.getTexture().getWidth() * scale * 1.2f, cardSprite.getTexture().getHeight() * scale * 1.2f);
+        // Get position variables
+        cardX = (x - ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2)); // Bottom left corner x
+        cardY = (y - ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2)); // Bottom left corner y
+        midcardX = ((cardbackSprite.getWidth() * cardbackSprite.getScaleX()) / 2);  // Distance from the card's left edge to middle
+        midcardY = ((cardbackSprite.getHeight() * cardbackSprite.getScaleY()) / 2); // Distance from the card's bottom edge to middle
+        // Set sprite position (doesn't directly draw)
+        cardbackSprite.setPosition(cardX , cardY);
+        selectedSprite.setPosition(cardX - (midcardX * 0.1f), cardY - (midcardY * 0.06f));
+        cardSprite.setPosition(cardX + (midcardX / 3.5f), cardY + (midcardY / 1.6f));
+        // Set text sizing and position (doesn't directly draw)
+        selectedSprite.setAlpha(0.2f);
+        nameFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        nameFont.getData().setScale(scale * 0.65f);
+        nameX =  cardX + (midcardX * 0.16f);
+        nameY = cardY + (midcardY * 1.92f);
+        nameFont.getData().setLineHeight(nameFont.getLineHeight() * 2.5f);
+        descWidth = 130 * scale;
+        descLayout = new GlyphLayout();
+        descLayout.setText(nameFont, card.getDesc(), Color.BLACK, 140 * scale, Align.left, true);
+        descX = cardX + (midcardX * 0.16f);
+        descY = cardY + (midcardY * 0.54f);
+        numberFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        numberFont.getData().setScale(scale * 0.8f);
+        costTextX = cardX + (midcardX * 0.2f);
+        costTextY =  cardY + (midcardY * 1.7f);
         attackTextX = cardX + (midcardX * 1.64f);
         attackTextY =  cardY + (midcardY * 0.56f);
         shieldTextX = cardX + (midcardX * 1.64f);
@@ -135,8 +241,10 @@ public class CardOnScreenData {
     public static void generateCardToIntMap(){
         if (CardOnScreenData.cardToIntMap == null){
             cardToIntMap = new HashMap<>();
+            nameToIntMap = new HashMap<>();
             for (int i = 0; i < CardOnScreenData.getCardList().size(); i++){
                 cardToIntMap.put(CardOnScreenData.getCardList().get(i), i);
+                nameToIntMap.put(CardOnScreenData.getCardList().get(i).getName(), i);
             }
         }
     }
