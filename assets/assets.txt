@@ -1,4 +1,7 @@
 background.png
+bg_lightgreen.png
+bg_orange.png
+btn_back.png
 btn_exit.png
 btn_help.png
 btn_lib.png
