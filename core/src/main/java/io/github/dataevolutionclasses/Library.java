@@ -25,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List; // Util
 import java.util.stream.Collectors;
 
@@ -37,7 +38,6 @@ public class Library extends ApplicationAdapter {
     private List<Card> viewCardList;                                                        // Master Card Storage (Do not change)
     private ArrayList<CardOnScreenData> cardOnScreenDatas;                              // Houses all information about all cards spots displayed on the screen
     private SpriteBatch spriteBatch;
-    private Sprite bgSpr;
     private BitmapFont debugFont, noncardUIFont;
     private String drawnStr = "You can draw a card";
     private final GlyphLayout drawnTextLayout = new GlyphLayout();
@@ -45,10 +45,23 @@ public class Library extends ApplicationAdapter {
     private final StringBuilder stringBuilder = new StringBuilder();
     private int frameCounter = 0;
     private Stage stage;
-    private Scroll scroll;
+//    private Scroll scroll;
     private Stage uiStage; // New stage for UI elements
     private Skin skin; // Skin for styling UI elements
     private Integer lastEvent;
+    private final HashMap<String, Card> nameToCardHashmap = new HashMap<>();            // Master Card Storage (Do not change)
+    private final HashMap<String, Integer> nameToIntHashmap = new HashMap<>();          // Master Card Storage (Do not change)
+    private List<Card> cardOnPage;
+    private ArrayList<Card> cardInDeck;
+//    private ArrayList<CardOnScreenData> cardOnScreenDatas = new ArrayList<>();
+    // Spr
+    private Sprite bgSpr, playBtn, libBtn, helpBtn, exitBtn, titleSpr;
+    private ArrayList<Sprite> btnList = new ArrayList<>();
+    private String deckStr = "Deck: ";
+    private GlyphLayout deckLayout = new GlyphLayout();
+    private BitmapFont defaultFont;
+    private boolean clicked = false;
+    private int selectedCardNumber = -1;
 
 
     // Instantiated upon startup
@@ -58,16 +71,29 @@ public class Library extends ApplicationAdapter {
         camera = new OrthographicCamera();
         viewport = new FitViewport(600, 600, camera);                       // 600x600 is the virtual world size
         stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
-        scroll = new Scroll();
-        scroll.createSlider(stage); //Add the slider into the stage
+//        Gdx.input.setInputProcessor(stage);
+//        scroll = new Scroll();
+//        scroll.createSlider(stage); //Add the slider into the stage
         viewport.apply();
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0); // Center the camera
         camera.update();
-        // Read and generate cards and place cards into cardList
+        createInputProcessor();
+        // Pop storage
         CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats2.csv");
-        reader.generateFirst35CardsFromFile();
+        reader.generateCardsFromCSV();
         cardList = reader.getCardList();
+        for (int i = 0; i < cardList.size(); i++){
+            nameToCardHashmap.put(cardList.get(i).getName(), cardList.get(i)); // Populate the nameToCard and nameToInt Hashmap (For easier searches of name to Card type);
+            nameToIntHashmap.put(cardList.get(i).getName(), i);
+        }
+        CardOnScreenData.staticSetCardList(cardList);
+
+
+//        cardOnPage = new ArrayList<>();
+//        for (int i = 0; i < 15; i ++){
+//            cardOnPage.add(cardList.get(i).deepCopy());
+//        }
+
         viewCardList = new ArrayList<>(cardList);
 
         CardOnScreenData.staticSetCardList(cardList);   // Sets the static cardList in CardOnScreenData so it knows which cardList to reference
@@ -163,6 +189,10 @@ public class Library extends ApplicationAdapter {
         // Add the table to the UI stage
         uiStage.addActor(menuTable);
     }
+
+    private void createInputProcessor() {
+    }
+
     public void drawAll(){
         // Clears screen and prepares batch for drawing
         ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
@@ -220,31 +250,31 @@ public class Library extends ApplicationAdapter {
             CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getShieldTextX(), CoSD.getShieldTextY());
         }
     }
-    public void adjustCamera() {
-        float cardHeight = 150;  // Assume each card has a height of 150 units
-        float totalHeight = cardHeight * 11;
-        float visibleHeight = viewport.getWorldHeight();
-
-
-        // Calculate the maximum scrollable range
-        float maxScroll = totalHeight - visibleHeight;
-
-
-        // Get the slider value and calculate the camera Y offset
-        float sliderValue = scroll.getSliderValue();  // Value from 0 to 100
-        float yOffset = (sliderValue / 100f) * maxScroll;
-
-
-        // Adjust the camera's position
-        camera.position.y = totalHeight - (visibleHeight / 2) - yOffset;
-        camera.update();
-    }
+//    public void adjustCamera() {
+//        float cardHeight = 150;  // Assume each card has a height of 150 units
+//        float totalHeight = cardHeight * 11;
+//        float visibleHeight = viewport.getWorldHeight();
+//
+//
+//        // Calculate the maximum scrollable range
+//        float maxScroll = totalHeight - visibleHeight;
+//
+//
+//        // Get the slider value and calculate the camera Y offset
+//        float sliderValue = scroll.getSliderValue();  // Value from 0 to 100
+//        float yOffset = (sliderValue / 100f) * maxScroll;
+//
+//
+//        // Adjust the camera's position
+//        camera.position.y = totalHeight - (visibleHeight / 2) - yOffset;
+//        camera.update();
+//    }
     // Called every refresh rate for rendering
     @Override
     public void render() {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         stage.act(); //Process any UI events
-        adjustCamera();
+//        adjustCamera();
         drawAll();
         stage.draw(); //Draw the stage (including the slider)
         // Draw the UI stage for the menu
@@ -268,7 +298,7 @@ public class Library extends ApplicationAdapter {
     @Override
     public void dispose() {
         stage.dispose();
-        scroll.dispose();
+//        scroll.dispose();
         spriteBatch.dispose();
         debugFont.dispose();
         noncardUIFont.dispose();
