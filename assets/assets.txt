@@ -6,6 +6,7 @@ btn_exit.png
 btn_help.png
 btn_lib.png
 btn_play.png
+buttonSound.mp3
 cardback.png
 cardback2.png
 cardback3.png
@@ -58,10 +59,11 @@ endturn.png
 enemycloud.png
 enemyenergy.png
 enemyhealth.png
+Help1.jpg
 libgdx.png
 playercloud.png
 playerenergy.png
-title.png
+Title.png
 ui/dpcomic.bmp
 ui/dpcomic.fnt
 ui/dpcomic.ttf
