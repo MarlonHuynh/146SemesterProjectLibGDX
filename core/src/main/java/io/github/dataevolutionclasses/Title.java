@@ -5,6 +5,7 @@
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -21,8 +22,9 @@ public class Title extends ScreenAdapter {
     private FitViewport viewport;                   // Viewport
     // Spr
     private SpriteBatch spriteBatch;
-    private Sprite bgSpr, playBtn, libBtn, helpBtn, exitBtn, titleSpr, creatureSpr;
+    private Sprite bgSpr, playBtn, libBtn, helpBtn, exitBtn, titleSpr, Title;
     private ArrayList<Sprite> btnList = new ArrayList<>();
+    private Sound buttonSound;
 
     //
     private boolean clicked = false;
@@ -45,16 +47,20 @@ public class Title extends ScreenAdapter {
         spriteBatch = new SpriteBatch();
         bgSpr = new Sprite(new Texture("bg_lightgreen.png"));
         playBtn = new Sprite(new Texture("btn_play.png"));
-        playBtn.setPosition(200, 260);
+        playBtn.setPosition(200, 340);
         libBtn = new Sprite(new Texture("btn_lib.png"));
-        libBtn.setPosition(200, 190);
+        libBtn.setPosition(200, 260);
         helpBtn = new Sprite(new Texture("btn_help.png"));
-        helpBtn.setPosition(200, 120);
+        helpBtn.setPosition(200, 180);
         exitBtn = new Sprite(new Texture("btn_exit.png"));
-        exitBtn.setPosition(200, 50);
-        titleSpr = new Sprite(new Texture("title.png"));
-        titleSpr.setPosition(140, 350);
-        creatureSpr = new Sprite(new Texture("creatures.png"));
+        exitBtn.setPosition(200, 100);
+        titleSpr = new Sprite(new Texture("background.png"));
+        Title = new Sprite(new Texture("Title.png"));
+        Title.setPosition(100, 320);
+        Title.setSize( 400, 300);
+        buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
+
+
         // Add buttons to list
         btnList.add(playBtn);
         btnList.add(libBtn);
@@ -77,12 +83,11 @@ public class Title extends ScreenAdapter {
         spriteBatch.begin();
 
         bgSpr.draw(spriteBatch);
-        titleSpr.draw(spriteBatch);
-        creatureSpr.draw(spriteBatch);
         playBtn.draw(spriteBatch);
         libBtn.draw(spriteBatch);
         helpBtn.draw(spriteBatch);
         exitBtn.draw(spriteBatch);
+        Title.draw(spriteBatch);
 
         spriteBatch.end();
     }
@@ -117,13 +122,16 @@ public class Title extends ScreenAdapter {
                     }
                 }
                 if (indexClicked == 0){ // Play
+                    buttonSound.play();
                     game.setScreen(new Gameplay(game));
                 }
                 else if (indexClicked == 1){
+                    buttonSound.play();
                     game.setScreen(new Library(game));
                 }
                 else if (indexClicked == 2){
-
+                    buttonSound.play();
+                    game.setScreen(new Help(game));
                 }
                 else if (indexClicked == 3){
                     Gdx.app.exit();

@@ -1,6 +1,7 @@
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -41,6 +42,10 @@ public class Library extends ScreenAdapter {
     private boolean clicked = false;
     private Vector3 worldCoords = new Vector3();
     private int selectedCardNumber = -1;
+    
+    // button sound effect
+    private Sound buttonSound = buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
+
     //
     private Game game;
     public Library(Game game) {
@@ -177,6 +182,7 @@ public class Library extends ScreenAdapter {
                     }
                 }
                 if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    buttonSound.play();
                     game.setScreen(new Title(game));
                 }
 
