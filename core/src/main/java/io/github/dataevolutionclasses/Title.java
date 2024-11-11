@@ -123,15 +123,15 @@ public class Title extends ScreenAdapter {
                     }
                 }
                 if (indexClicked == 0){ // Play
-                    buttonSound.play();
+                    playButtonSound();
                     game.setScreen(new Gameplay(game));
                 }
                 else if (indexClicked == 1){
-                    buttonSound.play();
+                    playButtonSound();
                     game.setScreen(new Library(game));
                 }
                 else if (indexClicked == 2){
-                    buttonSound.play();
+                    playButtonSound();
                     game.setScreen(new Help(game));
                 }
                 else if (indexClicked == 3){
@@ -141,5 +141,9 @@ public class Title extends ScreenAdapter {
                 return clicked;
             }
         });
+    }
+
+    public void playButtonSound(){
+        buttonSound.play(0.3f);
     }
 }

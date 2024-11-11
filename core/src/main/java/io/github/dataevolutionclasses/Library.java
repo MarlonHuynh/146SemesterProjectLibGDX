@@ -42,7 +42,7 @@ public class Library extends ScreenAdapter {
     private boolean clicked = false;
     private Vector3 worldCoords = new Vector3();
     private int selectedCardNumber = -1;
-    
+
     // button sound effect
     private Sound buttonSound = buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
 
@@ -182,7 +182,7 @@ public class Library extends ScreenAdapter {
                     }
                 }
                 if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
-                    buttonSound.play();
+                    buttonSound.play(0.4f);
                     game.setScreen(new Title(game));
                 }
 
