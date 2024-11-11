@@ -131,6 +131,7 @@ public class Title extends ScreenAdapter {
                 }
                 else if (indexClicked == 2){
                     buttonSound.play();
+                    game.setScreen(new Help(game));
                 }
                 else if (indexClicked == 3){
                     Gdx.app.exit();
