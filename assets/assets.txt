@@ -52,6 +52,7 @@ cardsprites/stack.png
 cardsprites/string.png
 cardsprites/tuple.png
 cardsprites/word.png
+creatures.png
 discard.png
 endturn.png
 enemycloud.png
@@ -60,6 +61,7 @@ enemyhealth.png
 libgdx.png
 playercloud.png
 playerenergy.png
+title.png
 ui/dpcomic.bmp
 ui/dpcomic.fnt
 ui/dpcomic.ttf

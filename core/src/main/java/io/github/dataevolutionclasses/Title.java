@@ -21,7 +21,7 @@ public class Title extends ScreenAdapter {
     private FitViewport viewport;                   // Viewport
     // Spr
     private SpriteBatch spriteBatch;
-    private Sprite bgSpr, playBtn, libBtn, helpBtn, exitBtn, titleSpr;
+    private Sprite bgSpr, playBtn, libBtn, helpBtn, exitBtn, titleSpr, creatureSpr;
     private ArrayList<Sprite> btnList = new ArrayList<>();
 
     //
@@ -45,14 +45,16 @@ public class Title extends ScreenAdapter {
         spriteBatch = new SpriteBatch();
         bgSpr = new Sprite(new Texture("bg_lightgreen.png"));
         playBtn = new Sprite(new Texture("btn_play.png"));
-        playBtn.setPosition(200, 400);
+        playBtn.setPosition(200, 260);
         libBtn = new Sprite(new Texture("btn_lib.png"));
-        libBtn.setPosition(200, 300);
+        libBtn.setPosition(200, 190);
         helpBtn = new Sprite(new Texture("btn_help.png"));
-        helpBtn.setPosition(200, 200);
+        helpBtn.setPosition(200, 120);
         exitBtn = new Sprite(new Texture("btn_exit.png"));
-        exitBtn.setPosition(200, 100);
-        titleSpr = new Sprite(new Texture("background.png"));
+        exitBtn.setPosition(200, 50);
+        titleSpr = new Sprite(new Texture("title.png"));
+        titleSpr.setPosition(140, 350);
+        creatureSpr = new Sprite(new Texture("creatures.png"));
         // Add buttons to list
         btnList.add(playBtn);
         btnList.add(libBtn);
@@ -75,6 +77,8 @@ public class Title extends ScreenAdapter {
         spriteBatch.begin();
 
         bgSpr.draw(spriteBatch);
+        titleSpr.draw(spriteBatch);
+        creatureSpr.draw(spriteBatch);
         playBtn.draw(spriteBatch);
         libBtn.draw(spriteBatch);
         helpBtn.draw(spriteBatch);
