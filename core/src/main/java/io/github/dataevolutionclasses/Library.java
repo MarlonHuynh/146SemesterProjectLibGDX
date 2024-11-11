@@ -176,15 +176,15 @@ public class Library extends ApplicationAdapter {
 
         // Add buttons to the table in a vertical layout
         menuTable.add(sortByNameButton).fillX().pad(10); // Pad for spacing
-        menuTable.row(); // Move to the next row
+//        menuTable.row(); // Move to the next row
         menuTable.add(sortByStageButton).fillX().pad(10);
-        menuTable.row();
+//        menuTable.row();
         menuTable.add(sortByCostButton).fillX().pad(10);
-        menuTable.row();
+//        menuTable.row();
         menuTable.add(sortByHealthButton).fillX().pad(10);
-        menuTable.row();
+//        menuTable.row();
         menuTable.add(sortByAttackButton).fillX().pad(10);
-        menuTable.row();
+//        menuTable.row();
         menuTable.add(unsorted).fillX().pad(10);
         // Add the table to the UI stage
         uiStage.addActor(menuTable);
