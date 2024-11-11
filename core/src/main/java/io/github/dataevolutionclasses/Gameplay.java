@@ -6,6 +6,7 @@
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -40,7 +41,7 @@ public class Gameplay extends ScreenAdapter {
     private final Card[] cardsInEnemyField = new Card[3];
     // UI vars
     private SpriteBatch spriteBatch;
-    private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr, loseSpr, winSpr;
+    private Sprite playerHealthSpr, enemyHealthSpr, playerCloudSpr, enemyCloudSpr, playerEnergySpr, enemyEnergySpr, bgSpr, loseSpr, winSpr, backSpr;
     private BitmapFont debugFont, noncardUIFont;
     private String drawnStr = "You can draw a card";
     private String enemyActionStr = "Last enemy action will be displayed here.";
@@ -69,6 +70,8 @@ public class Gameplay extends ScreenAdapter {
     private Card cardToAdd;
     // Debug vars
     private int frameCounter = 0;
+    // button sound effect
+    private Sound buttonSound = buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
 
     private Game game;
     public Gameplay(Game game) {
@@ -111,6 +114,9 @@ public class Gameplay extends ScreenAdapter {
         enemyEnergySpr = new Sprite(new Texture("enemyenergy.png")); enemyEnergySpr.setScale(0.5f); enemyEnergySpr.setPosition(380, 270);
         loseSpr = new Sprite(new Texture("youlose.png")); loseSpr.setPosition(50, 200);
         winSpr = new Sprite(new Texture("youwin.png")); winSpr.setPosition(50, 200);
+        backSpr = new Sprite(new Texture("btn_back.png"));
+        backSpr.setScale(0.35f);
+        backSpr.setPosition(-60, 550);
         // Initialize stat variables
         playerHealth = 60; enemyHealth = 40; playerEnergy = 0; playerRecharge = 0; enemyEnergy = 0; enemyRecharge = 0;
         // Create the cards in the player's deck
@@ -233,6 +239,7 @@ public class Gameplay extends ScreenAdapter {
         enemyEnergySpr.draw(spriteBatch);
         playerCloudSpr.draw(spriteBatch);
         enemyCloudSpr.draw(spriteBatch);
+        backSpr.draw(spriteBatch);
         // Draw non-card text UI
         debugFont.draw(spriteBatch, drawnTextLayout, 5, 200);
         stringBuilder.setLength(0); stringBuilder.append("Cards Left: ");
@@ -323,6 +330,10 @@ public class Gameplay extends ScreenAdapter {
                             break;
                         }
                     }
+                }
+                if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    buttonSound.play();
+                    game.setScreen(new Title(game));
                 }
                 // If nothing has been clicked and nothing has been clicked, no additional logic needed so returns
                 if (prevSelectedCardNumber == -1 && selectedCardNumber == -1 )
@@ -547,52 +558,81 @@ public class Gameplay extends ScreenAdapter {
                 delayAndExecute(() -> {
                     // Determine if field is full
                     boolean full = true;
-                    for (Card fieldCard : cardsInEnemyField){
-                        if (fieldCard == null){
+                    for (Card fieldCard : cardsInEnemyField) {
+                        if (fieldCard == null) {
                             full = false;
                             break;
                         }
                     }
-                    // If full field discard lowest value card
-                    if (full){
-                       discardLowestValueEnemyHand();
-                    }
-                    // Else if hand full, can't place cards, and recharge less than 10
-                    else if (cardsInEnemyHand.size() > 4 && finalPlaced == false && enemyRecharge < 10){
-                        discardLowestValueEnemyHand();
-                    }
-                    /*
-                    if (!cardsInEnemyHand.isEmpty()) {
-                        // Get first available card
-                        Card highestCostCard = cardsInEnemyHand.get(0);
-                        int indexToDiscard = 0;
-                        // Find highest cost card
-                        for (int j = 1; j < cardsInEnemyHand.size(); j++) {
-                            if (cardsInEnemyHand.get(j).getCost() > highestCostCard.getCost()) {
-                                highestCostCard = cardsInEnemyHand.get(j);
-                                indexToDiscard = j;
+                    // Discard priority logic
+                    // Mostly check if handsize = 5 or not
+                    // Check enemyReacharge <10 (better to check recharge than energy)
+                    // Wasn't place any card this turn
+                    if (cardsInEnemyHand.size() >= 5 || (enemyRecharge < 10 && !finalPlaced && !full)) {
+                        Card discardCandidate = null;
+
+                        // Step 1: Prioritize discarding basics if the field is full
+                        for (Card card : cardsInEnemyHand) {
+                            if (card.getStage() == 1 && full) { // Check if basic and field is full
+                                discardCandidate = card;
+                                break;
                             }
                         }
-                        // 50 50 to discard (not a great solution to discarding all higher tier cards, but it will do for now until the discard rework)
-                        int coin = (int) (Math.random() * 2);
-                        // If hand is full always discard
-                        if (cardsInEnemyHand.size() == 5){
-                            coin = 1;
+
+                        // Step 2: Prioritize higher-stage cards that don't match fielded card types
+                        if (discardCandidate == null) {
+                            for (Card card : cardsInEnemyHand) {
+                                // Only consider cards with stage 2 (higher than basic)
+                                if (card.getStage() == 2) {
+                                    boolean matchesFieldType = false;
+                                    for (Card fieldCard : cardsInEnemyField) {
+                                        // Check if this card has the same type as any card already placed on the field
+                                        if (fieldCard != null && fieldCard.getType().equals(card.getType())) {
+                                            matchesFieldType = true;
+                                            break;
+                                        }
+                                    }
+                                    // If no matching type found on the field, discard this card
+                                    if (!matchesFieldType) {
+                                        discardCandidate = card;
+                                        break; // Discard the first matching card
+                                    }
+                                }
+                            }
                         }
-                        if (indexToDiscard != -1 && coin == 1) {
+
+                        // Step 3: Discard duplicates (higher to lower stages)
+                        if (discardCandidate == null) {
+                            for (int i = 0; i < cardsInEnemyHand.size(); i++) {
+                                Card card = cardsInEnemyHand.get(i);
+                                for (int j = i + 1; j < cardsInEnemyHand.size(); j++) {
+                                    if (card.getName().equals(cardsInEnemyHand.get(j).getName())) {
+                                        discardCandidate = card;
+                                        break;
+                                    }
+                                }
+                                if (discardCandidate != null) {
+                                    break;
+                                }
+                            }
+                        }
+
+                        // If a card was chosen to discard, proceed with discard
+                        if (discardCandidate != null) {
+                            cardsInEnemyHand.remove(discardCandidate);
                             enemyEnergy++;
                             enemyRecharge++;
+                            // Update UI: replace card in hand with blank card
                             for (int k = 0; k < 5; k++) {
-                                if (cardOnScreenDatas.get(k).getCard().getName().equals(cardsInEnemyHand.get(indexToDiscard).getName())) {
+                                if (cardOnScreenDatas.get(k).getCard().getName().equals(discardCandidate.getName())) {
                                     cardOnScreenDatas.get(k).remakeCard(37, cardOnScreenDatas.get(k).getX(), cardOnScreenDatas.get(k).getY(), cardOnScreenDatas.get(k).getScale());
                                     break;
                                 }
                             }
-                            cardsInEnemyHand.remove(indexToDiscard);
-                            enemyActionStr = "Discarded highest-value card.";
+                            enemyActionStr = "Discarded a card to manage energy and hand space.";
                             enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
                         }
-                    }*/
+                    }
                     // Task 4: Attack Player
                     delayAndExecute(() -> {
                         processCardInteraction(1, 13, 10);
