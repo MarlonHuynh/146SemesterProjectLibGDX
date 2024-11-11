@@ -80,7 +80,7 @@ public class Library extends ApplicationAdapter {
         createInputProcessor();
         // Pop storage
         CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats2.csv");
-        reader.generateCardsFromCSV();
+        reader.generateFirst35CardsFromFile();
         cardList = reader.getCardList();
         for (int i = 0; i < cardList.size(); i++){
             nameToCardHashmap.put(cardList.get(i).getName(), cardList.get(i)); // Populate the nameToCard and nameToInt Hashmap (For easier searches of name to Card type);
@@ -216,9 +216,10 @@ public class Library extends ApplicationAdapter {
         debugFont.draw(spriteBatch, stringBuilder, 520, 360);
 
         ArrayList<CardOnScreenData>  cardOnScreenDatas = new ArrayList<>();
-        for (int i = 0; i < viewCardList.size() && i < 35; i++) {
-            int x = (i % 3) * 100 + 55; //45
-            int y = ((35-i) / 3)* 140 + 50; //90
+        for (int i = 0; i < viewCardList.size() && i < 10; i++) {
+            int x = (i % 5) * 100 + 55; //45
+//            int y = ((35-i) / 3)* 140 + 50; //90
+            int y = ((35-i) / 5) * 50 ;
             cardOnScreenDatas.add(new CardOnScreenData(viewCardList.get(i), x, y, 0.45f));
         }
         // Draw each card on screen
