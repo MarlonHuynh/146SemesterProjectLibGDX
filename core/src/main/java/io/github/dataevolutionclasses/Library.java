@@ -105,7 +105,7 @@ public class Library extends ScreenAdapter {
 
         // Sprite for player deck
         playersDeckIcon = new Sprite(new Texture("youlose.png"));
-        playersDeckIcon.setPosition(500, 500);
+        playersDeckIcon.setPosition(370, 480);
 
         defaultFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         defaultFont.getData().setScale(0.4f);
