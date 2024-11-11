@@ -5,6 +5,7 @@
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -21,8 +22,9 @@ public class Title extends ScreenAdapter {
     private FitViewport viewport;                   // Viewport
     // Spr
     private SpriteBatch spriteBatch;
-    private Sprite bgSpr, playBtn, libBtn, helpBtn, exitBtn, titleSpr;
+    private Sprite bgSpr, playBtn, libBtn, helpBtn, exitBtn, titleSpr, creaturesSpr;
     private ArrayList<Sprite> btnList = new ArrayList<>();
+    private Sound buttonSound;
 
     //
     private boolean clicked = false;
@@ -43,16 +45,22 @@ public class Title extends ScreenAdapter {
         camera.update();
         // Sprite
         spriteBatch = new SpriteBatch();
-        bgSpr = new Sprite(new Texture("background.png"));
+        bgSpr = new Sprite(new Texture("bg_lightgreen.png"));
         playBtn = new Sprite(new Texture("btn_play.png"));
-        playBtn.setPosition(200, 400);
+        playBtn.setPosition(200, 260);
         libBtn = new Sprite(new Texture("btn_lib.png"));
-        libBtn.setPosition(200, 300);
+        libBtn.setPosition(200, 190);
         helpBtn = new Sprite(new Texture("btn_help.png"));
-        helpBtn.setPosition(200, 200);
+        helpBtn.setPosition(200, 120);
         exitBtn = new Sprite(new Texture("btn_exit.png"));
-        exitBtn.setPosition(200, 100);
+        exitBtn.setPosition(200, 50);
         titleSpr = new Sprite(new Texture("background.png"));
+        titleSpr = new Sprite(new Texture("Title.png"));
+        titleSpr.setPosition(140, 350);
+        creaturesSpr = new Sprite(new Texture("creatures.png"));
+        buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
+
+
         // Add buttons to list
         btnList.add(playBtn);
         btnList.add(libBtn);
@@ -75,10 +83,12 @@ public class Title extends ScreenAdapter {
         spriteBatch.begin();
 
         bgSpr.draw(spriteBatch);
+        creaturesSpr.draw(spriteBatch);
         playBtn.draw(spriteBatch);
         libBtn.draw(spriteBatch);
         helpBtn.draw(spriteBatch);
         exitBtn.draw(spriteBatch);
+        titleSpr.draw(spriteBatch);
 
         spriteBatch.end();
     }
@@ -113,20 +123,27 @@ public class Title extends ScreenAdapter {
                     }
                 }
                 if (indexClicked == 0){ // Play
+                    playButtonSound();
                     game.setScreen(new Gameplay(game));
                 }
-//                else if (indexClicked == 1){
-//                    game.setScreen(new Library(game));
-//                }
+                else if (indexClicked == 1){
+                    playButtonSound();
+                    game.setScreen(new Library(game));
+                }
                 else if (indexClicked == 2){
-
+                    playButtonSound();
+                    game.setScreen(new Help(game));
                 }
                 else if (indexClicked == 3){
-
+                    Gdx.app.exit();
                 }
 
                 return clicked;
             }
         });
+    }
+
+    public void playButtonSound(){
+        buttonSound.play(0.3f);
     }
 }
