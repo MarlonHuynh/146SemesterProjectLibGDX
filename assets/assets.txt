@@ -74,7 +74,7 @@ Help1.jpg
 libgdx.png
 playercloud.png
 playerenergy.png
-Title.png
+title.png
 ui/dpcomic.bmp
 ui/dpcomic.fnt
 ui/dpcomic.ttf
