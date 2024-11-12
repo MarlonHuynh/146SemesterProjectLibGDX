@@ -1,231 +1,227 @@
 package io.github.dataevolutionclasses;
 
-import com.badlogic.gdx.ApplicationAdapter; // Rendering
+
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.Gdx; // Input
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.BitmapFont; // Text
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List; // Util
-import java.util.stream.Collectors;
+import java.util.List;
 
-public class Library extends ApplicationAdapter {
+
+public class Library extends ScreenAdapter {
     // Window vars
     private OrthographicCamera camera;              // Camera
     private FitViewport viewport;                   // Viewport
+    // Storage
     // Storage vars
     private List<Card> cardList;                                                        // Master Card Storage (Do not change)
-    private List<Card> viewCardList;                                                        // Master Card Storage (Do not change)
-    private ArrayList<CardOnScreenData> cardOnScreenDatas;                              // Houses all information about all cards spots displayed on the screen
-    private SpriteBatch spriteBatch;
-    private BitmapFont debugFont, noncardUIFont;
-    private String drawnStr = "You can draw a card";
-    private final GlyphLayout drawnTextLayout = new GlyphLayout();
-    private final Vector3 worldCoords = new Vector3();
-    private final StringBuilder stringBuilder = new StringBuilder();
-    private int frameCounter = 0;
-    private Stage stage;
-//    private Scroll scroll;
-    private Stage uiStage; // New stage for UI elements
-    private Skin skin; // Skin for styling UI elements
-    private Integer lastEvent;
     private final HashMap<String, Card> nameToCardHashmap = new HashMap<>();            // Master Card Storage (Do not change)
     private final HashMap<String, Integer> nameToIntHashmap = new HashMap<>();          // Master Card Storage (Do not change)
     private List<Card> cardOnPage;
     private ArrayList<Card> cardInDeck;
-//    private ArrayList<CardOnScreenData> cardOnScreenDatas = new ArrayList<>();
+    private ArrayList<CardOnScreenData> cardOnScreenDatas = new ArrayList<>();
     // Spr
-    private Sprite bgSpr, playBtn, libBtn, helpBtn, exitBtn, titleSpr;
+    private SpriteBatch spriteBatch;
+    private Sprite bgSpr, backSpr;
     private ArrayList<Sprite> btnList = new ArrayList<>();
     private String deckStr = "Deck: ";
     private GlyphLayout deckLayout = new GlyphLayout();
     private BitmapFont defaultFont;
+
+
+    // Sprite for Player Deck button
+    private Sprite playersDeckIcon;
+    private Sprite sortByNameSprite;
+    private Sprite sortByCostSprite;
+    private Sprite sortByAttackSprite;
+    private Sprite sortByShieldSprite;
+    private Sprite sortByStageSprite;
+    private Sprite removeSortSprite;
+    private List<Card> viewCardList;                                                        // Master Card Storage (Do not change)
+
+
+    //
+    private StringBuilder stringBuilder = new StringBuilder();
     private boolean clicked = false;
+    private Vector3 worldCoords = new Vector3();
     private int selectedCardNumber = -1;
+    private int currentPage = 0;
+    private final int CARDS_PER_PAGE = 15;
+    private Sprite nextButtonSprite;
+    private Sprite prevButtonSprite;
+
+    // button sound effect
+    private Sound buttonSound = buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
 
 
-    // Instantiated upon startup
-    @Override
-    public void create() {
+    //
+    private Game game;
+    public Library(Game game) {
+        this.game = game;
+    }
+
+
+
+
+    public void show() {
         // Set up camera, viewport, and input processor
         camera = new OrthographicCamera();
         viewport = new FitViewport(600, 600, camera);                       // 600x600 is the virtual world size
-//        stage = new Stage(new ScreenViewport());
-//        Gdx.input.setInputProcessor(stage);
-//        scroll = new Scroll();
-//        scroll.createSlider(stage); //Add the slider into the stage
         viewport.apply();
-        camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0); // Center the camera
+        camera.position.set(300, 300, 0);  // Center at 600x600 middle
         camera.update();
         createInputProcessor();
         // Pop storage
         CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats2.csv");
         reader.generateFirst35CardsFromFile();
         cardList = reader.getCardList();
+
         for (int i = 0; i < cardList.size(); i++){
             nameToCardHashmap.put(cardList.get(i).getName(), cardList.get(i)); // Populate the nameToCard and nameToInt Hashmap (For easier searches of name to Card type);
             nameToIntHashmap.put(cardList.get(i).getName(), i);
         }
         CardOnScreenData.staticSetCardList(cardList);
 
+        viewCardList = new ArrayList<>(cardList);
+
         cardOnPage = new ArrayList<>();
         for (int i = 0; i < 15; i ++){
             cardOnPage.add(cardList.get(i).deepCopy());
         }
 
-        viewCardList = new ArrayList<>(cardList);
 
-        CardOnScreenData.staticSetCardList(cardList);   // Sets the static cardList in CardOnScreenData so it knows which cardList to reference
-        // Set up array of Sprite names and sprites to keep track of the sprites on screen for input handling
-        cardOnScreenDatas = new ArrayList<>();
-        // Initialize drawBatch
+        cardInDeck = new ArrayList<Card>();
+        nextButtonSprite = new Sprite(new Texture("btn_nextpage.png"));
+        nextButtonSprite.setSize(100, 25);
+        nextButtonSprite.setPosition(300, 0);
+
+        prevButtonSprite = new Sprite(new Texture("btn_prevpage.png"));
+        prevButtonSprite.setSize(100, 25);
+        prevButtonSprite.setPosition(200, 0);
+
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(0), 80, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(1), 190, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(2), 300, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(3), 410, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(4), 530, 400, 0.45f));
+
+
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(5), 80, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(6), 190, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(7),300, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(8), 410, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(9), 530, 250, 0.45f));
+
+
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(10), 80, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(11), 190, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(12), 300, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(13), 410, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(14), 530, 100, 0.45f));
+        // Sprite
         spriteBatch = new SpriteBatch();
-        // Initialize non-card Fonts and text
-        debugFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        debugFont.getData().setScale(0.4f);
-        noncardUIFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
-        noncardUIFont.getData().setScale(1.2f);
-        drawnTextLayout.setText(debugFont, drawnStr, Color.RED, 100, Align.left, true);
-        // Initialize non-card sprites, with scale and position
         bgSpr = new Sprite(new Texture("background.png"));
-        // Initialize UI Stage and Skin
-        uiStage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(uiStage);
-        skin = new Skin(Gdx.files.internal("uiskin.json")); // Ensure you have a skin file
 
-        // Create the menu and buttons
-        Table menuTable = new Table();
-        menuTable.setFillParent(true);
-        menuTable.top().left(); // Align to the top-left corner
+        sortByNameSprite = new Sprite(new Texture("btn_sortbyname.png"));
+        sortByNameSprite.setSize(100,25);
+        sortByNameSprite.setPosition(10, 510);
 
-        TextButton sortByNameButton = new TextButton("Sort by Name", skin);
-        TextButton sortByStageButton = new TextButton("Sort by Stage", skin);
-        TextButton sortByCostButton = new TextButton("Sort by Cost", skin);
-        TextButton sortByHealthButton = new TextButton("Sort by Shield", skin);
-        TextButton sortByAttackButton = new TextButton("Sort by Attack", skin);
-        TextButton unsorted = new TextButton("Remove sorting", skin);
+        sortByCostSprite = new Sprite(new Texture("btn_sortbycost.png"));
+        sortByCostSprite.setSize(100,25);
+        sortByCostSprite.setPosition(120, 510);
 
-        // Add button listeners (you can implement sorting later)
-        sortByNameButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                // Sort by Name logic
-                viewCardList = CardSorter.sortByName(cardList);
-            }
-        });
-        sortByStageButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                // Sort by Stage logic
-                viewCardList = CardSorter.sortByStage(cardList);
-                System.out.println("Sorting by Stage");
-            }
-        });
-        sortByCostButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                // Sort by Cost logic
-                viewCardList = CardSorter.sortByCost(cardList);
-                System.out.println("Sorting by Cost");
-            }
-        });
-        sortByHealthButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                // Sort by Health logic
-                viewCardList = CardSorter.sortByShield(cardList);
-                System.out.println("Sorting by Shield");
-            }
-        });
-        sortByAttackButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                // Sort by Attack logic
-                viewCardList = CardSorter.sortByAttack(cardList);
-                System.out.println("Sorting by Attack");
-            }
-        });
+        sortByAttackSprite = new Sprite(new Texture("btn_sortbyattack.png"));
+        sortByAttackSprite.setSize(100,25);
+        sortByAttackSprite.setPosition(230, 510);
 
-        unsorted.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent changeEvent, Actor actor) {
-                viewCardList = cardList;
-            }
-        });
+        sortByShieldSprite = new Sprite(new Texture("btn_sortbyshield.png"));
+        sortByShieldSprite.setSize(100,25);
+        sortByShieldSprite.setPosition(10, 480);
 
-        // Add buttons to the table in a vertical layout
-        menuTable.add(sortByNameButton).fillX().pad(10); // Pad for spacing
-//        menuTable.row(); // Move to the next row
-        menuTable.add(sortByStageButton).fillX().pad(10);
-//        menuTable.row();
-        menuTable.add(sortByCostButton).fillX().pad(10);
-//        menuTable.row();
-        menuTable.add(sortByHealthButton).fillX().pad(10);
-//        menuTable.row();
-        menuTable.add(sortByAttackButton).fillX().pad(10);
-//        menuTable.row();
-        menuTable.add(unsorted).fillX().pad(10);
-        // Add the table to the UI stage
-        uiStage.addActor(menuTable);
+        sortByStageSprite = new Sprite(new Texture("btn_sortbystage.png"));
+        sortByStageSprite.setSize(100,25);
+        sortByStageSprite.setPosition(120, 480);
+
+        removeSortSprite = new Sprite(new Texture("btn_removesorting.png"));
+        removeSortSprite.setSize(100,25);
+        removeSortSprite.setPosition(230, 480);
+
+        // Sprite for player deck
+        playersDeckIcon = new Sprite(new Texture("youlose.png"));
+        playersDeckIcon.setPosition(370, 480);
+
+
+        defaultFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        defaultFont.getData().setScale(0.4f);
+        deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);
+        defaultFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
+        defaultFont.getData().setScale(0.4f);
+        deckLayout.setText(defaultFont, deckStr, Color.RED, 600, Align.left, true);
+        backSpr = new Sprite(new Texture("btn_back.png"));
+        backSpr.setScale(0.5f);
+        backSpr.setPosition(-30, 550);
+    }
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+        draw();
     }
 
-    private void createInputProcessor() {
-    }
 
-    public void drawAll(){
-        // Clears screen and prepares batch for drawing
-        ScreenUtils.clear(245/255f, 1250/255f, 205/255f, 1f);
-
-        worldCoords.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+    public void draw() {
+        ScreenUtils.clear(245 / 255f, 1250 / 255f, 205 / 255f, 1f);
+        camera.position.set(300, 300, 0); // Recenter camera on resize
+        camera.update();
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
 
-        // Draw background
+
         bgSpr.draw(spriteBatch);
+        playersDeckIcon.draw(spriteBatch);
+        sortByNameSprite.draw(spriteBatch);
+        sortByAttackSprite.draw(spriteBatch);
+        sortByStageSprite.draw(spriteBatch);
+        sortByCostSprite.draw(spriteBatch);
+        sortByShieldSprite.draw(spriteBatch);
+        removeSortSprite.draw(spriteBatch);
+        nextButtonSprite.draw(spriteBatch);
+        prevButtonSprite.draw(spriteBatch);
 
-        // Draw debug FPS and cursor coordinates
-        stringBuilder.setLength(0);
-        stringBuilder.append("FPS: ").append(Gdx.graphics.getFramesPerSecond());
-        debugFont.draw(spriteBatch, stringBuilder, 520, 340);
-        stringBuilder.setLength(0);
-        stringBuilder.append("X: ").append((int)worldCoords.x);
-        debugFont.draw(spriteBatch, stringBuilder, 520, 380);
-        stringBuilder.setLength(0);
-        stringBuilder.append("Y: ").append((int)worldCoords.y);
-        debugFont.draw(spriteBatch, stringBuilder, 520, 360);
 
-        ArrayList<CardOnScreenData>  cardOnScreenDatas = new ArrayList<>();
-        for (int i = 0; i < viewCardList.size() && i < 10; i++) {
-            int x = (i % 5) * 100 + 55; //45
-//            int y = ((35-i) / 3)* 140 + 50; //90
-            int y = ((35-i) / 5) * 50 ;
-            cardOnScreenDatas.add(new CardOnScreenData(viewCardList.get(i), x, y, 0.45f));
-        }
-        // Draw each card on screen
-        for (CardOnScreenData CoSD : cardOnScreenDatas) {
+        backSpr.draw(spriteBatch);
+
+
+        for (CardOnScreenData CoSD : cardOnScreenDatas)
             drawCard(CoSD, spriteBatch);
-        }
+        if (selectedCardNumber != -1)
+            cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(spriteBatch);
+        defaultFont.draw(spriteBatch, deckLayout, 10, 550);
+
+
         spriteBatch.end();
+    }
+
+    private void updateCardsOnPage() {
+        int start = currentPage * CARDS_PER_PAGE;
+        int end = Math.min(start + CARDS_PER_PAGE, cardList.size());
+        cardOnPage = new ArrayList<>(cardList.subList(start, end));
+
+        // Update `cardOnScreenDatas` to reflect `cardOnPage`
+        cardOnScreenDatas.clear();
+        for (int i = 0; i < cardOnPage.size(); i++) {
+            cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(i), 80 + (110 * (i % 5)), 400 - (150 * (i / 5)), 0.45f));
+        }
     }
     public void drawCard(CardOnScreenData CoSD, SpriteBatch batch){
         // Draw cardback
@@ -237,74 +233,119 @@ public class Library extends ApplicationAdapter {
             CoSD.getNameFont().draw(batch, CoSD.getCard().getName(), CoSD.getNameX(), CoSD.getNameY());
             CoSD.getNameFont().draw(batch, CoSD.getDescLayout(), CoSD.getDescX(), CoSD.getDescY());
             // Draw cost
-            stringBuilder.setLength(0);
-            stringBuilder.append(CoSD.getCard().getCost());
+            stringBuilder.setLength(0); stringBuilder.append(CoSD.getCard().getCost());
             CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getCostTextX(), CoSD.getCostTextY());
             // Draw attack
-            stringBuilder.setLength(0);
-            stringBuilder.append(CoSD.getCard().getAttack());
+            stringBuilder.setLength(0); stringBuilder.append(CoSD.getCard().getAttack());
             CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getAttackTextX(), CoSD.getAttackTextY());
             // Draw shield
-            stringBuilder.setLength(0);
-            stringBuilder.append(CoSD.getCard().getShield());
+            stringBuilder.setLength(0); stringBuilder.append(CoSD.getCard().getShield());
             CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getShieldTextX(), CoSD.getShieldTextY());
         }
     }
-//    public void adjustCamera() {
-//        float cardHeight = 150;  // Assume each card has a height of 150 units
-//        float totalHeight = cardHeight * 11;
-//        float visibleHeight = viewport.getWorldHeight();
-//
-//
-//        // Calculate the maximum scrollable range
-//        float maxScroll = totalHeight - visibleHeight;
-//
-//
-//        // Get the slider value and calculate the camera Y offset
-//        float sliderValue = scroll.getSliderValue();  // Value from 0 to 100
-//        float yOffset = (sliderValue / 100f) * maxScroll;
-//
-//
-//        // Adjust the camera's position
-//        camera.position.y = totalHeight - (visibleHeight / 2) - yOffset;
-//        camera.update();
-//    }
-    // Called every refresh rate for rendering
-    @Override
-    public void render() {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        stage.act(); //Process any UI events
-//        adjustCamera();
-        drawAll();
-        stage.draw(); //Draw the stage (including the slider)
-        // Draw the UI stage for the menu
-        uiStage.act();
-        uiStage.draw(); // Draw the UI menu
-        // Log memory every 100 frames
-        frameCounter++;
-        if (frameCounter >= 100) {
-            Gdx.app.log("Memory", "Used: " + Gdx.app.getJavaHeap() + " bytes");
-            frameCounter = 0; // Reset counter after logging
-        }
-    }
-    // Called when resizing window
+
+
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true); //Upadte the stage viewport
         viewport.update(width, height);
-        camera.update();
     }
+
+
     // Called when exiting
     @Override
     public void dispose() {
-        stage.dispose();
-//        scroll.dispose();
-        spriteBatch.dispose();
-        debugFont.dispose();
-        noncardUIFont.dispose();
-        bgSpr.getTexture().dispose();
+
+
     }
 
-    //kms
-    //kmsFUCK THIS
+
+    public void createInputProcessor(){
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                worldCoords = viewport.unproject(new Vector3(screenX, screenY, 0));
+                clicked = false;
+                if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600)
+                    return false;
+                //To click onto the sprite of the playerDeckList
+                if (worldCoords.x < 600 && worldCoords.x > 700 || worldCoords.y < 600 || worldCoords.y > 700)
+                {
+
+
+                }
+
+                if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 500 && worldCoords.y <= 525) {
+                    // Sort the cards by name and update viewCardList
+                    viewCardList = CardSorter.sortByName(cardList);
+                    System.out.println("Sorting by Name");
+
+                    // Update cardOnPage with sorted viewCardList
+                    cardOnPage.clear();
+                    for (int i = 0; i < Math.min(15, viewCardList.size()); i++) {
+                        cardOnPage.add(viewCardList.get(i).deepCopy());
+                    }
+
+                    // Refresh cardOnScreenDatas with the sorted cards
+                    cardOnScreenDatas.clear();
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(0), 80, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(1), 190, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(2), 300, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(3), 410, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(4), 530, 400, 0.45f));
+
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(5), 80, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(6), 190, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(7), 300, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(8), 410, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(9), 530, 250, 0.45f));
+
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(10), 80, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(11), 190, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(12), 300, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(13), 410, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(14), 530, 100, 0.45f));
+
+                    System.out.println("Cards sorted and displayed.");
+                }
+
+                if (worldCoords.x >= 200 && worldCoords.x <= 300 && worldCoords.y >= 0 && worldCoords.y <= 25) {
+                    // Next button clicked
+
+                    if (currentPage > 0) {
+                        currentPage--;
+                        updateCardsOnPage();
+                    }
+                }
+
+                if (worldCoords.x >= 300 && worldCoords.x <= 400 && worldCoords.y >= 0 && worldCoords.y <= 25) {
+                    // Previous button clicked
+                    if ((currentPage + 1) * CARDS_PER_PAGE < cardList.size()) {
+                        currentPage++;
+                        updateCardsOnPage();
+                    }
+                }
+
+                for (int i = 0; i < cardOnScreenDatas.size(); i++) {
+                    if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y) || cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                        System.out.println("Selected");
+                        // Update selection variables accordingly to what was clicked and what was previously clicked
+                        selectedCardNumber = i;
+                        clicked = true;
+                        cardInDeck.add(cardList.get(selectedCardNumber));
+                        deckStr += cardList.get(selectedCardNumber).getName() + ", ";
+                        deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);
+                        break;
+                    }
+                }
+                if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    buttonSound.play(0.4f);
+                    game.setScreen(new Title(game));
+                }
+
+
+                return clicked;
+            }
+        });
+    }
 }
+

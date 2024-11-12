@@ -8,11 +8,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -47,7 +42,12 @@ public class LibraryTemp extends ScreenAdapter {
 
     // Sprite for Player Deck button
     private Sprite playersDeckIcon;
-    private Sprite sortByNameTexture;
+    private Sprite sortByNameSprite;
+    private Sprite sortByCostSprite;
+    private Sprite sortByAttackSprite;
+    private Sprite sortByShieldSprite;
+    private Sprite sortByStageSprite;
+    private Sprite removeSortSprite;
     private List<Card> viewCardList;                                                        // Master Card Storage (Do not change)
 
 
@@ -56,7 +56,10 @@ public class LibraryTemp extends ScreenAdapter {
     private boolean clicked = false;
     private Vector3 worldCoords = new Vector3();
     private int selectedCardNumber = -1;
-    private Stage uiStage; // New stage for UI elements
+    private int currentPage = 0;
+    private final int CARDS_PER_PAGE = 15;
+    private Sprite nextButtonSprite;
+    private Sprite prevButtonSprite;
 
     // button sound effect
     private Sound buttonSound = buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
@@ -83,6 +86,7 @@ public class LibraryTemp extends ScreenAdapter {
         CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats2.csv");
         reader.generateFirst35CardsFromFile();
         cardList = reader.getCardList();
+
         for (int i = 0; i < cardList.size(); i++){
             nameToCardHashmap.put(cardList.get(i).getName(), cardList.get(i)); // Populate the nameToCard and nameToInt Hashmap (For easier searches of name to Card type);
             nameToIntHashmap.put(cardList.get(i).getName(), i);
@@ -98,7 +102,13 @@ public class LibraryTemp extends ScreenAdapter {
 
 
         cardInDeck = new ArrayList<Card>();
+        nextButtonSprite = new Sprite(new Texture("btn_nextpage.png"));
+        nextButtonSprite.setSize(100, 25);
+        nextButtonSprite.setPosition(300, 0);
 
+        prevButtonSprite = new Sprite(new Texture("btn_prevpage.png"));
+        prevButtonSprite.setSize(100, 25);
+        prevButtonSprite.setPosition(200, 0);
 
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(0), 80, 400, 0.45f));
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(1), 190, 400, 0.45f));
@@ -123,10 +133,29 @@ public class LibraryTemp extends ScreenAdapter {
         spriteBatch = new SpriteBatch();
         bgSpr = new Sprite(new Texture("background.png"));
 
-        sortByNameTexture = new Sprite(new Texture("btn_sortbyname.png"));
-        sortByNameTexture.setSize(100,25);
-        sortByNameTexture.setPosition(10, 500);
+        sortByNameSprite = new Sprite(new Texture("btn_sortbyname.png"));
+        sortByNameSprite.setSize(100,25);
+        sortByNameSprite.setPosition(10, 510);
 
+        sortByCostSprite = new Sprite(new Texture("btn_sortbycost.png"));
+        sortByCostSprite.setSize(100,25);
+        sortByCostSprite.setPosition(120, 510);
+
+        sortByAttackSprite = new Sprite(new Texture("btn_sortbyattack.png"));
+        sortByAttackSprite.setSize(100,25);
+        sortByAttackSprite.setPosition(230, 510);
+
+        sortByShieldSprite = new Sprite(new Texture("btn_sortbyshield.png"));
+        sortByShieldSprite.setSize(100,25);
+        sortByShieldSprite.setPosition(10, 480);
+
+        sortByStageSprite = new Sprite(new Texture("btn_sortbystage.png"));
+        sortByStageSprite.setSize(100,25);
+        sortByStageSprite.setPosition(120, 480);
+
+        removeSortSprite = new Sprite(new Texture("btn_removesorting.png"));
+        removeSortSprite.setSize(100,25);
+        removeSortSprite.setPosition(230, 480);
 
         // Sprite for player deck
         playersDeckIcon = new Sprite(new Texture("youlose.png"));
@@ -160,7 +189,14 @@ public class LibraryTemp extends ScreenAdapter {
 
         bgSpr.draw(spriteBatch);
         playersDeckIcon.draw(spriteBatch);
-        sortByNameTexture.draw(spriteBatch);
+        sortByNameSprite.draw(spriteBatch);
+        sortByAttackSprite.draw(spriteBatch);
+        sortByStageSprite.draw(spriteBatch);
+        sortByCostSprite.draw(spriteBatch);
+        sortByShieldSprite.draw(spriteBatch);
+        removeSortSprite.draw(spriteBatch);
+        nextButtonSprite.draw(spriteBatch);
+        prevButtonSprite.draw(spriteBatch);
 
 
         backSpr.draw(spriteBatch);
@@ -176,7 +212,17 @@ public class LibraryTemp extends ScreenAdapter {
         spriteBatch.end();
     }
 
+    private void updateCardsOnPage() {
+        int start = currentPage * CARDS_PER_PAGE;
+        int end = Math.min(start + CARDS_PER_PAGE, cardList.size());
+        cardOnPage = new ArrayList<>(cardList.subList(start, end));
 
+        // Update `cardOnScreenDatas` to reflect `cardOnPage`
+        cardOnScreenDatas.clear();
+        for (int i = 0; i < cardOnPage.size(); i++) {
+            cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(i), 80 + (110 * (i % 5)), 400 - (150 * (i / 5)), 0.45f));
+        }
+    }
     public void drawCard(CardOnScreenData CoSD, SpriteBatch batch){
         // Draw cardback
         CoSD.getCardbackSprite().draw(batch);
@@ -260,6 +306,23 @@ public class LibraryTemp extends ScreenAdapter {
                     cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(14), 530, 100, 0.45f));
 
                     System.out.println("Cards sorted and displayed.");
+                }
+
+                if (worldCoords.x >= 200 && worldCoords.x <= 300 && worldCoords.y >= 0 && worldCoords.y <= 25) {
+                    // Next button clicked
+
+                    if (currentPage > 0) {
+                        currentPage--;
+                        updateCardsOnPage();
+                    }
+                }
+
+                if (worldCoords.x >= 300 && worldCoords.x <= 400 && worldCoords.y >= 0 && worldCoords.y <= 25) {
+                    // Previous button clicked
+                    if ((currentPage + 1) * CARDS_PER_PAGE < cardList.size()) {
+                        currentPage++;
+                        updateCardsOnPage();
+                    }
                 }
 
                 for (int i = 0; i < cardOnScreenDatas.size(); i++) {

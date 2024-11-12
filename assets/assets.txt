@@ -13,6 +13,7 @@ ui/dpcomic_0.tga
 enemycloud.png
 bg_orange.png
 title.png
+cardback_spell.png
 btn_credits.png
 youwin.png
 playercloud.png
@@ -55,6 +56,7 @@ bg_lightgreen.png
 btn_sortbyname.png
 background.png
 btn_lib.png
+btn_prevpage.png
 btn_sortbyattack.png
 yourhealth.png
 libgdx.png
@@ -84,5 +86,6 @@ playerenergy.png
 cardback_algo3.png
 cardback_datastruct1.png
 cardback_datatype1.png
+btn_nextpage.png
 cardback_algo2.png
 creatures.png
