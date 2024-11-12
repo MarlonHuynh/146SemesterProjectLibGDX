@@ -66,7 +66,10 @@ public class CardOnScreenData {
         this.cardListID = nameToIntMap.get(card.getName());
         this.cardSprite = new Sprite(card.getTexture());
         this.cardbackSprite = new Sprite(new Texture("cardback2.png"));
-        if (card.getStage() == 1 && card.getType().equals("Algorithm")){
+        if (card.getType().equals("Spell")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_spell.png"));
+        }
+        else if (card.getStage() == 1 && card.getType().equals("Algorithm")){
             this.cardbackSprite = new Sprite(new Texture("cardback_algo1.png"));
         }
         else if (card.getStage() == 2 && card.getType().equals("Algorithm")){
@@ -148,7 +151,10 @@ public class CardOnScreenData {
         this.cardListID = cardListID;
         this.cardSprite = new Sprite(card.getTexture());
         this.cardbackSprite = new Sprite(new Texture("cardback2.png"));
-        if (card.getStage() == 1 && card.getType().equals("Algorithm")){
+        if (card.getType().equals("Spell")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_spell.png"));
+        }
+        else if (card.getStage() == 1 && card.getType().equals("Algorithm")){
             this.cardbackSprite = new Sprite(new Texture("cardback_algo1.png"));
         }
         else if (card.getStage() == 2 && card.getType().equals("Algorithm")){

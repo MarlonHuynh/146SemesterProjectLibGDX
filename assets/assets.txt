@@ -32,6 +32,7 @@ cardback_datastruct3.png
 cardback_datatype1.png
 cardback_datatype2.png
 cardback_datatype3.png
+cardback_spell.png
 cardsprites/array.png
 cardsprites/astar.png
 cardsprites/balancedbinarytree.png

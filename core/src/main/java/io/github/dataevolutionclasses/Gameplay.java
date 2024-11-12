@@ -123,12 +123,14 @@ public class Gameplay extends ScreenAdapter {
         // TODO: Initial deck will be a deck taken from from the library section
         List<String> strTemp = Arrays.asList(
             "Bubble Sort", "Bubble Sort", "Seelection", "Seelection", "Eelnsertion Sort", "Eelnsertion Sort",
+            "Bubble Sort", "Bubble Sort", "Seelection", "Seelection", "Eelnsertion Sort", "Eelnsertion Sort",
             "Surgeon Sort", "Surgeon Sort", "Shell Sort", "Shell Sort", "Quickfish Sort", "Quickfish Sort",
-            "A-Starfish", "A-Starfish", "Bucket O' Fish", "Bucket O' Fish", "Raydix Sort", "Raydix Sort",
+            "A-Starfish", "Bucket O' Fish", "Raydix Sort",
+            "Parraykeet", "Parraykeet", "Sphinx List", "Sphinx List", "Bin. Canary Tree", "Bin. Canary Tree",
             "Parraykeet", "Parraykeet", "Sphinx List", "Sphinx List", "Bin. Canary Tree", "Bin. Canary Tree",
             "Quack Stack", "Quack Stack", "Hawkmap", "Hawkmap", "Quetzelqueueotl", "Quetzelqueueotl",
-            "Grifminmax Heap", "Grifminmax Heap", "Hippograph", "Hippograph", "Bal. Canary Tree", "Bal. Canary Tree",
-            "Bitbug", "Bitbug"
+            "Grifminmax Heap", "Hippograph", "Bal. Canary Tree",
+            "Recover Data", "Recover Data", "Recover Data", "Recover Data", "Recover Data", "Recover Data"
         );
         for (String s : strTemp) {
             Card card = nameToCardHashmap.get(s);
@@ -146,12 +148,13 @@ public class Gameplay extends ScreenAdapter {
         // Enemy Deck
         List<String> strTemp_e = Arrays.asList(
             "Bitbug", "Bitbug", "Stringer Bee", "Stringer Bee", "Int Ant", "Int Ant",
+            "Bitbug", "Bitbug", "Stringer Bee", "Stringer Bee", "Int Ant", "Int Ant",
             "Beetlean", "Beetlean", "Pointerpede", "Pointerpede", "Bytebug", "Bytebug",
             "Tupletick", "Tupletick", "Wordbug", "Wordbug", "Referant", "Referant",
             "Parraykeet", "Parraykeet", "Sphinx List", "Sphinx List", "Bin. Canary Tree", "Bin. Canary Tree",
+            "Parraykeet", "Parraykeet", "Sphinx List", "Sphinx List", "Bin. Canary Tree", "Bin. Canary Tree",
             "Quack Stack", "Quack Stack", "Hawkmap", "Hawkmap", "Quetzelqueueotl", "Quetzelqueueotl",
-            "Grifminmax Heap", "Grifminmax Heap", "Hippograph", "Hippograph", "Bal. Canary Tree", "Bal. Canary Tree",
-            "Bitbug", "Bitbug"
+            "Grifminmax Heap", "Grifminmax Heap", "Hippograph", "Hippograph", "Bal. Canary Tree", "Bal. Canary Tree"
             );
         for (String s : strTemp_e) {
             Card card = nameToCardHashmap.get(s);
@@ -310,12 +313,16 @@ public class Gameplay extends ScreenAdapter {
             // Draw cost
             stringBuilder.setLength(0); stringBuilder.append(CoSD.getCard().getCost());
             CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getCostTextX(), CoSD.getCostTextY());
-            // Draw attack
-            stringBuilder.setLength(0); stringBuilder.append(CoSD.getCard().getAttack());
-            CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getAttackTextX(), CoSD.getAttackTextY());
-            // Draw shield
-            stringBuilder.setLength(0); stringBuilder.append(CoSD.getCard().getShield());
-            CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getShieldTextX(), CoSD.getShieldTextY());
+            if (!CoSD.getCard().getType().equals("Spell")) {
+                // Draw attack
+                stringBuilder.setLength(0);
+                stringBuilder.append(CoSD.getCard().getAttack());
+                CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getAttackTextX(), CoSD.getAttackTextY());
+                // Draw shield
+                stringBuilder.setLength(0);
+                stringBuilder.append(CoSD.getCard().getShield());
+                CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getShieldTextX(), CoSD.getShieldTextY());
+            }
         }
     }
 
@@ -348,7 +355,7 @@ public class Gameplay extends ScreenAdapter {
                     }
                 }
                 if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
-                    buttonSound.play();
+                    buttonSound.play(0.5f);
                     game.setScreen(new Title(game));
                 }
                 // If nothing has been clicked and nothing has been clicked, no additional logic needed so returns
@@ -359,8 +366,29 @@ public class Gameplay extends ScreenAdapter {
                 // -----------------------------------------------------------------------------------------------
                 CardOnScreenData currData = cardOnScreenDatas.get(selectedCardNumber);
                 CardOnScreenData prevData = cardOnScreenDatas.get(prevSelectedCardNumber);
+                // 0) Spell Logic
+                if (currData.getCard().getType().equals("Spell") && prevData.getCard().getType().equals("Spell")){
+
+                    if (currData.getCard().getName().equals("Recover Data") && playerEnergy >= currData.getCard().getCost()){
+                        // Subtract cost
+                        playerEnergy -= currData.getCard().getCost();
+                        // Add 5 hp
+                        playerHealth += 5;
+                        // Remove from hand
+                        for (int i = 0; i < cardsInPlayerHand.size(); i++) {
+                            if (cardsInPlayerHand.get(i).getName().equals(currData.getCard().getName())) {
+                                cardsInPlayerHand.remove(i);
+                                break;
+                            }
+                        }
+                        // Remake the card's UI to be reflective of usage
+                        currData.remakeCard(37, currData.getX(), currData.getY(), currData.getScale());
+                    }
+
+
+                }
                 // 1) Fielding Card logic (prev -> card in hand, curr -> player field blank)
-                if (!prevData.getCard().getName().equals("Blank")                       // CONDITIONS: Previous select is not blank card
+                else if (!prevData.getCard().getName().equals("Blank")                       // CONDITIONS: Previous select is not blank card
                 && !prevData.getCard().getName().equals("Trash")
                 && !prevData.getCard().getName().equals("End Turn")
                 && !prevData.getCard().getName().equals("Discard")
@@ -527,6 +555,7 @@ public class Gameplay extends ScreenAdapter {
                             handCard.setShield(fieldCard.getShield() + handCard.getShield());
                             // Remake field card
                             fieldSlot.remakeCard(handCard, fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
+                            System.out.print("Placing hand card: " + handCard.getName());
                             // Remove handCard from hand
                             cardsInEnemyHand.remove(handCard);
                             // Remake hand card into blank
@@ -543,6 +572,7 @@ public class Gameplay extends ScreenAdapter {
                                 handCard.setAttack(handCard.getAttack() / 2);
                             // Remake field card
                             fieldSlot.remakeCard(handCard, fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
+                            System.out.print("Placing hand card: " + handCard.getName());
                             // Remove handCard from hand
                             cardsInEnemyHand.remove(handCard);
                             // Remake hand card into blank
@@ -574,11 +604,8 @@ public class Gameplay extends ScreenAdapter {
                 delayAndExecute(() -> {
                     // Determine if field is full
                     boolean full = true;
-                    for (Card fieldCard : cardsInEnemyField) {
-                        if (fieldCard == null) {
-                            full = false;
-                            break;
-                        }
+                    if (cardsInEnemyDeck.size() >= 3){
+                        full = false;
                     }
                     // Discard priority logic
                     // Mostly check if handsize = 5 or not
