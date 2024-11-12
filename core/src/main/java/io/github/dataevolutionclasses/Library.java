@@ -274,10 +274,176 @@ public class Library extends ScreenAdapter {
 
                 }
 
-                if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 500 && worldCoords.y <= 525) {
+                if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 510 && worldCoords.y <= 535) {
                     // Sort the cards by name and update viewCardList
                     viewCardList = CardSorter.sortByName(cardList);
                     System.out.println("Sorting by Name");
+
+                    // Update cardOnPage with sorted viewCardList
+                    cardOnPage.clear();
+                    for (int i = 0; i < Math.min(15, viewCardList.size()); i++) {
+                        cardOnPage.add(viewCardList.get(i).deepCopy());
+                    }
+
+                    // Refresh cardOnScreenDatas with the sorted cards
+                    cardOnScreenDatas.clear();
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(0), 80, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(1), 190, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(2), 300, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(3), 410, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(4), 530, 400, 0.45f));
+
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(5), 80, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(6), 190, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(7), 300, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(8), 410, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(9), 530, 250, 0.45f));
+
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(10), 80, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(11), 190, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(12), 300, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(13), 410, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(14), 530, 100, 0.45f));
+
+                    System.out.println("Cards sorted and displayed.");
+                }
+
+                if (worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 510 && worldCoords.y <= 535) {
+                    // Sort the cards by cost and update viewCardList
+                    viewCardList = CardSorter.sortByCost(cardList);
+                    System.out.println("Sorting by Cost");
+
+                    // Update cardOnPage with sorted viewCardList
+                    cardOnPage.clear();
+                    for (int i = 0; i < Math.min(15, viewCardList.size()); i++) {
+                        cardOnPage.add(viewCardList.get(i).deepCopy());
+                    }
+
+                    // Refresh cardOnScreenDatas with the sorted cards
+                    cardOnScreenDatas.clear();
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(0), 80, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(1), 190, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(2), 300, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(3), 410, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(4), 530, 400, 0.45f));
+
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(5), 80, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(6), 190, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(7), 300, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(8), 410, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(9), 530, 250, 0.45f));
+
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(10), 80, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(11), 190, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(12), 300, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(13), 410, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(14), 530, 100, 0.45f));
+
+                    System.out.println("Cards sorted and displayed.");
+                }
+                if (worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 510 && worldCoords.y <= 535) {
+                    // Sort the cards by attack and update viewCardList
+                    viewCardList = CardSorter.sortByAttack(cardList);
+                    System.out.println("Sorting by Attack");
+
+                    // Update cardOnPage with sorted viewCardList
+                    cardOnPage.clear();
+                    for (int i = 0; i < Math.min(15, viewCardList.size()); i++) {
+                        cardOnPage.add(viewCardList.get(i).deepCopy());
+                    }
+
+                    // Refresh cardOnScreenDatas with the sorted cards
+                    cardOnScreenDatas.clear();
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(0), 80, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(1), 190, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(2), 300, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(3), 410, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(4), 530, 400, 0.45f));
+
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(5), 80, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(6), 190, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(7), 300, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(8), 410, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(9), 530, 250, 0.45f));
+
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(10), 80, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(11), 190, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(12), 300, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(13), 410, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(14), 530, 100, 0.45f));
+
+                    System.out.println("Cards sorted and displayed.");
+                }
+                if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 480 && worldCoords.y <= 505) {
+                    // Sort the cards by shield and update viewCardList
+                    viewCardList = CardSorter.sortByShield(cardList);
+                    System.out.println("Sorting by Shield");
+
+                    // Update cardOnPage with sorted viewCardList
+                    cardOnPage.clear();
+                    for (int i = 0; i < Math.min(15, viewCardList.size()); i++) {
+                        cardOnPage.add(viewCardList.get(i).deepCopy());
+                    }
+
+                    // Refresh cardOnScreenDatas with the sorted cards
+                    cardOnScreenDatas.clear();
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(0), 80, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(1), 190, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(2), 300, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(3), 410, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(4), 530, 400, 0.45f));
+
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(5), 80, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(6), 190, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(7), 300, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(8), 410, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(9), 530, 250, 0.45f));
+
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(10), 80, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(11), 190, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(12), 300, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(13), 410, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(14), 530, 100, 0.45f));
+
+                    System.out.println("Cards sorted and displayed.");
+                }
+                if (worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 480 && worldCoords.y <= 505) {
+                    // Sort the cards by stage and update viewCardList
+                    viewCardList = CardSorter.sortByStage(cardList);
+                    System.out.println("Sorting by Stage");
+
+                    // Update cardOnPage with sorted viewCardList
+                    cardOnPage.clear();
+                    for (int i = 0; i < Math.min(15, viewCardList.size()); i++) {
+                        cardOnPage.add(viewCardList.get(i).deepCopy());
+                    }
+
+                    // Refresh cardOnScreenDatas with the sorted cards
+                    cardOnScreenDatas.clear();
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(0), 80, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(1), 190, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(2), 300, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(3), 410, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(4), 530, 400, 0.45f));
+
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(5), 80, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(6), 190, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(7), 300, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(8), 410, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(9), 530, 250, 0.45f));
+
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(10), 80, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(11), 190, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(12), 300, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(13), 410, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(14), 530, 100, 0.45f));
+
+                    System.out.println("Cards sorted and displayed.");
+                }
+                if (worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 480 && worldCoords.y <= 505) {
+                    // Sort the cards removing sort and update viewCardList
+                    viewCardList = cardList;
+                    System.out.println("Remove Sort");
 
                     // Update cardOnPage with sorted viewCardList
                     cardOnPage.clear();
