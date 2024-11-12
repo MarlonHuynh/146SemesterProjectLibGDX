@@ -519,6 +519,7 @@ public class Gameplay extends ScreenAdapter {
 
     public void processEnemyTurnTimed() {
         // Task 1: Draw a card if able at the start of each turn
+
         Gdx.app.postRunnable(() -> {
             isEnemyTurn = true;
             if (cardsInEnemyHand.size() < 5 && !cardsInEnemyDeck.isEmpty()) {
@@ -540,48 +541,49 @@ public class Gameplay extends ScreenAdapter {
             // Task 2: Prioritize evolving cards first if enough energy is available
             delayAndExecute(() -> {
                 boolean placed = false;
-                for (int i = 0; i < cardsInEnemyHand.size(); i++) { // Loops through every card in hand
+                for (int i = 0; i < cardsInEnemyHand.size(); i++) { // Loop through every card in hand
                     Card handCard = cardsInEnemyHand.get(i);
-                    for (int j = 10; j < 13; j++) { // Loops through every field slot
+                    for (int j = 10; j < 13; j++) { // Loop through every field slot
                         CardOnScreenData fieldSlot = cardOnScreenDatas.get(j);
                         Card fieldCard = fieldSlot.getCard();
-                        // Evolution is possible, evolve card
-                        if (fieldCard.getStage() == handCard.getStage() + 1
-                            && fieldCard.getType().equals(handCard.getType())
-                            && enemyEnergy >= handCard.getCost()) {
-                            // Decrease energy and adds attack and shield
-                            enemyEnergy -= handCard.getCost();
-                            handCard.setAttack(fieldCard.getAttack() + handCard.getAttack());
-                            handCard.setShield(fieldCard.getShield() + handCard.getShield());
-                            // Remake field card
-                            fieldSlot.remakeCard(handCard, fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
-                            System.out.print("Placing hand card: " + handCard.getName());
-                            // Remove handCard from hand
-                            cardsInEnemyHand.remove(handCard);
-                            // Remake hand card into blank
-                            cardOnScreenDatas.get(i).remakeCard(37, cardOnScreenDatas.get(i).getX(), cardOnScreenDatas.get(i).getY(), cardOnScreenDatas.get(i).getScale());
-                            placed = true;
-                            break;
-                        }
-                        // Evolution not possible, settles for placing card on blank
-                        else if (enemyEnergy >= handCard.getCost() && fieldSlot.getCard().getName().equals("Blank")) {
+                        // Check if evolution is possible
+                        boolean canEvolve = fieldCard.getStage() == handCard.getStage() - 1 && fieldCard.getType().equals(handCard.getType()) && enemyEnergy >= handCard.getCost();
+                        // Check if placement on blank slot is possible
+                        boolean canPlaceOnBlank = enemyEnergy >= handCard.getCost() && fieldSlot.getCard().getName().equals("Blank");
+                        if (canEvolve || canPlaceOnBlank) {
                             // Decrease energy
                             enemyEnergy -= handCard.getCost();
-                            // Halves attack if places higher stage card raw
-                            if (handCard.getStage() > 1)
+                            if (canEvolve) {
+                                // Evolution: add attack and shield to hand card
+                                handCard.setAttack(fieldCard.getAttack() + handCard.getAttack());
+                                handCard.setShield(fieldCard.getShield() + handCard.getShield());
+                            } else if (handCard.getStage() > 1) {
+                                // Place raw higher-stage card on blank slot, halve its attack
                                 handCard.setAttack(handCard.getAttack() / 2);
-                            // Remake field card
-                            fieldSlot.remakeCard(handCard, fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
-                            System.out.print("Placing hand card: " + handCard.getName());
-                            // Remove handCard from hand
-                            cardsInEnemyHand.remove(handCard);
-                            // Remake hand card into blank
-                            cardOnScreenDatas.get(i).remakeCard(37, cardOnScreenDatas.get(i).getX(), cardOnScreenDatas.get(i).getY(), cardOnScreenDatas.get(i).getScale());
+                            }
+                            // Place hand card on the field slot
+                            fieldSlot.remakeCard(handCard.deepCopy(), fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
+                            // Replace hand card with a blank card in the hand display
+                            for (int k = 0; k < 4; k++) {
+                                if (cardOnScreenDatas.get(k).getCard().getName().equals(handCard.getName())) {
+                                    cardOnScreenDatas.get(k).remakeCard(37, cardOnScreenDatas.get(k).getX(), cardOnScreenDatas.get(k).getY(), cardOnScreenDatas.get(k).getScale());
+                                    break;
+                                }
+                            }
+                            // Remove the placed card from enemy hand
+                            for (int k = 0; k < cardsInEnemyHand.size(); k++) {
+                                if (cardsInEnemyHand.get(k).getName().equals(handCard.getName())) {
+                                    cardsInEnemyHand.remove(k);
+                                    break;
+                                }
+                            }
                             placed = true;
                             break;
                         }
                     }
+                    if (placed) break; // Exit the outer loop once a card has been placed
                 }
+
                 enemyActionStr = "Evolving or placing cards completed.";
                 enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
                 // TODO: Rework enemy AI
@@ -602,16 +604,20 @@ public class Gameplay extends ScreenAdapter {
                 // Task 3: Discard highest-cost card if low on energy
                 boolean finalPlaced = placed;
                 delayAndExecute(() -> {
+
                     // Determine if field is full
                     boolean full = true;
-                    if (cardsInEnemyDeck.size() >= 3){
-                        full = false;
+                    for (int i = 0; i < 4; i++){
+                        if (cardOnScreenDatas.get(i).getCard().getName().equals("Blank")) {
+                            full = false;
+                            break;
+                        }
                     }
                     // Discard priority logic
                     // Mostly check if handsize = 5 or not
                     // Check enemyReacharge <10 (better to check recharge than energy)
                     // Wasn't place any card this turn
-                    if (cardsInEnemyHand.size() >= 5 || (enemyRecharge < 10 && !finalPlaced && !full)) {
+                    if (cardsInEnemyHand.size() >= 5 || (enemyRecharge < 10)) {
                         Card discardCandidate = null;
 
                         // Step 1: Prioritize discarding basics if the field is full
@@ -676,6 +682,12 @@ public class Gameplay extends ScreenAdapter {
                             enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
                         }
                     }
+                    for (int k = 0; k < cardsInEnemyHand.size(); k++) {
+                        System.out.println(cardsInEnemyHand.get(k).getName());
+                    }
+                    System.out.println();
+
+
                     // Task 4: Attack Player
                     delayAndExecute(() -> {
                         processCardInteraction(1, 13, 10);
@@ -758,13 +770,14 @@ public class Gameplay extends ScreenAdapter {
         }
     }
 
+    // Not in use
     void discardLowestValueEnemyHand(){
         // Get first available card
         Card lowestValueCard = cardsInEnemyHand.get(0);
-        int indexToDiscard = -1;
+        int indexToDiscard = 0;
         // Find highest cost card
         for (int j = 1; j < cardsInEnemyHand.size(); j++) {
-            if (cardsInEnemyHand.get(j).getCost() < lowestValueCard.getCost()) {
+            if (cardsInEnemyHand.get(j).getCost() > lowestValueCard.getCost()) {
                 lowestValueCard = cardsInEnemyHand.get(j);
                 indexToDiscard = j;
             }
