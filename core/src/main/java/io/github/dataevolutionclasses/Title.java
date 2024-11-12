@@ -128,7 +128,7 @@ public class Title extends ScreenAdapter {
                 }
                 else if (indexClicked == 1){
                     playButtonSound();
-                    game.setScreen(new Library(game));
+                    game.setScreen(new LibraryTemp(game));
                 }
                 else if (indexClicked == 2){
                     playButtonSound();

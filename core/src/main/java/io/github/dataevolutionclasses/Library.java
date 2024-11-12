@@ -70,7 +70,7 @@ public class Library extends ApplicationAdapter {
         // Set up camera, viewport, and input processor
         camera = new OrthographicCamera();
         viewport = new FitViewport(600, 600, camera);                       // 600x600 is the virtual world size
-        stage = new Stage(new ScreenViewport());
+//        stage = new Stage(new ScreenViewport());
 //        Gdx.input.setInputProcessor(stage);
 //        scroll = new Scroll();
 //        scroll.createSlider(stage); //Add the slider into the stage
@@ -88,11 +88,10 @@ public class Library extends ApplicationAdapter {
         }
         CardOnScreenData.staticSetCardList(cardList);
 
-
-//        cardOnPage = new ArrayList<>();
-//        for (int i = 0; i < 15; i ++){
-//            cardOnPage.add(cardList.get(i).deepCopy());
-//        }
+        cardOnPage = new ArrayList<>();
+        for (int i = 0; i < 15; i ++){
+            cardOnPage.add(cardList.get(i).deepCopy());
+        }
 
         viewCardList = new ArrayList<>(cardList);
 
@@ -117,7 +116,7 @@ public class Library extends ApplicationAdapter {
         // Create the menu and buttons
         Table menuTable = new Table();
         menuTable.setFillParent(true);
-        menuTable.top().right(); // Align to the top-right corner
+        menuTable.top().left(); // Align to the top-left corner
 
         TextButton sortByNameButton = new TextButton("Sort by Name", skin);
         TextButton sortByStageButton = new TextButton("Sort by Stage", skin);
