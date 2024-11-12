@@ -116,7 +116,7 @@ public class CardReader {
                 case "A-Starfish":
                     card.setTexture("cardsprites/astar.png");
                     break;
-                case "Bucket o' Fish":
+                case "Bucket O' Fish":
                     card.setTexture("cardsprites/bucketsort.png");
                     break;
                 case "Raydix Sort":
@@ -188,10 +188,10 @@ public class CardReader {
                 case "Superoverclock":
                     card.setTexture("cardsprites/plusattack.png");
                     break;
-                case "Recover data":
+                case "Recover Data":
                     card.setTexture("cardsprites/plushealth.png");
                     break;
-                case "Backup data":
+                case "Backup Data":
                     card.setTexture("cardsprites/plushealth.png");
                     break;
                 case "Send Bug":

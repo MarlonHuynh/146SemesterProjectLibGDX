@@ -66,7 +66,10 @@ public class CardOnScreenData {
         this.cardListID = nameToIntMap.get(card.getName());
         this.cardSprite = new Sprite(card.getTexture());
         this.cardbackSprite = new Sprite(new Texture("cardback2.png"));
-        if (card.getStage() == 1 && card.getType().equals("Algorithm")){
+        if (card.getType().equals("Spell")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_spell.png"));
+        }
+        else if (card.getStage() == 1 && card.getType().equals("Algorithm")){
             this.cardbackSprite = new Sprite(new Texture("cardback_algo1.png"));
         }
         else if (card.getStage() == 2 && card.getType().equals("Algorithm")){
@@ -76,22 +79,22 @@ public class CardOnScreenData {
             this.cardbackSprite = new Sprite(new Texture("cardback_algo3.png"));
         }
         else if (card.getStage() == 1 && card.getType().equals("Data Structure")){
-            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct1.png"));
-        }
-        else if (card.getStage() == 2 && card.getType().equals("Data Structure")){
-            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct2.png"));
-        }
-        else if (card.getStage() == 3 && card.getType().equals("Data Structure")){
-            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct3.png"));
-        }
-        else if (card.getStage() == 1 && card.getType().equals("Data Type")){
             this.cardbackSprite = new Sprite(new Texture("cardback_datatype1.png"));
         }
-        else if (card.getStage() == 2 && card.getType().equals("Data Type")){
+        else if (card.getStage() == 2 && card.getType().equals("Data Structure")){
             this.cardbackSprite = new Sprite(new Texture("cardback_datatype2.png"));
         }
-        else if (card.getStage() == 3 && card.getType().equals("Data Type")){
+        else if (card.getStage() == 3 && card.getType().equals("Data Structure")){
             this.cardbackSprite = new Sprite(new Texture("cardback_datatype3.png"));
+        }
+        else if (card.getStage() == 1 && card.getType().equals("Data Type")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct1.png"));
+        }
+        else if (card.getStage() == 2 && card.getType().equals("Data Type")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct2.png"));
+        }
+        else if (card.getStage() == 3 && card.getType().equals("Data Type")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_datastruct3.png"));
         }
         else if (card.getName().equals("Draw")){
             this.cardbackSprite = new Sprite(new Texture("cardback3.png"));
@@ -148,7 +151,10 @@ public class CardOnScreenData {
         this.cardListID = cardListID;
         this.cardSprite = new Sprite(card.getTexture());
         this.cardbackSprite = new Sprite(new Texture("cardback2.png"));
-        if (card.getStage() == 1 && card.getType().equals("Algorithm")){
+        if (card.getType().equals("Spell")){
+            this.cardbackSprite = new Sprite(new Texture("cardback_spell.png"));
+        }
+        else if (card.getStage() == 1 && card.getType().equals("Algorithm")){
             this.cardbackSprite = new Sprite(new Texture("cardback_algo1.png"));
         }
         else if (card.getStage() == 2 && card.getType().equals("Algorithm")){
