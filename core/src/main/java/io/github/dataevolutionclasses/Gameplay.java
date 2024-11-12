@@ -682,10 +682,6 @@ public class Gameplay extends ScreenAdapter {
                             enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
                         }
                     }
-                    for (int k = 0; k < cardsInEnemyHand.size(); k++) {
-                        System.out.println(cardsInEnemyHand.get(k).getName());
-                    }
-                    System.out.println();
 
 
                     // Task 4: Attack Player
