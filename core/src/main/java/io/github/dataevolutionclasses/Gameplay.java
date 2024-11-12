@@ -122,12 +122,20 @@ public class Gameplay extends ScreenAdapter {
         // Create the cards in the player's deck
         // TODO: Initial deck will be a deck taken from from the library section
         List<String> strTemp = Arrays.asList(
-            "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort",
-            "Parraykeet","Parraykeet","Quack Stack", "Bin. Canary Tree", "Bin. Canary Tree", "Bal. Canary Tree");
+            "Bubble Sort", "Bubble Sort", "Seelection", "Seelection", "Eelnsertion Sort", "Eelnsertion Sort",
+            "Surgeon Sort", "Surgeon Sort", "Shell Sort", "Shell Sort", "Quickfish Sort", "Quickfish Sort",
+            "A-Starfish", "A-Starfish", "Bucket O' Fish", "Bucket O' Fish", "Raydix Sort", "Raydix Sort",
+            "Parraykeet", "Parraykeet", "Sphinx List", "Sphinx List", "Bin. Canary Tree", "Bin. Canary Tree",
+            "Quack Stack", "Quack Stack", "Hawkmap", "Hawkmap", "Quetzelqueueotl", "Quetzelqueueotl",
+            "Grifminmax Heap", "Grifminmax Heap", "Hippograph", "Hippograph", "Bal. Canary Tree", "Bal. Canary Tree",
+            "Bitbug", "Bitbug"
+        );
         for (String s : strTemp) {
             Card card = nameToCardHashmap.get(s);
             if (card != null)
                 cardsInPlayerDeck.add(card);
+            else
+                System.out.println("Null card: " + s);
         }
         // Generate hand by taking 5 cards from deck
         for (int i = 0; i < 5; i++){
@@ -137,12 +145,20 @@ public class Gameplay extends ScreenAdapter {
         }
         // Enemy Deck
         List<String> strTemp_e = Arrays.asList(
-            "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort",
-            "Bubble Sort", "Bubble Sort", "Seelection Sort", "Seelection Sort", "Eelnsertion Sort", "Eelnsertion Sort", "Surgeon Sort", "Surgeon Sort", "A-Starfish", "Raydix Sort");
+            "Bitbug", "Bitbug", "Stringer Bee", "Stringer Bee", "Int Ant", "Int Ant",
+            "Beetlean", "Beetlean", "Pointerpede", "Pointerpede", "Bytebug", "Bytebug",
+            "Tupletick", "Tupletick", "Wordbug", "Wordbug", "Referant", "Referant",
+            "Parraykeet", "Parraykeet", "Sphinx List", "Sphinx List", "Bin. Canary Tree", "Bin. Canary Tree",
+            "Quack Stack", "Quack Stack", "Hawkmap", "Hawkmap", "Quetzelqueueotl", "Quetzelqueueotl",
+            "Grifminmax Heap", "Grifminmax Heap", "Hippograph", "Hippograph", "Bal. Canary Tree", "Bal. Canary Tree",
+            "Bitbug", "Bitbug"
+            );
         for (String s : strTemp_e) {
             Card card = nameToCardHashmap.get(s);
             if (card != null)
                 cardsInEnemyDeck.add(card);
+            else
+                System.out.println("Null card: " + s);
         }
         // Generate hand by taking 5 cards from deck
         for (int i = 0; i < 5; i++){

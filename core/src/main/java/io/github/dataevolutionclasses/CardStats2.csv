@@ -15,7 +15,7 @@ Quack Stack,Data Structure,2,5,4,5,Stack push and pop items
 Hawkmap,Data Structure,2,5,2,7,Stores data in keys and value pairs
 Quetzelqueueotl,Data Structure,2,6,3,8,Adds to back. Take from front
 Grifminmax Heap,Data Structure,3,10,5,10,Has a significant item as root
-Hippograph,Data structure,3,8,4,9,Holds data in vertices and edges
+Hippograph,Data Structure,3,8,4,9,Holds data in vertices and edges
 Bal. Canary Tree,Data Structure,3,7,4,7,Has a max height of log n
 Bitbug,Data Type,1,2,2,2,A bit can be either 1 or 0
 Stringer Bee,Data Type,1,2,2,3,String store text data
