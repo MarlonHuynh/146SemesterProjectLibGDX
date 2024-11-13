@@ -7,7 +7,9 @@ btn_deck.png
 btn_exit.png
 btn_help.png
 btn_lib.png
+btn_nextpage.png
 btn_play.png
+btn_prevpage.png
 btn_removesorting.png
 btn_sortbyattack.png
 btn_sortbycost.png
@@ -30,6 +32,7 @@ cardback_datastruct3.png
 cardback_datatype1.png
 cardback_datatype2.png
 cardback_datatype3.png
+cardback_spell.png
 cardsprites/array.png
 cardsprites/astar.png
 cardsprites/balancedbinarytree.png
