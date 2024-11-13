@@ -1,6 +1,5 @@
 package io.github.dataevolutionclasses;
 
-
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
@@ -11,19 +10,15 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class Library extends ScreenAdapter {
     // Window vars
     private OrthographicCamera camera;              // Camera
     private FitViewport viewport;                   // Viewport
-    // Storage
     // Storage vars
     private List<Card> cardList;                                                        // Master Card Storage (Do not change)
     private final HashMap<String, Card> nameToCardHashmap = new HashMap<>();            // Master Card Storage (Do not change)
@@ -38,8 +33,6 @@ public class Library extends ScreenAdapter {
     private String deckStr = "Deck: ";
     private GlyphLayout deckLayout = new GlyphLayout();
     private BitmapFont defaultFont;
-
-
     // Sprite for Player Deck button
     private Sprite playersDeckIcon;
     private Sprite sortByNameSprite;
@@ -49,9 +42,6 @@ public class Library extends ScreenAdapter {
     private Sprite sortByStageSprite;
     private Sprite removeSortSprite;
     private List<Card> viewCardList;                                                        // Master Card Storage (Do not change)
-
-
-    //
     private StringBuilder stringBuilder = new StringBuilder();
     private boolean clicked = false;
     private Vector3 worldCoords = new Vector3();
@@ -60,19 +50,12 @@ public class Library extends ScreenAdapter {
     private final int CARDS_PER_PAGE = 15;
     private Sprite nextButtonSprite;
     private Sprite prevButtonSprite;
-
     // button sound effect
     private Sound buttonSound = buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
-
-
-    //
     private Game game;
     public Library(Game game) {
         this.game = game;
     }
-
-
-
 
     public void show() {
         // Set up camera, viewport, and input processor
@@ -100,7 +83,6 @@ public class Library extends ScreenAdapter {
             cardOnPage.add(cardList.get(i).deepCopy());
         }
 
-
         cardInDeck = new ArrayList<Card>();
         nextButtonSprite = new Sprite(new Texture("btn_nextpage.png"));
         nextButtonSprite.setSize(100, 25);
@@ -114,21 +96,21 @@ public class Library extends ScreenAdapter {
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(1), 190, 400, 0.45f));
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(2), 300, 400, 0.45f));
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(3), 410, 400, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(4), 530, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(4), 520, 400, 0.45f));
 
 
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(5), 80, 250, 0.45f));
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(6), 190, 250, 0.45f));
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(7),300, 250, 0.45f));
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(8), 410, 250, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(9), 530, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(9), 520, 250, 0.45f));
 
 
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(10), 80, 100, 0.45f));
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(11), 190, 100, 0.45f));
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(12), 300, 100, 0.45f));
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(13), 410, 100, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(14), 530, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(14), 520, 100, 0.45f));
         // Sprite
         spriteBatch = new SpriteBatch();
         bgSpr = new Sprite(new Texture("background.png"));
@@ -358,4 +340,3 @@ public class Library extends ScreenAdapter {
         });
     }
 }
-
