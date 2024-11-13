@@ -104,8 +104,8 @@ public class Library extends ScreenAdapter {
         bgSpr = new Sprite(new Texture("background.png"));
 
         // Sprite for player deck
-        playersDeckIcon = new Sprite(new Texture("youlose.png"));
-        playersDeckIcon.setPosition(370, 480);
+        playersDeckIcon = new Sprite(new Texture("btn_deck.png"));
+        playersDeckIcon.setPosition(370, 500);
 
         defaultFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         defaultFont.getData().setScale(0.4f);
@@ -184,11 +184,6 @@ public class Library extends ScreenAdapter {
                 clicked = false;
                 if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600)
                     return false;
-                //To click onto the sprite of the playerDeckList
-                if (worldCoords.x < 600 && worldCoords.x > 700 || worldCoords.y < 600 || worldCoords.y > 700)
-                {
-
-                }
                 for (int i = 0; i < cardOnScreenDatas.size(); i++) {
                     if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y) || cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                         System.out.println("Selected");
@@ -200,6 +195,38 @@ public class Library extends ScreenAdapter {
                         deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);
                         break;
                     }
+                }
+                //To click onto the sprite of the playerDeckList
+                //Creation of coordinates for x and y of sprite deck button
+                float xMin = playersDeckIcon.getX();
+                float xMax = xMin + playersDeckIcon.getWidth();
+                float yMin = playersDeckIcon.getY();
+                float yMax = yMin + playersDeckIcon.getHeight();
+
+                if (worldCoords.x <= xMax && worldCoords.x >= xMin  &&
+                    worldCoords.y <= yMax && worldCoords.y >= yMin)
+                {
+                    //check if empty, then do nothing
+                    if(cardInDeck.isEmpty())
+                    {
+                        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(0), 80, 400, 0.45f));
+                    }
+                    else
+                    {
+                        //Removes all current cards being displayed
+                        while (!cardOnScreenDatas.isEmpty())
+                        {
+                            cardOnScreenDatas.remove(0);
+                        }
+                        
+                    }
+
+                    //Remove below clearing method after implementation
+                    while (!cardOnScreenDatas.isEmpty())
+                    {
+                        cardOnScreenDatas.remove(0);
+                    }
+                    //Stop removing from here
                 }
                 if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                     buttonSound.play(0.4f);
