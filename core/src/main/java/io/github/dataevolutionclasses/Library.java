@@ -218,7 +218,7 @@ public class Library extends ScreenAdapter {
                         {
                             cardOnScreenDatas.remove(0);
                         }
-                        
+
                     }
 
                     //Remove below clearing method after implementation
