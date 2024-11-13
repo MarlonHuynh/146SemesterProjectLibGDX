@@ -325,24 +325,33 @@ public class Library extends ScreenAdapter {
                         updateCardsOnPage();
                     }
                 }
-
+// Check for card selection
                 for (int i = 0; i < cardOnScreenDatas.size(); i++) {
-                    if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y) || cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    // Check if the click is on a card (either front or back)
+                    if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y) ||
+                        cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                         System.out.println("Selected");
-                        // Update selection variables accordingly to what was clicked and what was previously clicked
-                        selectedCardNumber = i;
-                        clicked = true;
-                        cardInDeck.add(viewCardList.get(selectedCardNumber));
-                        deckStr += viewCardList.get(selectedCardNumber).getName() + ", ";
-                        deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);
+
+                        // Calculate the actual index of the card in the full list
+                        int actualIndex = currentPage * CARDS_PER_PAGE + i;  // Calculate the index in the full list
+
+                        if (actualIndex >= 0 && actualIndex < viewCardList.size()) {
+                            // Set selected card index based on actual index
+                            selectedCardNumber = i;
+                            clicked = true;
+                            cardInDeck.add(viewCardList.get(actualIndex));  // Add the selected card to the deck
+                            deckStr += viewCardList.get(actualIndex).getName() + ", ";  // Update the deck string
+                            deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);  // Update deck layout
+                        }
                         break;
                     }
                 }
+
+                // Check if the back button is pressed
                 if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                     buttonSound.play(0.4f);
                     game.setScreen(new Title(game));
                 }
-
 
                 return clicked;
             }
