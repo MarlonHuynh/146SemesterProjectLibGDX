@@ -132,7 +132,7 @@ public class Gameplay extends ScreenAdapter {
             "Parraykeet", "Parraykeet", "Sphinx List", "Sphinx List", "Bin. Canary Tree", "Bin. Canary Tree",
             "Quack Stack", "Quack Stack", "Hawkmap", "Hawkmap", "Quetzelqueueotl", "Quetzelqueueotl",
             "Grifminmax Heap", "Hippograph", "Bal. Canary Tree",
-            "Recover Data", "Recover Data", "Recover Data", "Recover Data", "Recover Data", "Recover Data"
+            "Backup Data", "Backup Data", "Backup Data", "Backup Data", "Backup Data", "Backup Data"
         );
         for (String s : strTemp) {
             Card card = nameToCardHashmap.get(s);
@@ -353,11 +353,16 @@ public class Gameplay extends ScreenAdapter {
             CardOnScreenData prevData = cardOnScreenDatas.get(prevSelectedCardNumber);
             // 0) Spell Logic
             if (currData.getCard().getType().equals("Spell") && prevData.getCard().getType().equals("Spell")){
-                if (currData.getCard().getName().equals("Recover Data") && playerEnergy >= currData.getCard().getCost()){
+                if (currData.getCard().getName().equals("Recover Data") || currData.getCard().getName().equals("Backup Data") && playerEnergy >= currData.getCard().getCost()){
                     // Subtract cost
                     playerEnergy -= currData.getCard().getCost();
                     // Add 5 hp
-                    playerHealth += 5;
+                    if  (currData.getCard().getName().equals("Recover Data")) {
+                        playerHealth += 5;
+                    }
+                    else {
+                        playerHealth += 10;
+                    }
                     // Remove from hand
                     for (int i = 0; i < cardsInPlayerHand.size(); i++) {
                         if (cardsInPlayerHand.get(i).getName().equals(currData.getCard().getName())) {
@@ -376,6 +381,7 @@ public class Gameplay extends ScreenAdapter {
             && !prevData.getCard().getName().equals("End Turn")
             && !prevData.getCard().getName().equals("Discard")
             && currData.getCard().getName().equals("Blank")                     // Current select is blank card
+            && !prevData.getCard().getType().equals("Spell")
             && prevSelectedCardNumber >= 5 && prevSelectedCardNumber <= 9       // Previous select is in player hand
             && selectedCardNumber >= 13 && selectedCardNumber <= 15             // Current select is in bottom field (player field)
             && prevData.getCard().getCost() <= playerEnergy) {                  // Player has enough money to place card
@@ -423,6 +429,7 @@ public class Gameplay extends ScreenAdapter {
                 }
                 // Add prevolution attack to current card's attack
                 prevData.getCard().setAttack(prevData.getCard().getAttack() + currData.getCard().getAttack());
+                prevData.getCard().setShield(prevData.getCard().getShield() + currData.getCard().getShield());
                 // Remake the card's UI to be reflective of the swap
                 currData.remakeCard(prevData.getCard(), currData.getX(), currData.getY(), currData.getScale());
                 prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale()); // ID 37 -> blank card
@@ -502,7 +509,6 @@ public class Gameplay extends ScreenAdapter {
 
     public void processEnemyTurnTimed() {
         // Task 1: Draw a card if able at the start of each turn
-
         Gdx.app.postRunnable(() -> {
             isEnemyTurn = true;
             drawCardEnemy();
@@ -513,26 +519,26 @@ public class Gameplay extends ScreenAdapter {
                 placeCardEnemy();
                 enemyActionStr = "Attempting evolving or placing cards.";
                 enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
+                // Task 3: Draw a card if able
                 delayAndExecute(() -> {
                     drawCardEnemy();
                     enemyActionStr = "Attempting card drawing.";
                     enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
+                    // Task 4: Discard
                     delayAndExecute(() -> {
                         discardCardEnemy();
                         enemyActionStr = "Attempting discard.";
                         enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
-                        // Task 4: Attack Player
+                        // Task 5: Attack Player
                         delayAndExecute(() -> {
                             attackPlayerEnemy();
                             enemyActionStr = "Enemy turn complete. It is your turn.";
                             enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
                             isEnemyTurn = false;
-                        }, 1000); // delay before Task 4
-
-                    }, 1000); // delay before Task 3
+                        }, 1000);
+                    }, 1000);
                 }, 1000);
-            }, 1000); // delay before Task 2
-
+            }, 1000);
         });
     }
 
