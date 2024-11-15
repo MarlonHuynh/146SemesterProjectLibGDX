@@ -98,7 +98,6 @@ public class Title extends ScreenAdapter {
         viewport.update(width, height);
     }
 
-    // Called when exiting
     @Override
     public void dispose() {
 
