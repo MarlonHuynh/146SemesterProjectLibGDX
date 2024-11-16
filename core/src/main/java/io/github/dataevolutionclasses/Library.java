@@ -202,6 +202,10 @@ public class Library extends ScreenAdapter {
         int end = Math.min(start + CARDS_PER_PAGE, viewCardList.size());
         cardOnPage = new ArrayList<>(viewCardList.subList(start, end));
 
+        if (cardInDeck.isEmpty())
+        {
+            return;
+        }
         // Update `cardOnScreenDatas` to reflect `cardOnPage`
         cardOnScreenDatas.clear();
         for (int i = 0; i < cardOnPage.size(); i++) {
@@ -308,23 +312,31 @@ public class Library extends ScreenAdapter {
                         updateCardsOnPage();
                     }
                 }
-// Check for card selection
+                // Check for card selection
                 for (int i = 0; i < cardOnScreenDatas.size(); i++) {
                     // Check if the click is on a card (either front or back)
                     if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y) ||
                         cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
-                        System.out.println("Selected");
+                        System.out.println("Selected " + cardInDeck.size());
 
                         // Calculate the actual index of the card in the full list
                         int actualIndex = currentPage * CARDS_PER_PAGE + i;  // Calculate the index in the full list
+                        int cardCount = 0;
 
                         if (actualIndex >= 0 && actualIndex < viewCardList.size()) {
                             // Set selected card index based on actual index
                             selectedCardNumber = i;
                             clicked = true;
-                            cardInDeck.add(viewCardList.get(actualIndex));  // Add the selected card to the deck
-                            deckStr += viewCardList.get(actualIndex).getName() + ", ";  // Update the deck string
-                            deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);  // Update deck layout
+                            if (cardInDeck.size() >= 40)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                cardInDeck.add(viewCardList.get(actualIndex));  // Add the selected card to the deck
+                                deckStr += viewCardList.get(actualIndex).getName() + ", ";  // Update the deck string
+                                deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);  // Update deck layout
+                            }
                         }
                         break;
                     }
@@ -336,33 +348,32 @@ public class Library extends ScreenAdapter {
                 float xMax = xMin + playersDeckIcon.getWidth();
                 float yMin = playersDeckIcon.getY();
                 float yMax = yMin + playersDeckIcon.getHeight();
+                //Will use for toggling button
+                int counter = 0;
 
                 if (worldCoords.x <= xMax && worldCoords.x >= xMin  &&
-                    worldCoords.y <= yMax && worldCoords.y >= yMin)
+                    worldCoords.y <= yMax && worldCoords.y >= yMin && cardInDeck.size() == 40)
+
                 {
-                    //check if empty, then do nothing
-                    if(cardInDeck.isEmpty())
-                    {
-                        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(0), 80, 400, 0.45f));
-                    }
-                    else
-                    {
-                        //Removes all current cards being displayed
-                        while (!cardOnScreenDatas.isEmpty())
-                        {
-                            cardOnScreenDatas.remove(0);
-                        }
+                    //System.out.println(cardInDeck.get(0).getName());
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(0), 80, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(1), 190, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(2), 300, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(3), 410, 400, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(4), 520, 400, 0.45f));
 
-                    }
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(5), 80, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(6), 190, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(7),300, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(8), 410, 250, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(9), 520, 250, 0.45f));
 
-                    //Remove below clearing method after implementation
-                    while (!cardOnScreenDatas.isEmpty())
-                    {
-                        cardOnScreenDatas.remove(0);
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(10), 80, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(11), 190, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(12), 300, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(13), 410, 100, 0.45f));
+                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(14), 520, 100, 0.45f));
                     }
-                    //Stop removing from here
-                }
-
                 // Check if the back button is pressed
                 if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                     buttonSound.play(0.4f);
