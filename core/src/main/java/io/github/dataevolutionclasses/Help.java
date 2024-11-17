@@ -26,7 +26,7 @@ public class Help extends ScreenAdapter {
     private OrthographicCamera camera;              // Camera
     private FitViewport viewport;                   // Viewport
     private SpriteBatch spriteBatch;
-    private Sprite bgSpr, backSpr, HelpPage1;       // Sprites for background and help elements
+    private Sprite backSpr, nextSpr, HelpPage1;       // Sprites for background and help elements
 
     //State variables for input and screen interaction
     private boolean clicked = false;    //Tracks if the screen was clicked
@@ -34,6 +34,7 @@ public class Help extends ScreenAdapter {
 
     // button sound effect
     private Sound buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
+    private Sound pageSound = Gdx.audio.newSound(Gdx.files.internal("turnPageSound.mp3"));
 
     // Game instance to manage screen transitions
     private Game game;
@@ -64,14 +65,16 @@ public class Help extends ScreenAdapter {
 
         // Sprite
         spriteBatch = new SpriteBatch();
-        bgSpr = new Sprite(new Texture("background.png"));
         backSpr = new Sprite(new Texture("btn_back.png"));
+        nextSpr = new Sprite(new Texture("btn_nextpage.png"));
         HelpPage1 = new Sprite(new Texture("Help1.jpg"));
 
         // Set up sprite properties
         HelpPage1.setSize(600, 600);    // Help page fills the viewport
         backSpr.setScale(0.5f);         // Scale down the back button
         backSpr.setPosition(-30, 550);  // Position the back button
+        nextSpr.setScale(0.5f);
+        nextSpr.setPosition(430, 10);
     }
 
     /**
@@ -99,8 +102,7 @@ public class Help extends ScreenAdapter {
         //bgSpr.draw(spriteBatch);
         HelpPage1.draw(spriteBatch);
         backSpr.draw(spriteBatch);
-
-
+        nextSpr.draw(spriteBatch);
 
         spriteBatch.end();
     }
@@ -121,8 +123,9 @@ public class Help extends ScreenAdapter {
      */
     @Override
     public void dispose() {
-
+        spriteBatch.dispose();
     }
+
     /**
      * Sets up an input processor for touch events, handling user clicks on the screen.
      * Detects touches within the viewport and triggers a screen change if the back button is pressed.
@@ -140,8 +143,15 @@ public class Help extends ScreenAdapter {
                 if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                     buttonSound.play();
                     game.setScreen(new Title(game));
+                    dispose();
                 }
 
+                // if next button is clicked
+                if (nextSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    pageSound.play();
+                    game.setScreen(new Help2(game));
+                    dispose();
+                }
                 return clicked;
             }
         });
