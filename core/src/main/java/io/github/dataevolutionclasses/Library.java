@@ -193,7 +193,6 @@ public class Library extends ScreenAdapter {
             cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(spriteBatch);
         defaultFont.draw(spriteBatch, deckLayout, 10, 550);
 
-
         spriteBatch.end();
     }
 
@@ -201,7 +200,7 @@ public class Library extends ScreenAdapter {
         int start = currentPage * CARDS_PER_PAGE;
         int end = Math.min(start + CARDS_PER_PAGE, viewCardList.size());
         cardOnPage = new ArrayList<>(viewCardList.subList(start, end));
-        
+
         // Update `cardOnScreenDatas` to reflect `cardOnPage`
         cardOnScreenDatas.clear();
         for (int i = 0; i < cardOnPage.size(); i++) {
