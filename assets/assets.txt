@@ -71,10 +71,15 @@ enemycloud.png
 enemyenergy.png
 enemyhealth.png
 Help1.jpg
+Help2.jpg
+Help3.jpg
+Help4.jpg
+Help5.jpg
 libgdx.png
 playercloud.png
 playerenergy.png
 title.png
+turnPageSound.mp3
 ui/dpcomic.bmp
 ui/dpcomic.fnt
 ui/dpcomic.ttf

@@ -201,11 +201,7 @@ public class Library extends ScreenAdapter {
         int start = currentPage * CARDS_PER_PAGE;
         int end = Math.min(start + CARDS_PER_PAGE, viewCardList.size());
         cardOnPage = new ArrayList<>(viewCardList.subList(start, end));
-
-        if (cardInDeck.isEmpty())
-        {
-            return;
-        }
+        
         // Update `cardOnScreenDatas` to reflect `cardOnPage`
         cardOnScreenDatas.clear();
         for (int i = 0; i < cardOnPage.size(); i++) {
@@ -355,12 +351,22 @@ public class Library extends ScreenAdapter {
                     worldCoords.y <= yMax && worldCoords.y >= yMin && cardInDeck.size() == 40)
 
                 {
+                    /*
+                    for (int i = 0; i < cardOnPage.size(); i++)
+                    {
+                        System.out.println(cardOnPage.get(i));
+                        cardOnPage.remove(0);
+                    }
+                    for (int i = 0; i < 15; i ++){
+                        cardOnPage.add(cardInDeck.get(i).deepCopy());
+                    }*/
+
                     //System.out.println(cardInDeck.get(0).getName());
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(0), 80, 400, 0.45f));
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(1), 190, 400, 0.45f));
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(2), 300, 400, 0.45f));
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(3), 410, 400, 0.45f));
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(4), 520, 400, 0.45f));
+                    cardOnScreenDatas.get(0).remakeCard(cardInDeck.get(0), 80, 400, 0.45f);
+                    cardOnScreenDatas.get(1).remakeCard(cardInDeck.get(1), 190, 400, 0.45f);
+                    cardOnScreenDatas.get(2).remakeCard(cardInDeck.get(2), 300, 400, 0.45f);
+                    cardOnScreenDatas.get(3).remakeCard(cardInDeck.get(3), 410, 400, 0.45f);
+                    cardOnScreenDatas.get(4).remakeCard(cardInDeck.get(4), 520, 400, 0.45f);
 
                     cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(5), 80, 250, 0.45f));
                     cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(6), 190, 250, 0.45f));
