@@ -12,21 +12,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-/**
- * The Help screen displays instructions on how to play the game.
- *
- * <p>This screen includes a help page and a back button that takes the user
- * to the title screen. It sets up the camera, viewport, and sprites for the
- * background, help page, and back button, as well as the sound effect for button
- * clicks.</p>
- */
 
-public class Help extends ScreenAdapter {
+public class Help3 extends ScreenAdapter {
     // Window vars
     private OrthographicCamera camera;              // Camera
     private FitViewport viewport;                   // Viewport
     private SpriteBatch spriteBatch;
-    private Sprite backSpr, nextSpr, HelpPage1;       // Sprites for background and help elements
+    private Sprite backSpr, prevSpr, nextSpr, HelpPage3;       // Sprites for background and help elements
 
     //State variables for input and screen interaction
     private boolean clicked = false;    //Tracks if the screen was clicked
@@ -43,7 +35,7 @@ public class Help extends ScreenAdapter {
      *
      * @param game the Game instance used to manage screens.
      */
-    public Help(Game game) {
+    public Help3(Game game) {
         this.game = game;
     }
 
@@ -66,13 +58,16 @@ public class Help extends ScreenAdapter {
         // Sprite
         spriteBatch = new SpriteBatch();
         backSpr = new Sprite(new Texture("btn_back.png"));
+        prevSpr = new Sprite(new Texture("btn_prevpage.png"));
         nextSpr = new Sprite(new Texture("btn_nextpage.png"));
-        HelpPage1 = new Sprite(new Texture("Help1.jpg"));
+        HelpPage3 = new Sprite(new Texture("Help3.jpg"));
 
         // Set up sprite properties
-        HelpPage1.setSize(600, 600);    // Help page fills the viewport
+        HelpPage3.setSize(600, 600); // Help page fills the viewport
         backSpr.setScale(0.5f);         // Scale down the back button
         backSpr.setPosition(-30, 550);  // Position the back button
+        prevSpr.setScale(0.5f);
+        prevSpr.setPosition(-30, 10);
         nextSpr.setScale(0.5f);
         nextSpr.setPosition(430, 10);
     }
@@ -99,9 +94,9 @@ public class Help extends ScreenAdapter {
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
 
-        //bgSpr.draw(spriteBatch);
-        HelpPage1.draw(spriteBatch);
+        HelpPage3.draw(spriteBatch);
         backSpr.draw(spriteBatch);
+        prevSpr.draw(spriteBatch);
         nextSpr.draw(spriteBatch);
 
         spriteBatch.end();
@@ -125,7 +120,6 @@ public class Help extends ScreenAdapter {
     public void dispose() {
         spriteBatch.dispose();
     }
-
     /**
      * Sets up an input processor for touch events, handling user clicks on the screen.
      * Detects touches within the viewport and triggers a screen change if the back button is pressed.
@@ -146,10 +140,17 @@ public class Help extends ScreenAdapter {
                     dispose();
                 }
 
+                // if prev button is clicked
+                if (prevSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    pageSound.play();
+                    game.setScreen(new Help2(game));
+                    dispose();
+                }
+
                 // if next button is clicked
                 if (nextSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                     pageSound.play();
-                    game.setScreen(new Help2(game));
+                    game.setScreen(new Help4(game));
                     dispose();
                 }
                 return clicked;

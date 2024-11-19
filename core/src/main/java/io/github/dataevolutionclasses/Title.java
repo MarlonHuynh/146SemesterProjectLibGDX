@@ -15,7 +15,12 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
-
+/**
+ * The Title screen displays the main menu of the game, allowing the player
+ * to navigate to other screens such as gameplay, library, help, or exit the game.
+ *
+ * <p>This screen includes a title, menu buttons, and sound effects for button clicks.</p>
+ */
 public class Title extends ScreenAdapter {
     // Window vars
     private OrthographicCamera camera;              // Camera
@@ -34,7 +39,10 @@ public class Title extends ScreenAdapter {
     public Title(Game game) {
         this.game = game;
     }
-
+    /**
+     * Initializes the Title screen by setting up the camera, viewport, and input processor,
+     * and loading textures for the background, buttons, title, and other elements.
+     */
 
     public void show() {
         // Set up camera, viewport, and input processor
@@ -69,12 +77,19 @@ public class Title extends ScreenAdapter {
         // make Inp processor
         createInputProcessor();
     }
+    /**
+     * Renders the Title screen and updates visuals for each frame.
+     *
+     * @param delta the time elapsed since the last frame in seconds
+     */
     @Override
     public void render(float delta) {
         super.render(delta);
         draw();
     }
-
+    /**
+     * Draws the title screen, including background, buttons, and title sprite.
+     */
     public void draw() {
         ScreenUtils.clear(245 / 255f, 1250 / 255f, 205 / 255f, 1f);
         camera.position.set(300, 300, 0); // Recenter camera on resize
@@ -92,7 +107,12 @@ public class Title extends ScreenAdapter {
 
         spriteBatch.end();
     }
-
+    /**
+     * Handles resizing of the viewport and adjusts it to maintain aspect ratio.
+     *
+     * @param width  the new width of the viewport
+     * @param height the new height of the viewport
+     */
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
@@ -103,7 +123,11 @@ public class Title extends ScreenAdapter {
 
     }
 
-
+    /**
+     * Sets up an input processor for touch events, handling user clicks on the screen.
+     * Detects touches within the viewport and triggers appropriate actions based on
+     * which button was clicked (e.g., starting gameplay, navigating to library or help, or exiting).
+     */
     public void createInputProcessor(){
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
@@ -141,7 +165,9 @@ public class Title extends ScreenAdapter {
             }
         });
     }
-
+    /**
+     * Plays the button click sound effect at a reduced volume.
+     */
     public void playButtonSound(){
         buttonSound.play(0.3f);
     }
