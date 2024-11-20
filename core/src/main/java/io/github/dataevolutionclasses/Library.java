@@ -93,26 +93,7 @@ public class Library extends ScreenAdapter {
         prevButtonSprite = new Sprite(new Texture("btn_prevpage.png"));
         prevButtonSprite.setSize(100, 25);
         prevButtonSprite.setPosition(200, 0);
-
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(0), 80, 400, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(1), 190, 400, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(2), 300, 400, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(3), 410, 400, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(4), 520, 400, 0.45f));
-
-
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(5), 80, 250, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(6), 190, 250, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(7),300, 250, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(8), 410, 250, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(9), 520, 250, 0.45f));
-
-
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(10), 80, 100, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(11), 190, 100, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(12), 300, 100, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(13), 410, 100, 0.45f));
-        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(14), 520, 100, 0.45f));
+        updateCardsOnPage();
         // Sprite
         spriteBatch = new SpriteBatch();
         bgSpr = new Sprite(new Texture("background.png"));
@@ -270,7 +251,7 @@ public class Library extends ScreenAdapter {
                 }
                 //sort if in the deck
                 if (viewCardList==cardInDeck && worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 510 && worldCoords.y <= 535) {
-                    viewCardList = CardSorter.sortByCost(cardList);
+                    viewCardList = CardSorter.sortByCost(cardInDeck);
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
@@ -284,7 +265,7 @@ public class Library extends ScreenAdapter {
                 }
                 //sort if in the deck
                 if (viewCardList==cardInDeck && worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 510 && worldCoords.y <= 535) {
-                    viewCardList = CardSorter.sortByAttack(cardList);
+                    viewCardList = CardSorter.sortByAttack(cardInDeck);
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
@@ -298,7 +279,7 @@ public class Library extends ScreenAdapter {
                 }
                 //sort if in the deck
                 if (viewCardList==cardInDeck && worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 480 && worldCoords.y <= 505) {
-                    viewCardList = CardSorter.sortByShield(cardList);
+                    viewCardList = CardSorter.sortByShield(cardInDeck);
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
@@ -312,7 +293,7 @@ public class Library extends ScreenAdapter {
                 }
                 //sort if in the deck
                 if (viewCardList==cardInDeck && worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 480 && worldCoords.y <= 505) {
-                    viewCardList = CardSorter.sortByStage(cardList);
+                    viewCardList = CardSorter.sortByStage(cardInDeck);
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
@@ -326,7 +307,7 @@ public class Library extends ScreenAdapter {
                 }
                 //sort if in the deck
                 if (viewCardList==cardInDeck && worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 480 && worldCoords.y <= 505) {
-                    viewCardList = cardList;
+                    viewCardList = cardInDeck;
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
@@ -394,39 +375,9 @@ public class Library extends ScreenAdapter {
                 //Will use for toggling button
                 int counter = 0;
 
-                if (worldCoords.x <= xMax && worldCoords.x >= xMin  &&
-                    worldCoords.y <= yMax && worldCoords.y >= yMin && cardInDeck.size() == 40)
-
-                {
-                    /*
-                    for (int i = 0; i < cardOnPage.size(); i++)
-                    {
-                        System.out.println(cardOnPage.get(i));
-                        cardOnPage.remove(0);
-                    }
-                    for (int i = 0; i < 15; i ++){
-                        cardOnPage.add(cardInDeck.get(i).deepCopy());
-                    }*/
+                if (worldCoords.x <= xMax && worldCoords.x >= xMin  && worldCoords.y <= yMax && worldCoords.y >= yMin && cardInDeck.size() == 40){
                     viewCardList = cardInDeck;
                     updateCardsOnPage();
-//                    //System.out.println(cardInDeck.get(0).getName());
-//                    cardOnScreenDatas.get(0).remakeCard(cardInDeck.get(0), 80, 400, 0.45f);
-//                    cardOnScreenDatas.get(1).remakeCard(cardInDeck.get(1), 190, 400, 0.45f);
-//                    cardOnScreenDatas.get(2).remakeCard(cardInDeck.get(2), 300, 400, 0.45f);
-//                    cardOnScreenDatas.get(3).remakeCard(cardInDeck.get(3), 410, 400, 0.45f);
-//                    cardOnScreenDatas.get(4).remakeCard(cardInDeck.get(4), 520, 400, 0.45f);
-//
-//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(5), 80, 250, 0.45f));
-//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(6), 190, 250, 0.45f));
-//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(7),300, 250, 0.45f));
-//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(8), 410, 250, 0.45f));
-//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(9), 520, 250, 0.45f));
-//
-//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(10), 80, 100, 0.45f));
-//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(11), 190, 100, 0.45f));
-//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(12), 300, 100, 0.45f));
-//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(13), 410, 100, 0.45f));
-//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(14), 520, 100, 0.45f));
                     }
                 // Check if the back button is pressed
                 if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
