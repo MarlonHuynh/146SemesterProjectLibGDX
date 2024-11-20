@@ -359,25 +359,26 @@ public class Library extends ScreenAdapter {
                     for (int i = 0; i < 15; i ++){
                         cardOnPage.add(cardInDeck.get(i).deepCopy());
                     }*/
-
-                    //System.out.println(cardInDeck.get(0).getName());
-                    cardOnScreenDatas.get(0).remakeCard(cardInDeck.get(0), 80, 400, 0.45f);
-                    cardOnScreenDatas.get(1).remakeCard(cardInDeck.get(1), 190, 400, 0.45f);
-                    cardOnScreenDatas.get(2).remakeCard(cardInDeck.get(2), 300, 400, 0.45f);
-                    cardOnScreenDatas.get(3).remakeCard(cardInDeck.get(3), 410, 400, 0.45f);
-                    cardOnScreenDatas.get(4).remakeCard(cardInDeck.get(4), 520, 400, 0.45f);
-
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(5), 80, 250, 0.45f));
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(6), 190, 250, 0.45f));
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(7),300, 250, 0.45f));
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(8), 410, 250, 0.45f));
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(9), 520, 250, 0.45f));
-
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(10), 80, 100, 0.45f));
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(11), 190, 100, 0.45f));
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(12), 300, 100, 0.45f));
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(13), 410, 100, 0.45f));
-                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(14), 520, 100, 0.45f));
+                    viewCardList = cardInDeck;
+                    updateCardsOnPage();
+//                    //System.out.println(cardInDeck.get(0).getName());
+//                    cardOnScreenDatas.get(0).remakeCard(cardInDeck.get(0), 80, 400, 0.45f);
+//                    cardOnScreenDatas.get(1).remakeCard(cardInDeck.get(1), 190, 400, 0.45f);
+//                    cardOnScreenDatas.get(2).remakeCard(cardInDeck.get(2), 300, 400, 0.45f);
+//                    cardOnScreenDatas.get(3).remakeCard(cardInDeck.get(3), 410, 400, 0.45f);
+//                    cardOnScreenDatas.get(4).remakeCard(cardInDeck.get(4), 520, 400, 0.45f);
+//
+//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(5), 80, 250, 0.45f));
+//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(6), 190, 250, 0.45f));
+//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(7),300, 250, 0.45f));
+//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(8), 410, 250, 0.45f));
+//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(9), 520, 250, 0.45f));
+//
+//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(10), 80, 100, 0.45f));
+//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(11), 190, 100, 0.45f));
+//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(12), 300, 100, 0.45f));
+//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(13), 410, 100, 0.45f));
+//                    cardOnScreenDatas.add(new CardOnScreenData(cardInDeck.get(14), 520, 100, 0.45f));
                     }
                 // Check if the back button is pressed
                 if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
