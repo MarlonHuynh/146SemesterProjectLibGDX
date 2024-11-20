@@ -254,37 +254,85 @@ public class Library extends ScreenAdapter {
                     return false;
 
                 //Sorting functions buttons
-                if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 510 && worldCoords.y <= 535) {
+                //sort if in the deck
+                if (viewCardList==cardInDeck && worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 510 && worldCoords.y <= 535) {
+                    viewCardList = CardSorter.sortByName(cardInDeck);
+                    currentPage = 0;  // Reset to the first page
+                    updateCardsOnPage();  // Refresh display for the first page
+                    System.out.println("Cards sorted and displayed.");
+                }
+                //sort if the original list
+                else if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 510 && worldCoords.y <= 535) {
                     viewCardList = CardSorter.sortByName(cardList);
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
                 }
-                if (worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 510 && worldCoords.y <= 535) {
+                //sort if in the deck
+                if (viewCardList==cardInDeck && worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 510 && worldCoords.y <= 535) {
                     viewCardList = CardSorter.sortByCost(cardList);
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
                 }
-                if (worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 510 && worldCoords.y <= 535) {
+                //sort if the original list
+                else if (worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 510 && worldCoords.y <= 535) {
+                    viewCardList = CardSorter.sortByCost(cardList);
+                    currentPage = 0;  // Reset to the first page
+                    updateCardsOnPage();  // Refresh display for the first page
+                    System.out.println("Cards sorted and displayed.");
+                }
+                //sort if in the deck
+                if (viewCardList==cardInDeck && worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 510 && worldCoords.y <= 535) {
                     viewCardList = CardSorter.sortByAttack(cardList);
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
                 }
-                if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 480 && worldCoords.y <= 505) {
+                //sort if the original list
+                else if (worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 510 && worldCoords.y <= 535) {
+                    viewCardList = CardSorter.sortByAttack(cardList);
+                    currentPage = 0;  // Reset to the first page
+                    updateCardsOnPage();  // Refresh display for the first page
+                    System.out.println("Cards sorted and displayed.");
+                }
+                //sort if in the deck
+                if (viewCardList==cardInDeck && worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 480 && worldCoords.y <= 505) {
                     viewCardList = CardSorter.sortByShield(cardList);
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
                 }
-                if (worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 480 && worldCoords.y <= 505) {
+                //sort if the original list
+                else if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 480 && worldCoords.y <= 505) {
+                    viewCardList = CardSorter.sortByShield(cardList);
+                    currentPage = 0;  // Reset to the first page
+                    updateCardsOnPage();  // Refresh display for the first page
+                    System.out.println("Cards sorted and displayed.");
+                }
+                //sort if in the deck
+                if (viewCardList==cardInDeck && worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 480 && worldCoords.y <= 505) {
                     viewCardList = CardSorter.sortByStage(cardList);
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
                 }
-                if (worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 480 && worldCoords.y <= 505) {
+                //sort if the original list
+                else if (worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 480 && worldCoords.y <= 505) {
+                    viewCardList = CardSorter.sortByStage(cardList);
+                    currentPage = 0;  // Reset to the first page
+                    updateCardsOnPage();  // Refresh display for the first page
+                    System.out.println("Cards sorted and displayed.");
+                }
+                //sort if in the deck
+                if (viewCardList==cardInDeck && worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 480 && worldCoords.y <= 505) {
+                    viewCardList = cardList;
+                    currentPage = 0;  // Reset to the first page
+                    updateCardsOnPage();  // Refresh display for the first page
+                    System.out.println("Cards sorted and displayed.");
+                }
+                //sort if the original list
+                else if (worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 480 && worldCoords.y <= 505) {
                     viewCardList = cardList;
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
