@@ -5,6 +5,7 @@
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -30,6 +31,7 @@ public class Title extends ScreenAdapter {
     private Sprite bgSpr, playBtn, libBtn, helpBtn, exitBtn, titleSpr, creaturesSpr;
     private ArrayList<Sprite> btnList = new ArrayList<>();
     private Sound buttonSound;
+    private Music menuBackMusic;
 
     //
     private boolean clicked = false;
@@ -67,6 +69,10 @@ public class Title extends ScreenAdapter {
         titleSpr.setPosition(140, 350);
         creaturesSpr = new Sprite(new Texture("creatures.png"));
         buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
+        menuBackMusic = Gdx.audio.newMusic(Gdx.files.internal("menuMusic.mp3"));
+        menuBackMusic.setVolume(0.4f);
+        menuBackMusic.setLooping(true);
+        menuBackMusic.play();
 
 
         // Add buttons to list
@@ -121,7 +127,8 @@ public class Title extends ScreenAdapter {
     // Called when exiting
     @Override
     public void dispose() {
-
+        spriteBatch.dispose();
+        menuBackMusic.dispose();
     }
 
     /**
@@ -149,14 +156,17 @@ public class Title extends ScreenAdapter {
                 if (indexClicked == 0){ // Play
                     playButtonSound();
                     game.setScreen(new Gameplay(game));
+                    dispose();
                 }
                 else if (indexClicked == 1){
                     playButtonSound();
                     game.setScreen(new Library(game));
+                    dispose();
                 }
                 else if (indexClicked == 2){
                     playButtonSound();
                     game.setScreen(new Help(game));
+                    dispose();
                 }
                 else if (indexClicked == 3){
                     Gdx.app.exit();
