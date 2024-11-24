@@ -129,14 +129,32 @@ public class Credits extends ScreenAdapter {
      * Detects touches within the viewport and triggers a screen change if the back button is pressed.
      */
     public void createInputProcessor(){
+
         Gdx.input.setInputProcessor(new InputAdapter() {
+
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                clicked = false;
+                // Get World Coords
+                worldCoords = viewport.unproject(new Vector3(screenX, screenY, 0));
+                if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600)
+                    return false;
+                // Reduce transparency if button clicked
+                if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    clicked = true;
+                    backSpr.setColor(1, 1, 1, 0.8f);
+                }
+                return clicked;
+            }
+            @Override
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+                // Reset Btn Color
+                backSpr.setColor(1, 1, 1, 1f);
+                // Get World Coords
                 worldCoords = viewport.unproject(new Vector3(screenX, screenY, 0));  // Convert screen coordinates to world coordinates
                 clicked = false;
                 if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600) // Check if the click is within the viewport
                     return false;
-
                 // If back button is clicked, play sound and return to the Title screen
                 if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                     buttonSound.play();

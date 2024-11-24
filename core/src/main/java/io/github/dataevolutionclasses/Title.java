@@ -120,8 +120,8 @@ public class Title extends ScreenAdapter {
         // Update the time
         time += Gdx.graphics.getDeltaTime();
         // Oscillate positions using sine wave
-        float offsetX = (float) Math.sin(time * 2) * 5; // Adjust speed and amplitude
-        float offsetY = (float) Math.cos(time * 2) * 5;
+        float offsetX = (float) Math.sin(time * 2) * 3; // Adjust speed and amplitude
+        float offsetY = (float) Math.cos(time * 2) * 3;
         // Update sprite position
         creaturesSpr.setPosition(0 + offsetX, 0 + offsetY);
         titleSpr.setPosition(140 - offsetX/4, 350 - offsetY/4);
@@ -154,20 +154,41 @@ public class Title extends ScreenAdapter {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                int indexClicked = -1;
+                // Get World Coords
+                worldCoords = viewport.unproject(new Vector3(screenX, screenY, 0));
                 clicked = false;
                 if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600)
                     return false;
-                // ---------- Check which card was clicked ----------
-                // Convert screen coordinates to world coordinates
+                // Reduce transparency of card if clicked down
+                for (int i = 0; i < btnList.size(); i++) {
+                    if (btnList.get(i).getBoundingRectangle().contains(worldCoords.x, worldCoords.y) || btnList.get(i).getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                        clicked = true;
+                        btnList.get(i).setColor(1, 1, 1, 0.8f);
+                    }
+                }
+                return clicked;
+            }
+            @Override
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+                int indexClicked = -1;
+                clicked = false;
+                // Get World Coords
                 worldCoords = viewport.unproject(new Vector3(screenX, screenY, 0));
+                if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600)
+                    return false;
+                // Reset all buttons to full alpha
+                for (int i = 0; i < btnList.size(); i++) {
+                        btnList.get(i).setColor(1, 1, 1, 1f);
+                }
+                // Check which btn was clicked
                 for (int i = 0; i < btnList.size(); i++) {
                     if (btnList.get(i).getBoundingRectangle().contains(worldCoords.x, worldCoords.y) || btnList.get(i).getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                         clicked = true;
                         indexClicked = i;
                     }
                 }
-                if (indexClicked == 0){ // Play
+                // Perform action based on btn clicked
+                if (indexClicked == 0){
                     playButtonSound();
                     game.setScreen(new Gameplay(game));
                     dispose();
