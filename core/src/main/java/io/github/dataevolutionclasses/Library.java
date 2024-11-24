@@ -59,6 +59,7 @@ public class Library extends ScreenAdapter {
         this.game = game;
     }
 
+
     public void show() {
         // Set up camera, viewport, and input processor
         camera = new OrthographicCamera();
@@ -86,6 +87,21 @@ public class Library extends ScreenAdapter {
         }
 
         cardInDeck = new ArrayList<Card>();
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(0), 80, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(1), 190, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(2), 300, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(3), 410, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(4), 530, 400, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(5), 80, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(6), 190, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(7),300, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(8), 410, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(9), 530, 250, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(10), 80, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(11), 190, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(12), 300, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(13), 410, 100, 0.45f));
+        cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(14), 530, 100, 0.45f));
         nextButtonSprite = new Sprite(new Texture("btn_nextpage.png"));
         nextButtonSprite.setSize(100, 25);
         nextButtonSprite.setPosition(300, 0);
@@ -209,7 +225,6 @@ public class Library extends ScreenAdapter {
             CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getShieldTextX(), CoSD.getShieldTextY());
         }
     }
-
 
     @Override
     public void resize(int width, int height) {

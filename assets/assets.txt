@@ -70,15 +70,23 @@ endturn.png
 enemycloud.png
 enemyenergy.png
 enemyhealth.png
+gameBackMusic.mp3
+happy-thoughtful-song-SUNRIZISH.mp3
 Help1.jpg
 Help2.jpg
 Help3.jpg
 Help4.jpg
 Help5.jpg
 libgdx.png
+menuMusic.mp3
+PlaceCardSound.mp3
 playercloud.png
 playerenergy.png
+<<<<<<< HEAD
 title.png
+=======
+Title.png
+>>>>>>> master
 turnPageSound.mp3
 ui/dpcomic.bmp
 ui/dpcomic.fnt
@@ -91,6 +99,7 @@ ui/font.fnt
 ui/uiskin.atlas
 ui/uiskin.json
 ui/uiskin.png
+walking-beat-SUNRIZISH.mp3
 youlose.png
 yourhealth.png
 youwin.png
