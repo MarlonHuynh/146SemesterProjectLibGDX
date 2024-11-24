@@ -185,7 +185,7 @@ public class Library extends ScreenAdapter {
 
 
         for (CardOnScreenData CoSD : cardOnScreenDatas)
-            drawCard(CoSD, spriteBatch);
+            CoSD.drawCard(CoSD, spriteBatch, stringBuilder);
         if (selectedCardNumber != -1)
             cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(spriteBatch);
         defaultFont.draw(spriteBatch, deckLayout, 10, 550);
@@ -202,27 +202,6 @@ public class Library extends ScreenAdapter {
         cardOnScreenDatas.clear();
         for (int i = 0; i < cardOnPage.size(); i++) {
             cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(i), 80 + (110 * (i % 5)), 400 - (150 * (i / 5)), 0.45f));
-        }
-    }
-
-    public void drawCard(CardOnScreenData CoSD, SpriteBatch batch){
-        // Draw cardback
-        CoSD.getCardbackSprite().draw(batch);
-        if (!CoSD.getCard().getName().equals("Draw") && !CoSD.getCard().getName().equals("Trash") && !CoSD.getCard().getName().equals("Blank") && !CoSD.getCard().getName().equals("End Turn")) {
-            // Draw creature
-            CoSD.getCardSprite().draw(batch);
-            // Draw text
-            CoSD.getNameFont().draw(batch, CoSD.getCard().getName(), CoSD.getNameX(), CoSD.getNameY());
-            CoSD.getNameFont().draw(batch, CoSD.getDescLayout(), CoSD.getDescX(), CoSD.getDescY());
-            // Draw cost
-            stringBuilder.setLength(0); stringBuilder.append(CoSD.getCard().getCost());
-            CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getCostTextX(), CoSD.getCostTextY());
-            // Draw attack
-            stringBuilder.setLength(0); stringBuilder.append(CoSD.getCard().getAttack());
-            CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getAttackTextX(), CoSD.getAttackTextY());
-            // Draw shield
-            stringBuilder.setLength(0); stringBuilder.append(CoSD.getCard().getShield());
-            CoSD.getNumberFont().draw(batch, stringBuilder, CoSD.getShieldTextX(), CoSD.getShieldTextY());
         }
     }
 
