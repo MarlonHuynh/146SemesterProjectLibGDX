@@ -82,11 +82,7 @@ menuMusic.mp3
 PlaceCardSound.mp3
 playercloud.png
 playerenergy.png
-<<<<<<< HEAD
 title.png
-=======
-Title.png
->>>>>>> master
 turnPageSound.mp3
 ui/dpcomic.bmp
 ui/dpcomic.fnt
