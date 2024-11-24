@@ -32,11 +32,10 @@ public class Title extends ScreenAdapter {
     private ArrayList<Sprite> btnList = new ArrayList<>();
     private Sound buttonSound;
     private Music menuBackMusic;
-
     //
     private boolean clicked = false;
     private Vector3 worldCoords = new Vector3();
-
+    // Game
     private Game game;
     public Title(Game game) {
         this.game = game;
@@ -69,8 +68,8 @@ public class Title extends ScreenAdapter {
         titleSpr.setPosition(140, 350);
         creaturesSpr = new Sprite(new Texture("creatures.png"));
         buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
-        menuBackMusic = Gdx.audio.newMusic(Gdx.files.internal("menuMusic.mp3"));
-        menuBackMusic.setVolume(0.4f);
+        menuBackMusic = Gdx.audio.newMusic(Gdx.files.internal("happy-thoughtful-song-SUNRIZISH.mp3"));
+        menuBackMusic.setVolume(0.5f);
         menuBackMusic.setLooping(true);
         menuBackMusic.play();
 

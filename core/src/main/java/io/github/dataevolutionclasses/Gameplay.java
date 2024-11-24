@@ -73,7 +73,7 @@ public class Gameplay extends ScreenAdapter {
     private int frameCounter = 0;
     // Sound effect vars
     private Sound buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
-    private Music gameBackMusic = Gdx.audio.newMusic(Gdx.files.internal("gameBackMusic.mp3"));
+    private Music gameBackMusic = Gdx.audio.newMusic(Gdx.files.internal("walking-beat-SUNRIZISH.mp3"));
     private Sound cardPlaceSound = Gdx.audio.newSound(Gdx.files.internal("PlaceCardSound.mp3"));
 
     // Define the scene
@@ -383,6 +383,7 @@ public class Gameplay extends ScreenAdapter {
             }
             // 1) Fielding Card logic (prev -> card in hand, curr -> player field blank)
             else if (!prevData.getCard().getName().equals("Blank")                       // CONDITIONS: Previous select is not blank card
+            && !prevData.getCard().getType().equals("Spell")
             && !prevData.getCard().getName().equals("Trash")
             && !prevData.getCard().getName().equals("End Turn")
             && !prevData.getCard().getName().equals("Discard")
