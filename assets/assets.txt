@@ -86,6 +86,10 @@ PlaceCardSound.mp3
 playercloud.png
 playerenergy.png
 title.png
+titlebug.png
+titlefish.png
+titlehawk.png
+titlemanta.png
 turnPageSound.mp3
 ui/dpcomic.bmp
 ui/dpcomic.fnt

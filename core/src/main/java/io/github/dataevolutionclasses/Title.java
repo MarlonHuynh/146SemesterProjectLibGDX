@@ -28,7 +28,8 @@ public class Title extends ScreenAdapter {
     private FitViewport viewport;                   // Viewport
     // Spr
     private SpriteBatch spriteBatch;
-    private Sprite bgSpr, playBtn, libBtn, helpBtn, creditsBtn, exitBtn, titleSpr, creaturesSpr;
+    private Sprite bgSpr, playBtn, libBtn, helpBtn, creditsBtn, exitBtn, titleSpr;
+    private Sprite hawkSpr, mantaSpr, bugSpr, fishSpr;
     private ArrayList<Sprite> btnList = new ArrayList<>();
     private Sound buttonSound;
     private Music menuBackMusic;
@@ -72,8 +73,15 @@ public class Title extends ScreenAdapter {
         exitBtn = new Sprite(new Texture("btn_exit.png"));
         exitBtn.setPosition(200, 30);
 
-        creaturesSpr = new Sprite(new Texture("creatures.png"));
-        creaturesSpr.setScale(1.1f);
+        hawkSpr = new Sprite(new Texture("titlehawk.png"));
+        hawkSpr.setScale(1.1f);
+        fishSpr = new Sprite(new Texture("titlefish.png"));
+        fishSpr.setScale(1.1f);
+        bugSpr = new Sprite(new Texture("titlebug.png"));
+        bugSpr.setScale(1.1f);
+        mantaSpr = new Sprite(new Texture("titlemanta.png"));
+        mantaSpr.setScale(1.1f);
+
         buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
         menuBackMusic = Gdx.audio.newMusic(Gdx.files.internal("happy-thoughtful-song-SUNRIZISH.mp3"));
         menuBackMusic.setVolume(0.5f);
@@ -109,7 +117,10 @@ public class Title extends ScreenAdapter {
         spriteBatch.begin();
 
         bgSpr.draw(spriteBatch);
-        creaturesSpr.draw(spriteBatch);
+        bugSpr.draw(spriteBatch);
+        fishSpr.draw(spriteBatch);
+        hawkSpr.draw(spriteBatch);
+        mantaSpr.draw(spriteBatch);
         playBtn.draw(spriteBatch);
         libBtn.draw(spriteBatch);
         helpBtn.draw(spriteBatch);
@@ -122,9 +133,13 @@ public class Title extends ScreenAdapter {
         // Oscillate positions using sine wave
         float offsetX = (float) Math.sin(time * 2) * 3; // Adjust speed and amplitude
         float offsetY = (float) Math.cos(time * 2) * 3;
+        float angle = (float) Math.sin(time * 2) * 1; // Oscillate between -1 and +1 degrees
         // Update sprite position
-        creaturesSpr.setPosition(0 + offsetX, 0 + offsetY);
-        titleSpr.setPosition(140 - offsetX/4, 350 - offsetY/4);
+        hawkSpr.setPosition(0 + offsetX, 0 + offsetY);
+        bugSpr.setRotation(angle);
+        mantaSpr.setPosition(0, 0 - offsetY/2);
+        fishSpr.setPosition(5, 0 - offsetY);
+        titleSpr.setPosition(140, 350 - offsetY/4);
 
         spriteBatch.end();
     }
