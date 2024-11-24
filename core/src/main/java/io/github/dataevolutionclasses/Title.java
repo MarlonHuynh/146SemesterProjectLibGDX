@@ -32,9 +32,10 @@ public class Title extends ScreenAdapter {
     private ArrayList<Sprite> btnList = new ArrayList<>();
     private Sound buttonSound;
     private Music menuBackMusic;
-    //
+    // Vars
     private boolean clicked = false;
     private Vector3 worldCoords = new Vector3();
+    private float time; // Keeps track of elapsed time
     // Game
     private Game game;
     public Title(Game game) {
@@ -67,11 +68,13 @@ public class Title extends ScreenAdapter {
         titleSpr = new Sprite(new Texture("Title.png"));
         titleSpr.setPosition(140, 350);
         creaturesSpr = new Sprite(new Texture("creatures.png"));
+        creaturesSpr.setScale(1.1f);
         buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
         menuBackMusic = Gdx.audio.newMusic(Gdx.files.internal("happy-thoughtful-song-SUNRIZISH.mp3"));
         menuBackMusic.setVolume(0.5f);
         menuBackMusic.setLooping(true);
         menuBackMusic.play();
+
 
 
         // Add buttons to list
@@ -109,6 +112,16 @@ public class Title extends ScreenAdapter {
         helpBtn.draw(spriteBatch);
         exitBtn.draw(spriteBatch);
         titleSpr.draw(spriteBatch);
+
+
+        /// Update the time
+        time += Gdx.graphics.getDeltaTime();
+        // Oscillate positions using sine wave
+        float offsetX = (float) Math.sin(time * 2) * 5; // Adjust speed and amplitude
+        float offsetY = (float) Math.cos(time * 2) * 5;
+        // Update sprite position
+        creaturesSpr.setPosition(0 + offsetX, 0 + offsetY);
+        titleSpr.setPosition(140 - offsetX/4, 350 - offsetY/4);
 
         spriteBatch.end();
     }
