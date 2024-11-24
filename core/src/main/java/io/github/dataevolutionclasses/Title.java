@@ -28,7 +28,7 @@ public class Title extends ScreenAdapter {
     private FitViewport viewport;                   // Viewport
     // Spr
     private SpriteBatch spriteBatch;
-    private Sprite bgSpr, playBtn, libBtn, helpBtn, exitBtn, titleSpr, creaturesSpr;
+    private Sprite bgSpr, playBtn, libBtn, helpBtn, creditsBtn, exitBtn, titleSpr, creaturesSpr;
     private ArrayList<Sprite> btnList = new ArrayList<>();
     private Sound buttonSound;
     private Music menuBackMusic;
@@ -56,17 +56,22 @@ public class Title extends ScreenAdapter {
         // Sprite
         spriteBatch = new SpriteBatch();
         bgSpr = new Sprite(new Texture("bg_lightgreen.png"));
-        playBtn = new Sprite(new Texture("btn_play.png"));
-        playBtn.setPosition(200, 260);
-        libBtn = new Sprite(new Texture("btn_lib.png"));
-        libBtn.setPosition(200, 190);
-        helpBtn = new Sprite(new Texture("btn_help.png"));
-        helpBtn.setPosition(200, 120);
-        exitBtn = new Sprite(new Texture("btn_exit.png"));
-        exitBtn.setPosition(200, 50);
         titleSpr = new Sprite(new Texture("background.png"));
         titleSpr = new Sprite(new Texture("Title.png"));
         titleSpr.setPosition(140, 350);
+
+        // Btn Spr
+        playBtn = new Sprite(new Texture("btn_play.png"));
+        playBtn.setPosition(200, 270);
+        libBtn = new Sprite(new Texture("btn_lib.png"));
+        libBtn.setPosition(200, 210);
+        helpBtn = new Sprite(new Texture("btn_help.png"));
+        helpBtn.setPosition(200, 150);
+        creditsBtn = new Sprite(new Texture("btn_credits.png"));
+        creditsBtn.setPosition(200, 90);
+        exitBtn = new Sprite(new Texture("btn_exit.png"));
+        exitBtn.setPosition(200, 30);
+
         creaturesSpr = new Sprite(new Texture("creatures.png"));
         creaturesSpr.setScale(1.1f);
         buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
@@ -74,13 +79,11 @@ public class Title extends ScreenAdapter {
         menuBackMusic.setVolume(0.5f);
         menuBackMusic.setLooping(true);
         menuBackMusic.play();
-
-
-
         // Add buttons to list
         btnList.add(playBtn);
         btnList.add(libBtn);
         btnList.add(helpBtn);
+        btnList.add(creditsBtn);
         btnList.add(exitBtn);
         // make Inp processor
         createInputProcessor();
@@ -110,11 +113,11 @@ public class Title extends ScreenAdapter {
         playBtn.draw(spriteBatch);
         libBtn.draw(spriteBatch);
         helpBtn.draw(spriteBatch);
+        creditsBtn.draw(spriteBatch);
         exitBtn.draw(spriteBatch);
         titleSpr.draw(spriteBatch);
 
-
-        /// Update the time
+        // Update the time
         time += Gdx.graphics.getDeltaTime();
         // Oscillate positions using sine wave
         float offsetX = (float) Math.sin(time * 2) * 5; // Adjust speed and amplitude
@@ -180,6 +183,11 @@ public class Title extends ScreenAdapter {
                     dispose();
                 }
                 else if (indexClicked == 3){
+                    playButtonSound();
+                    game.setScreen(new Credits(game));
+                    dispose();
+                }
+                else if (indexClicked == 4){
                     Gdx.app.exit();
                 }
 

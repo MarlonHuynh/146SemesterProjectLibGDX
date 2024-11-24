@@ -65,6 +65,9 @@ cardsprites/string.png
 cardsprites/tuple.png
 cardsprites/word.png
 creatures.png
+creditqueuebody.png
+creditqueuehead.png
+credittext.png
 discard.png
 endturn.png
 enemycloud.png
