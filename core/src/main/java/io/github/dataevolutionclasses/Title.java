@@ -11,9 +11,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.graphics.g2d.Animation;
 
 import java.util.ArrayList;
 /**
@@ -23,6 +26,7 @@ import java.util.ArrayList;
  * <p>This screen includes a title, menu buttons, and sound effects for button clicks.</p>
  */
 public class Title extends ScreenAdapter {
+    private static boolean introPlayed = false;
     // Window vars
     private OrthographicCamera camera;              // Camera
     private FitViewport viewport;                   // Viewport
@@ -33,7 +37,10 @@ public class Title extends ScreenAdapter {
     private ArrayList<Sprite> btnList = new ArrayList<>();
     private Sound buttonSound;
     private Music menuBackMusic;
+    private Animation<TextureRegion> intro;
+    private Array<TextureRegion> animationFrames = new Array<>();
     // Vars
+    private boolean dropSecondBg = false;
     private boolean clicked = false;
     private Vector3 worldCoords = new Vector3();
     private float time; // Keeps track of elapsed time
@@ -84,10 +91,10 @@ public class Title extends ScreenAdapter {
 
         mixSpr = new Sprite(new Texture("titlemix.png"));
         mixSpr.setPosition(-20,0);
-        mixSpr.setColor(1, 1, 1, 0.5f);
+        mixSpr.setColor(1, 1, 1, 0.2f);
         mix2Spr = new Sprite(new Texture("titlemix.png"));
         mix2Spr.setPosition(-20, 768);
-        mix2Spr.setColor(1, 1, 1, 0.5f);
+        mix2Spr.setColor(1, 1, 1, 0.2f);
 
         buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
         menuBackMusic = Gdx.audio.newMusic(Gdx.files.internal("happy-thoughtful-song-SUNRIZISH.mp3"));
@@ -100,6 +107,16 @@ public class Title extends ScreenAdapter {
         btnList.add(helpBtn);
         btnList.add(creditsBtn);
         btnList.add(exitBtn);
+
+        // Load all frames from the folder
+        animationFrames = new Array<>();
+        int frameCount = 72; // Replace with the actual number of frames in the folder
+        for (int i = 1; i <= frameCount; i++) {
+            // Load each frame sequentially
+            Texture frameTexture = new Texture(Gdx.files.internal("birdanims/bird-" + i + ".png"));
+            animationFrames.add(new TextureRegion(frameTexture));
+        }
+        intro = new Animation<>(0.1f, animationFrames, Animation.PlayMode.NORMAL);
         // make Inp processor
         createInputProcessor();
     }
@@ -117,12 +134,14 @@ public class Title extends ScreenAdapter {
      * Draws the title screen, including background, buttons, and title sprite.
      */
     public void draw() {
+        // Update the time
         ScreenUtils.clear(245 / 255f, 1250 / 255f, 205 / 255f, 1f);
-        camera.position.set(300, 300, 0); // Recenter camera on resize
+        time += Gdx.graphics.getDeltaTime();
+        camera.position.set(300, 300, 0);
         camera.update();
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
-
+        // Draw all title stuff
         bgSpr.draw(spriteBatch);
         mixSpr.draw(spriteBatch);
         mix2Spr.draw(spriteBatch);
@@ -136,9 +155,6 @@ public class Title extends ScreenAdapter {
         creditsBtn.draw(spriteBatch);
         exitBtn.draw(spriteBatch);
         titleSpr.draw(spriteBatch);
-
-        // Update the time
-        time += Gdx.graphics.getDeltaTime();
         // Oscillate positions using sine wave
         float offsetX = (float) Math.sin(time * 2) * 3; // Adjust speed and amplitude
         float offsetY = (float) Math.cos(time * 2) * 3;
@@ -146,10 +162,9 @@ public class Title extends ScreenAdapter {
         // Update sprite position
         hawkSpr.setPosition(0 + offsetX, 0 + offsetY);
         bugSpr.setRotation(angle);
-        mantaSpr.setPosition(0, 0 - offsetY/2);
+        mantaSpr.setPosition(0, 0 - offsetY / 2);
         fishSpr.setPosition(5, 0 - offsetY);
-        titleSpr.setPosition(140, 350 - offsetY/4);
-
+        titleSpr.setPosition(140, 350 - offsetY / 4);
         // Update sprite positions
         float delta = Gdx.graphics.getDeltaTime();
         // Update and loop mixSpr position
@@ -161,8 +176,25 @@ public class Title extends ScreenAdapter {
         if (mix2Spr.getY() + mix2Spr.getWidth() < 0) {
             mix2Spr.setY(600);
         }
-
         spriteBatch.end();
+        // Draw intro (with title stuff loaded behind)
+        if (!introPlayed) {
+            spriteBatch.begin();
+            if (!dropSecondBg) {
+                bgSpr.draw(spriteBatch);
+            }
+            if (intro != null) {
+                TextureRegion currentFrame = intro.getKeyFrame(time, false); // Looping animation
+                spriteBatch.draw(currentFrame, 0, 0); // Draw animation at position (100, 100)
+            }
+            spriteBatch.end();
+            if (intro.getKeyFrameIndex(time) == 68) {
+                dropSecondBg = true;
+            }
+            if (intro.isAnimationFinished(time)) {
+                introPlayed = true;
+            }
+        }
     }
     /**
      * Handles resizing of the viewport and adjusts it to maintain aspect ratio.
