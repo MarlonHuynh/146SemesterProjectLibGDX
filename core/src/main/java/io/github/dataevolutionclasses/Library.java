@@ -30,7 +30,7 @@ public class Library extends ScreenAdapter {
     private SpriteBatch spriteBatch;
     private Sprite bgSpr, backSpr;
     private ArrayList<Sprite> btnList = new ArrayList<>();
-    private String deckStr = "Deck: ";
+    private String deckStr = "Amount of Cards in Deck: ";
     private GlyphLayout deckLayout = new GlyphLayout();
     private BitmapFont defaultFont;
     // Sprite for Player Deck button
@@ -235,85 +235,40 @@ public class Library extends ScreenAdapter {
                     return false;
 
                 //Sorting functions buttons
-                //sort if in the deck
-                if (viewCardList==cardInDeck && worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 510 && worldCoords.y <= 535) {
-                    viewCardList = CardSorter.sortByName(cardInDeck);
+                if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 510 && worldCoords.y <= 535) {
+                    viewCardList = CardSorter.sortByName(viewCardList);
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
                 }
-                //sort if the original list
-                else if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 510 && worldCoords.y <= 535) {
-                    viewCardList = CardSorter.sortByName(cardList);
+                if (worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 510 && worldCoords.y <= 535) {
+                    viewCardList = CardSorter.sortByCost(viewCardList);
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
                 }
-                //sort if in the deck
-                if (viewCardList==cardInDeck && worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 510 && worldCoords.y <= 535) {
-                    viewCardList = CardSorter.sortByCost(cardInDeck);
+                if (worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 510 && worldCoords.y <= 535) {
+                    viewCardList = CardSorter.sortByAttack(viewCardList);
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
                 }
-                //sort if the original list
-                else if (worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 510 && worldCoords.y <= 535) {
-                    viewCardList = CardSorter.sortByCost(cardList);
+                if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 480 && worldCoords.y <= 505) {
+                    viewCardList = CardSorter.sortByShield(viewCardList);
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
                 }
-                //sort if in the deck
-                if (viewCardList==cardInDeck && worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 510 && worldCoords.y <= 535) {
-                    viewCardList = CardSorter.sortByAttack(cardInDeck);
+
+                if (worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 480 && worldCoords.y <= 505) {
+                    viewCardList = CardSorter.sortByStage(viewCardList);
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
                 }
-                //sort if the original list
-                else if (worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 510 && worldCoords.y <= 535) {
-                    viewCardList = CardSorter.sortByAttack(cardList);
-                    currentPage = 0;  // Reset to the first page
-                    updateCardsOnPage();  // Refresh display for the first page
-                    System.out.println("Cards sorted and displayed.");
-                }
-                //sort if in the deck
-                if (viewCardList==cardInDeck && worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 480 && worldCoords.y <= 505) {
-                    viewCardList = CardSorter.sortByShield(cardInDeck);
-                    currentPage = 0;  // Reset to the first page
-                    updateCardsOnPage();  // Refresh display for the first page
-                    System.out.println("Cards sorted and displayed.");
-                }
-                //sort if the original list
-                else if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 480 && worldCoords.y <= 505) {
-                    viewCardList = CardSorter.sortByShield(cardList);
-                    currentPage = 0;  // Reset to the first page
-                    updateCardsOnPage();  // Refresh display for the first page
-                    System.out.println("Cards sorted and displayed.");
-                }
-                //sort if in the deck
-                if (viewCardList==cardInDeck && worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 480 && worldCoords.y <= 505) {
-                    viewCardList = CardSorter.sortByStage(cardInDeck);
-                    currentPage = 0;  // Reset to the first page
-                    updateCardsOnPage();  // Refresh display for the first page
-                    System.out.println("Cards sorted and displayed.");
-                }
-                //sort if the original list
-                else if (worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 480 && worldCoords.y <= 505) {
-                    viewCardList = CardSorter.sortByStage(cardList);
-                    currentPage = 0;  // Reset to the first page
-                    updateCardsOnPage();  // Refresh display for the first page
-                    System.out.println("Cards sorted and displayed.");
-                }
-                //sort if in the deck
-                if (viewCardList==cardInDeck && worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 480 && worldCoords.y <= 505) {
-                    viewCardList = cardInDeck;
-                    currentPage = 0;  // Reset to the first page
-                    updateCardsOnPage();  // Refresh display for the first page
-                    System.out.println("Cards sorted and displayed.");
-                }
-                //sort if the original list
-                else if (worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 480 && worldCoords.y <= 505) {
+
+                //NOTE remove sort also quits deck
+                if (worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 480 && worldCoords.y <= 505) {
                     viewCardList = cardList;
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
@@ -346,20 +301,18 @@ public class Library extends ScreenAdapter {
                         // Calculate the actual index of the card in the full list
                         int actualIndex = currentPage * CARDS_PER_PAGE + i;  // Calculate the index in the full list
                         int cardCount = 0;
-
                         if (actualIndex >= 0 && actualIndex < viewCardList.size()) {
                             // Set selected card index based on actual index
                             selectedCardNumber = i;
                             clicked = true;
-                            if (cardInDeck.size() >= 40)
-                            {
+                            if (cardInDeck.size() >= 40) {
                                 break;
-                            }
-                            else
-                            {
+                            } else {
                                 cardInDeck.add(viewCardList.get(actualIndex));  // Add the selected card to the deck
-                                deckStr += viewCardList.get(actualIndex).getName() + ", ";  // Update the deck string
-                                deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);  // Update deck layout
+
+                                // Update the displayed count of selected cards
+                                String selectedCountStr = deckStr + cardInDeck.size();
+                                deckLayout.setText(defaultFont, selectedCountStr, Color.RED, 500, Align.left, true);  // Update deck layout with count
                             }
                         }
                         break;
@@ -389,4 +342,5 @@ public class Library extends ScreenAdapter {
             }
         });
     }
+
 }
