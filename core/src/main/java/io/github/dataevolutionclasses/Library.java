@@ -112,7 +112,7 @@ public class Library extends ScreenAdapter {
         updateCardsOnPage();
         // Sprite
         spriteBatch = new SpriteBatch();
-        bgSpr = new Sprite(new Texture("background.png"));
+        bgSpr = new Sprite(new Texture("bg_orange.png"));
 
         //Sprite buttons for Sorting
         sortByNameSprite = new Sprite(new Texture("btn_sortbyname.png"));
@@ -167,8 +167,6 @@ public class Library extends ScreenAdapter {
         camera.update();
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
-
-
         bgSpr.draw(spriteBatch);
         playersDeckIcon.draw(spriteBatch);
         sortByNameSprite.draw(spriteBatch);
@@ -179,11 +177,7 @@ public class Library extends ScreenAdapter {
         removeSortSprite.draw(spriteBatch);
         nextButtonSprite.draw(spriteBatch);
         prevButtonSprite.draw(spriteBatch);
-
-
         backSpr.draw(spriteBatch);
-
-
         for (CardOnScreenData CoSD : cardOnScreenDatas)
             CoSD.drawCard(CoSD, spriteBatch, stringBuilder);
         if (selectedCardNumber != -1)

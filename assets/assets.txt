@@ -90,6 +90,7 @@ titlebug.png
 titlefish.png
 titlehawk.png
 titlemanta.png
+titlemix.png
 turnPageSound.mp3
 ui/dpcomic.bmp
 ui/dpcomic.fnt

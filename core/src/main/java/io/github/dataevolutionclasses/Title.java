@@ -28,7 +28,7 @@ public class Title extends ScreenAdapter {
     private FitViewport viewport;                   // Viewport
     // Spr
     private SpriteBatch spriteBatch;
-    private Sprite bgSpr, playBtn, libBtn, helpBtn, creditsBtn, exitBtn, titleSpr;
+    private Sprite bgSpr, playBtn, libBtn, helpBtn, creditsBtn, exitBtn, titleSpr, mixSpr, mix2Spr;
     private Sprite hawkSpr, mantaSpr, bugSpr, fishSpr;
     private ArrayList<Sprite> btnList = new ArrayList<>();
     private Sound buttonSound;
@@ -82,6 +82,13 @@ public class Title extends ScreenAdapter {
         mantaSpr = new Sprite(new Texture("titlemanta.png"));
         mantaSpr.setScale(1.1f);
 
+        mixSpr = new Sprite(new Texture("titlemix.png"));
+        mixSpr.setPosition(-20,0);
+        mixSpr.setColor(1, 1, 1, 0.5f);
+        mix2Spr = new Sprite(new Texture("titlemix.png"));
+        mix2Spr.setPosition(-20, 768);
+        mix2Spr.setColor(1, 1, 1, 0.5f);
+
         buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
         menuBackMusic = Gdx.audio.newMusic(Gdx.files.internal("happy-thoughtful-song-SUNRIZISH.mp3"));
         menuBackMusic.setVolume(0.5f);
@@ -117,6 +124,8 @@ public class Title extends ScreenAdapter {
         spriteBatch.begin();
 
         bgSpr.draw(spriteBatch);
+        mixSpr.draw(spriteBatch);
+        mix2Spr.draw(spriteBatch);
         bugSpr.draw(spriteBatch);
         fishSpr.draw(spriteBatch);
         hawkSpr.draw(spriteBatch);
@@ -140,6 +149,18 @@ public class Title extends ScreenAdapter {
         mantaSpr.setPosition(0, 0 - offsetY/2);
         fishSpr.setPosition(5, 0 - offsetY);
         titleSpr.setPosition(140, 350 - offsetY/4);
+
+        // Update sprite positions
+        float delta = Gdx.graphics.getDeltaTime();
+        // Update and loop mixSpr position
+        mixSpr.setY(mixSpr.getY() - delta * 10); // Move mixSpr at a constant speed (10 pixels/second)
+        if (mixSpr.getY() + mixSpr.getWidth() < 0) { // Check if mixSpr is off-screen
+            mixSpr.setY(600); // Reset to the right of the screen
+        }
+        mix2Spr.setY(mix2Spr.getY() - delta * 10);
+        if (mix2Spr.getY() + mix2Spr.getWidth() < 0) {
+            mix2Spr.setY(600);
+        }
 
         spriteBatch.end();
     }
