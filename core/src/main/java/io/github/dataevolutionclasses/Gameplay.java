@@ -6,6 +6,7 @@
 package io.github.dataevolutionclasses;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -71,7 +72,9 @@ public class Gameplay extends ScreenAdapter {
     // Debug vars
     private int frameCounter = 0;
     // Sound effect vars
-    private Sound buttonSound = buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
+    private Sound buttonSound = Gdx.audio.newSound(Gdx.files.internal("buttonSound.mp3"));
+    private Music gameBackMusic = Gdx.audio.newMusic(Gdx.files.internal("walking-beat-SUNRIZISH.mp3"));
+    private Sound cardPlaceSound = Gdx.audio.newSound(Gdx.files.internal("PlaceCardSound.mp3"));
 
     // Define the scene
     private Game game;
@@ -119,6 +122,9 @@ public class Gameplay extends ScreenAdapter {
         backSpr = new Sprite(new Texture("btn_back.png"));
         backSpr.setScale(0.35f);
         backSpr.setPosition(-60, 550);
+        gameBackMusic.setVolume(0.4f);
+        gameBackMusic.setLooping(true);
+        gameBackMusic.play();
         // Initialize stat variables
         playerHealth = 60; enemyHealth = 40; playerEnergy = 0; playerRecharge = 0; enemyEnergy = 0; enemyRecharge = 0;
         // Create the cards in the player's deck
@@ -236,6 +242,8 @@ public class Gameplay extends ScreenAdapter {
         enemyCloudSpr.getTexture().dispose();
         playerEnergySpr.getTexture().dispose();
         enemyEnergySpr.getTexture().dispose();
+        gameBackMusic.dispose();
+        cardPlaceSound.dispose();
     }
 
     // Called every frame in render to draw the screen
@@ -325,6 +333,7 @@ public class Gameplay extends ScreenAdapter {
             for (int i = 0; i < cardOnScreenDatas.size(); i++) {
                 if (cardOnScreenDatas.get(i).getCardSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y) || cardOnScreenDatas.get(i).getCardbackSprite().getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                     // Update selection variables accordingly to what was clicked and what was previously clicked
+                    cardPlaceSound.play();
                     if (selectedCardNumber == -1) {
                         selectedCardNumber = i;
                         prevSelectedCardNumber = 0; // Initialized to 0 (enemy hand 1) at first to avoid null exceptions when retrieving card data. Doesn't affect any playerside logic.
@@ -332,6 +341,7 @@ public class Gameplay extends ScreenAdapter {
                         break;
                     }
                     else {
+                        cardPlaceSound.play();
                         prevSelectedCardNumber = selectedCardNumber;
                         selectedCardNumber = i;
                         clicked = true;
@@ -342,6 +352,7 @@ public class Gameplay extends ScreenAdapter {
             if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                 buttonSound.play(0.5f);
                 game.setScreen(new Title(game));
+                dispose();
             }
             // If nothing has been clicked and nothing has been clicked, no additional logic needed so returns
             if (prevSelectedCardNumber == -1 && selectedCardNumber == -1 )
@@ -372,6 +383,7 @@ public class Gameplay extends ScreenAdapter {
             }
             // 1) Fielding Card logic (prev -> card in hand, curr -> player field blank)
             else if (!prevData.getCard().getName().equals("Blank")                       // CONDITIONS: Previous select is not blank card
+            && !prevData.getCard().getType().equals("Spell")
             && !prevData.getCard().getName().equals("Trash")
             && !prevData.getCard().getName().equals("End Turn")
             && !prevData.getCard().getName().equals("Discard")
