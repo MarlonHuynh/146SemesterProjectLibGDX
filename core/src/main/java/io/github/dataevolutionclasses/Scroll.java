@@ -23,7 +23,7 @@ public class Scroll {
         // Create the slider with range from 0 to 100 and step size of 1
         slider = new Slider(0, 100, 1, true, skin);
         slider.setPosition(0, 0);  // Set position on screen
-        slider.setSize(10, 700);  // Set size of the slider
+        slider.setSize(10, Gdx.graphics.getHeight());  // Set size of the slider
 //Gdx.graphics.getHeight()
         slider.setValue(slider.getMaxValue());
 
