@@ -110,8 +110,8 @@ public class Title extends ScreenAdapter {
 
         // Load all frames from the folder
         animationFrames = new Array<>();
-        int frameCount = 72; // Replace with the actual number of frames in the folder
-        for (int i = 1; i <= frameCount; i++) {
+        int frameCount = 71; // Replace with the actual number of frames in the folder
+        for (int i = 0; i <= frameCount; i++) {
             // Load each frame sequentially
             Texture frameTexture = new Texture(Gdx.files.internal("birdanims/bird-" + i + ".png"));
             animationFrames.add(new TextureRegion(frameTexture));
@@ -188,7 +188,7 @@ public class Title extends ScreenAdapter {
                 spriteBatch.draw(currentFrame, 0, 0); // Draw animation at position (100, 100)
             }
             spriteBatch.end();
-            if (intro.getKeyFrameIndex(time) == 68) {
+            if (intro.getKeyFrameIndex(time) == 69) {
                 dropSecondBg = true;
             }
             if (intro.isAnimationFinished(time)) {

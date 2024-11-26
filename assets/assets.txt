@@ -71,12 +71,6 @@ birdanims/bird-69.png
 birdanims/bird-7.png
 birdanims/bird-70.png
 birdanims/bird-71.png
-birdanims/bird-72.png
-birdanims/bird-73.png
-birdanims/bird-74.png
-birdanims/bird-75.png
-birdanims/bird-76.png
-birdanims/bird-77.png
 birdanims/bird-8.png
 birdanims/bird-9.png
 btn_back.png
