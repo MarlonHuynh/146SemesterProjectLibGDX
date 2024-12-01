@@ -212,7 +212,6 @@ public class Library extends ScreenAdapter {
 
     }
 
-
     public void createInputProcessor(){
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
@@ -221,60 +220,94 @@ public class Library extends ScreenAdapter {
                 clicked = false;
                 if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600)
                     return false;
+                // Reduce transparency if button clicked
+                if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    clicked = true;
+                    backSpr.setColor(1, 1, 1, 0.8f);
+                    return clicked;
+                }
 
                 //Sorting functions buttons
                 if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 510 && worldCoords.y <= 535) {
                     viewCardList = CardSorter.sortByName(viewCardList);
+                    buttonSound.play();
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
+                    clicked = true;
+                    sortByNameSprite.setColor(1, 1, 1, 0.8f);
+                    return clicked;
                 }
                 if (worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 510 && worldCoords.y <= 535) {
                     viewCardList = CardSorter.sortByCost(viewCardList);
+                    buttonSound.play();
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
+                    clicked = true;
+                    sortByCostSprite.setColor(1, 1, 1, 0.8f);
+                    return clicked;
                 }
                 if (worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 510 && worldCoords.y <= 535) {
                     viewCardList = CardSorter.sortByAttack(viewCardList);
+                    buttonSound.play();
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
+                    clicked = true;
+                    sortByAttackSprite.setColor(1, 1, 1, 0.8f);
+                    return clicked;
                 }
                 if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 480 && worldCoords.y <= 505) {
                     viewCardList = CardSorter.sortByShield(viewCardList);
+                    buttonSound.play();
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
+                    clicked = true;
+                    sortByShieldSprite.setColor(1, 1, 1, 0.8f);
+                    return clicked;
                 }
 
                 if (worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 480 && worldCoords.y <= 505) {
                     viewCardList = CardSorter.sortByStage(viewCardList);
+                    buttonSound.play();
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
+                    clicked = true;
+                    sortByStageSprite.setColor(1, 1, 1, 0.8f);
+                    return clicked;
                 }
 
                 //NOTE remove sort also quits deck
                 if (worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 480 && worldCoords.y <= 505) {
                     viewCardList = cardList;
+                    buttonSound.play();
                     currentPage = 0;  // Reset to the first page
                     updateCardsOnPage();  // Refresh display for the first page
                     System.out.println("Cards sorted and displayed.");
+                    clicked = true;
+                    removeSortSprite.setColor(1, 1, 1, 0.8f);
+                    return clicked;
                 }
 
                 //Buttons to go next page or previous page
                 if (worldCoords.x >= 200 && worldCoords.x <= 300 && worldCoords.y >= 0 && worldCoords.y <= 25) {
-                    // Next button clicked
+                    // Previous button clicked
                     if (currentPage > 0) {
+                        buttonSound.play();
+                        prevButtonSprite.setColor(1, 1, 1, 0.8f);
                         currentPage--;
                         updateCardsOnPage();
                     }
                 }
 
                 if (worldCoords.x >= 300 && worldCoords.x <= 400 && worldCoords.y >= 0 && worldCoords.y <= 25) {
-                    // Previous button clicked
+                    // Next button clicked
                     if ((currentPage + 1) * CARDS_PER_PAGE < cardList.size()) {
+                        buttonSound.play();
+                        nextButtonSprite.setColor(1, 1, 1, 0.8f);
                         currentPage++;
                         updateCardsOnPage();
                     }
@@ -320,15 +353,56 @@ public class Library extends ScreenAdapter {
                     viewCardList = cardInDeck;
                     updateCardsOnPage();
                     }
-                // Check if the back button is pressed
+
+                return clicked;
+            }
+
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+                // Reset Btn Color
+                backSpr.setColor(1, 1, 1, 1f);
+                // Get World Coords
+                worldCoords = viewport.unproject(new Vector3(screenX, screenY, 0));  // Convert screen coordinates to world coordinates
+                clicked = false;
+                if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600) // Check if the click is within the viewport
+                    return false;
+                // If back button is clicked, play sound and return to the Title screen
                 if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
-                    buttonSound.play(0.4f);
+                    buttonSound.play();
                     game.setScreen(new Title(game));
+                    dispose();
+                }
+
+                if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 510 && worldCoords.y <= 535){
+                    sortByNameSprite.setColor(1, 1, 1, 1f);
+                }
+                if (worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 510 && worldCoords.y <= 535){
+                    sortByCostSprite.setColor(1, 1, 1, 1f);
+                }
+                if (worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 510 && worldCoords.y <= 535){
+                    sortByAttackSprite.setColor(1, 1, 1, 1f);
+                }
+                if (worldCoords.x >= 10 && worldCoords.x <= 110 && worldCoords.y >= 480 && worldCoords.y <= 505){
+                    sortByShieldSprite.setColor(1, 1, 1, 1f);
+                }
+                if (worldCoords.x >= 120 && worldCoords.x <= 220 && worldCoords.y >= 480 && worldCoords.y <= 505){
+                    sortByStageSprite.setColor(1, 1, 1, 1f);
+                }
+                if (worldCoords.x >= 230 && worldCoords.x <= 330 && worldCoords.y >= 480 && worldCoords.y <= 505){
+                    removeSortSprite.setColor(1, 1, 1, 1f);
+                }
+                if (worldCoords.x >= 200 && worldCoords.x <= 300 && worldCoords.y >= 0 && worldCoords.y <= 25){
+                    prevButtonSprite.setColor(1, 1, 1, 1f);
+                }
+                if (worldCoords.x >= 300 && worldCoords.x <= 400 && worldCoords.y >= 0 && worldCoords.y <= 25){
+                    nextButtonSprite.setColor(1, 1, 1, 1f);
                 }
 
                 return clicked;
             }
         });
     }
-//Temp Comment
+
+    public void playButtonSound(){
+        buttonSound.play(0.3f);
+    }
 }
