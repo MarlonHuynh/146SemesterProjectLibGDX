@@ -133,28 +133,61 @@ public class Help3 extends ScreenAdapter {
                 if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600) // Check if the click is within the viewport
                     return false;
 
-                // If back button is clicked, play sound and return to the Title screen
+                // Reduce transparency if button clicked
                 if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    clicked = true;
                     buttonSound.play();
-                    game.setScreen(new Title(game));
-                    dispose();
+                    backSpr.setColor(1, 1, 1, 0.8f);
+                    return clicked;
                 }
 
                 // if prev button is clicked
                 if (prevSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                     pageSound.play();
-                    game.setScreen(new Help2(game));
-                    dispose();
+                    prevSpr.setColor(1, 1, 1, 0.8f);
                 }
 
                 // if next button is clicked
                 if (nextSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                     pageSound.play();
-                    game.setScreen(new Help4(game));
-                    dispose();
+                    nextSpr.setColor(1, 1, 1, 0.8f);
                 }
                 return clicked;
             }
+
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+                // Reset Btn Color
+                backSpr.setColor(1, 1, 1, 1f);
+                // Get World Coords
+                worldCoords = viewport.unproject(new Vector3(screenX, screenY, 0));  // Convert screen coordinates to world coordinates
+                clicked = false;
+                if (worldCoords.x < 0 || worldCoords.x > 600 || worldCoords.y < 0 || worldCoords.y > 600) // Check if the click is within the viewport
+                    return false;
+                // If back button is clicked, play sound and return to the Title screen
+                if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    game.setScreen(new Title(game));
+                    dispose();
+                }
+                if (nextSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)){
+                    nextSpr.setColor(1, 1, 1, 1f);
+                    game.setScreen(new Help4(game));
+                    dispose();
+                }
+                if (prevSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)){
+                    prevSpr.setColor(1, 1, 1, 1f);
+                    game.setScreen(new Help2(game));
+                    dispose();
+                }
+
+                return clicked;
+            }
         });
+    }
+
+    /**
+     * Plays the button click sound effect at a reduced volume.
+     */
+    public void playButtonSound(){
+        buttonSound.play(0.3f);
     }
 }
