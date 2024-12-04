@@ -738,16 +738,18 @@ public class Gameplay extends ScreenAdapter {
         // Wasn't place any card this turn
         if (cardsInEnemyHand.size() >= 5 || (enemyRecharge < 10)) {
             Card discardCandidate = null;
+            // Only when >=6 energy
+            // Only when more than 2 card on hand (one cost on hand require high energy)
             if (enemyEnergy >= 6 && cardsInEnemyHand.size() > 2) {
                 for (Card card : cardsInEnemyHand) {
                     if (card.getCost() > 6) {
                         // Find the lowest-stage card in the hand
                         for (Card potentialCard : cardsInEnemyHand) {
-                            if (discardCandidate == null || potentialCard.getStage() < discardCandidate.getStage()) {
+                            if (discardCandidate == null || potentialCard.getStage() <= discardCandidate.getStage()) {
                                 discardCandidate = potentialCard;
                             }
                         }
-                        break; // Prioritize this case over others
+                        break;
                     }
                 }
             }
