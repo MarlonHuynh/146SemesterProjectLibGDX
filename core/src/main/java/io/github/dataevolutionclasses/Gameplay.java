@@ -745,7 +745,7 @@ public class Gameplay extends ScreenAdapter {
                     if (card.getCost() > 6) {
                         // Find the lowest-stage card in the hand
                         for (Card potentialCard : cardsInEnemyHand) {
-                            if (discardCandidate == null || potentialCard.getStage() <= discardCandidate.getStage()) {
+                            if (discardCandidate == null || potentialCard.getStage() < discardCandidate.getStage()) {
                                 discardCandidate = potentialCard;
                             }
                         }
