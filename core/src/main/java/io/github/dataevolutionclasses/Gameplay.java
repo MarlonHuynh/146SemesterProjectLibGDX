@@ -559,22 +559,26 @@ public class Gameplay extends ScreenAdapter {
             drawCardEnemy();
             enemyActionStr = "Attempting card drawing.";
             enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
-            // Task 2: Prioritize evolving cards first if enough energy is available
+
+            // Task 2: Discard cards if necessary
             delayAndExecute(() -> {
-                placeCardEnemy();
-                enemyActionStr = "Attempting evolving or placing cards.";
+                discardCardEnemy();
+                enemyActionStr = "Attempting discard.";
                 enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
-                // Task 3: Draw a card if able
+
+                // Task 3: Draw another card if able
                 delayAndExecute(() -> {
                     drawCardEnemy();
                     enemyActionStr = "Attempting card drawing.";
                     enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
-                    // Task 4: Discard
+
+                    // Task 4: Prioritize evolving or placing cards
                     delayAndExecute(() -> {
-                        discardCardEnemy();
-                        enemyActionStr = "Attempting discard.";
+                        placeCardEnemy();
+                        enemyActionStr = "Attempting evolving or placing cards.";
                         enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
-                        // Task 5: Attack Player
+
+                        // Task 5: Attack the player
                         delayAndExecute(() -> {
                             attackPlayerEnemy();
                             enemyActionStr = "Enemy turn complete. It is your turn.";
