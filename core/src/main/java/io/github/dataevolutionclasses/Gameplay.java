@@ -134,14 +134,11 @@ public class Gameplay extends ScreenAdapter {
             "Bubble Sort", "Bubble Sort", "Seelection", "Seelection", "Eelnsertion Sort", "Eelnsertion Sort",
             "Surgeon Sort", "Surgeon Sort", "Shell Sort", "Shell Sort", "Quickfish Sort", "Quickfish Sort",
             "A-Starfish", "Bucket O' Fish", "Raydix Sort",
-            /*
             "Parraykeet", "Parraykeet", "Sphinx List", "Sphinx List", "Bin. Canary Tree", "Bin. Canary Tree",
             "Parraykeet", "Parraykeet", "Sphinx List", "Sphinx List", "Bin. Canary Tree", "Bin. Canary Tree",
             "Quack Stack", "Quack Stack", "Hawkmap", "Hawkmap", "Quetzelqueueotl", "Quetzelqueueotl",
-            "Grifminmax Heap", "Hippograph", "Bal. Canary Tree",*/
-            "Backup Data", "Backup Data", "Backup Data", "Backup Data", "Backup Data", "Backup Data",
-            "Overclock", "Superoverclock", "Overclock", "Superoverclock", "Overclock", "Superoverclock",
-            "Allocate memory", "Allocate more memory", "Allocate memory", "Allocate more memory", "Allocate memory", "Allocate more memory"
+            "Grifminmax Heap", "Hippograph", "Bal. Canary Tree",
+            "Backup Data", "Backup Data", "Backup Data", "Backup Data", "Backup Data", "Backup Data"
         );
         for (String s : strTemp) {
             Card card = nameToCardHashmap.get(s);
@@ -381,58 +378,30 @@ public class Gameplay extends ScreenAdapter {
             // -----------------------------------------------------------------------------------------------
             CardOnScreenData currData = cardOnScreenDatas.get(selectedCardNumber);
             CardOnScreenData prevData = cardOnScreenDatas.get(prevSelectedCardNumber);
-            // 0) Spell Logic for single-use double-clicked spells (add player hp)
-            if (currData.getCard().getType().equals("Spell") && prevData.getCard().getType().equals("Spell") && playerEnergy >= currData.getCard().getCost()){
-                // Subtract cost
-                playerEnergy -= currData.getCard().getCost();
-                // Add 5 hp
-                switch (currData.getCard().getName()) {
-                    case "Recover Data":
+            // 0) Spell Logic
+            if (currData.getCard().getType().equals("Spell") && prevData.getCard().getType().equals("Spell")){
+                if (currData.getCard().getName().equals("Recover Data") || currData.getCard().getName().equals("Backup Data") && playerEnergy >= currData.getCard().getCost()){
+                    // Subtract cost
+                    playerEnergy -= currData.getCard().getCost();
+                    // Add 5 hp
+                    if  (currData.getCard().getName().equals("Recover Data")) {
                         playerHealth += 5;
-                        break;
-                    case "Backup Data":
-                        playerHealth += 10;
-                        break;
-                    default:
-                        break;
-                }
-                // Remove from hand
-                for (int i = 0; i < cardsInPlayerHand.size(); i++) {
-                    if (cardsInPlayerHand.get(i).getName().equals(currData.getCard().getName())) {
-                        cardsInPlayerHand.remove(i);
-                        break;
                     }
+                    else {
+                        playerHealth += 10;
+                    }
+                    // Remove from hand
+                    for (int i = 0; i < cardsInPlayerHand.size(); i++) {
+                        if (cardsInPlayerHand.get(i).getName().equals(currData.getCard().getName())) {
+                            cardsInPlayerHand.remove(i);
+                            break;
+                        }
+                    }
+                    // Remake the card's UI to be reflective of usage
+                    currData.remakeCard(37, currData.getX(), currData.getY(), currData.getScale());
                 }
-                // Remake the card's UI to be reflective of usage
-                currData.remakeCard(37, currData.getX(), currData.getY(), currData.getScale());
+                // TODO: Add more spells
             }
-            else if (prevData.getCard().getType().equals("Spell")                    // Current select is blank card
-                && !currData.getCard().getName().equals("Blank")
-                && prevSelectedCardNumber >= 5 && prevSelectedCardNumber <= 9       // Previous select is in player hand
-                && selectedCardNumber >= 13 && selectedCardNumber <= 15             // Current select is in bottom field (player field)
-                && prevData.getCard().getCost() <= playerEnergy) {                  // Player has enough money to place card
-                // Subtract cost
-                playerEnergy -= prevData.getCard().getCost();
-                switch (prevData.getCard().getName()) {
-                    case "Overclock":
-                        currData.getCard().setAttack(currData.getCard().getAttack() + 2);
-                        break;
-                    case "Superoverclock":
-                        currData.getCard().setAttack(currData.getCard().getAttack() + 4);
-                        break;
-                    case "Allocate memory":
-                        currData.getCard().setShield(currData.getCard().getShield() + 2);
-                        break;
-                    case "Allocate more memory":
-                        currData.getCard().setShield(currData.getCard().getShield() + 4);
-                        break;
-                    default:
-                        break;
-                }
-                // Remake the card's UI to be reflective of the swap
-                prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale()); // ID 37 -> blank card
-            }
-            // 0.1) Spell Logic for drag-to-creature spell (add attack, add shield)
             // 1) Fielding Card logic (prev -> card in hand, curr -> player field blank)
             else if (!prevData.getCard().getName().equals("Blank")                       // CONDITIONS: Previous select is not blank card
             && !prevData.getCard().getType().equals("Spell")
@@ -750,22 +719,9 @@ public class Gameplay extends ScreenAdapter {
     }
 
     void discardCardEnemy(){
-        /* TODO: Rework enemy AI
-               When to discard?
-                -> Enemy should discard when they can't place anything using their turn and always discard when their hand is full and deck still has card (so that they can draw).
-                    -> Reasoning: They want to gain energy to place other cards, therefore the only action when you can't play any card is to discard
-                -> Energy should avoid when >= 6 energy reached and entirely when >= 10 energy reached (max energy cost possible)
-                    -> Reasoning: 6 energy is usually a threshold for stage 2s and 10 for stage 3s.
-               If its applicable to discard, discard in the following priority:
-               -> Basics if field is full
-                    -> Reasoning: You don't need more basics if your field is full of them, and likely stronger as you probably evolved them
-               -> Higher stages of different type than of basics on field (Be very reluctant of discarding higher stages of same type as fielded card)
-                    -> Reasoning: Simulates enemy building for a certain type stage 3 for their endgame strategy
-               -> Duplicates (from higher stages to lower stages)
-                    -> Reasoning: You don't need a lot of duplicates most of the time
-        */
         // Determine if field is full
         boolean full = true;
+
         for (int i = 0; i < 4; i++){
             if (cardOnScreenDatas.get(i).getCard().getName().equals("Blank")) {
                 full = false;
@@ -778,7 +734,19 @@ public class Gameplay extends ScreenAdapter {
         // Wasn't place any card this turn
         if (cardsInEnemyHand.size() >= 5 || (enemyRecharge < 10)) {
             Card discardCandidate = null;
-
+            if (enemyEnergy >= 6 && cardsInEnemyHand.size() > 2) {
+                for (Card card : cardsInEnemyHand) {
+                    if (card.getCost() > 6) {
+                        // Find the lowest-stage card in the hand
+                        for (Card potentialCard : cardsInEnemyHand) {
+                            if (discardCandidate == null || potentialCard.getStage() < discardCandidate.getStage()) {
+                                discardCandidate = potentialCard;
+                            }
+                        }
+                        break; // Prioritize this case over others
+                    }
+                }
+            }
             // Step 1: Prioritize discarding basics if the field is full
             for (Card card : cardsInEnemyHand) {
                 if (card.getStage() == 1 && full) { // Check if basic and field is full
