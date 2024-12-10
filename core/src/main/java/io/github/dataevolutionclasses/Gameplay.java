@@ -707,13 +707,6 @@ public class Gameplay extends ScreenAdapter {
                     }
                     // Remove the placed card from enemy hand
                     cardsInEnemyHand.remove(handCard);
-                    /*
-                    for (int k = 0; k < cardsInEnemyHand.size(); k++) {
-                        if (cardsInEnemyHand.get(k).getName().equals(handCard.getName())) {
-                            cardsInEnemyHand.remove(k);
-                            break;
-                        }
-                    }*/
                     placed = true;
                     break;
                 }
@@ -819,32 +812,5 @@ public class Gameplay extends ScreenAdapter {
         processCardInteraction(1, 13, 10);
         processCardInteraction(1, 14, 11);
         processCardInteraction(1, 15, 12);
-    }
-
-    // Not in use
-    void discardLowestValueEnemyHand(){
-        // Get first available card
-        Card lowestValueCard = cardsInEnemyHand.get(0);
-        int indexToDiscard = 0;
-        // Find highest cost card
-        for (int j = 1; j < cardsInEnemyHand.size(); j++) {
-            if (cardsInEnemyHand.get(j).getCost() > lowestValueCard.getCost()) {
-                lowestValueCard = cardsInEnemyHand.get(j);
-                indexToDiscard = j;
-            }
-        }
-        if (indexToDiscard != -1) {
-            enemyEnergy++;
-            enemyRecharge++;
-            for (int k = 0; k < 5; k++) {
-                if (cardOnScreenDatas.get(k).getCard().getName().equals(cardsInEnemyHand.get(indexToDiscard).getName())) {
-                    cardOnScreenDatas.get(k).remakeCard(37, cardOnScreenDatas.get(k).getX(), cardOnScreenDatas.get(k).getY(), cardOnScreenDatas.get(k).getScale());
-                    break;
-                }
-            }
-            cardsInEnemyHand.remove(indexToDiscard);
-            enemyActionStr = "Discarded highest-value card.";
-            enemyActionLayout.setText(debugFont, enemyActionStr, Color.RED, 100, Align.left, true);
-        }
     }
 }
