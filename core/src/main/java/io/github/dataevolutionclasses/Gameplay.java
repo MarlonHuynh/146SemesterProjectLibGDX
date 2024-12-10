@@ -552,6 +552,7 @@ public class Gameplay extends ScreenAdapter {
         });
     }
 
+    // This method is used to simulate enemy actions
     public void processEnemyTurnTimed() {
         // Task 1: Draw a card if able at the start of each turn
         Gdx.app.postRunnable(() -> {
@@ -609,11 +610,12 @@ public class Gameplay extends ScreenAdapter {
         }).start();
     }
 
-    // Helper method to process card battle interations
-    // attackingPlayerInt == 0 means it's the player's turn to attack, attackingPlayerInt == 1 means it's the enemy's turn to attack
+    // Helper method to process card battle interaction
     private void processCardInteraction(int attackingPlayerInt, int playerIndex, int enemyIndex) {
         Card playerCard = cardOnScreenDatas.get(playerIndex).getCard();
         Card enemyCard = cardOnScreenDatas.get(enemyIndex).getCard();
+
+        // attackingPlayerInt == 0 means it's the player's turn to attack
         if (attackingPlayerInt == 0) {
             if (!playerCard.getName().equals("Blank") && !enemyCard.getName().equals("Blank")) {
                 playerCard.setShield(playerCard.getShield() - enemyCard.getAttack());
@@ -630,6 +632,8 @@ public class Gameplay extends ScreenAdapter {
                 enemyHealth -= playerCard.getAttack();
             }
         }
+
+        // attackingPlayerInt == 1 means it's the enemy's turn to attack
         else if (attackingPlayerInt == 1) {
             if (!enemyCard.getName().equals("Blank") && !playerCard.getName().equals("Blank")) {
                 enemyCard.setShield(enemyCard.getShield() - playerCard.getAttack());
@@ -646,6 +650,7 @@ public class Gameplay extends ScreenAdapter {
                 playerHealth -= enemyCard.getAttack();
             }
         }
+
         // Determine win or lose if applicable
         if (enemyHealth < 1) {
             win = true;
@@ -656,13 +661,16 @@ public class Gameplay extends ScreenAdapter {
         }
     }
 
+    // This method is used to draw card to enemy hand
     void drawCardEnemy(){
         if (cardsInEnemyHand.size() < 5 && !cardsInEnemyDeck.isEmpty() && !drawnEnemyBool) {
+
             // Selects random card to add to enemy hand
             int randomIndex = (int) (Math.random() * cardsInEnemyDeck.size());
             Card cardToAdd = cardsInEnemyDeck.get(randomIndex).deepCopy();
             cardsInEnemyHand.add(cardToAdd);
             cardsInEnemyDeck.remove(randomIndex);
+
             // Update enemy hand UI
             for (int i = 0; i <= 4; i++) {
                 if (cardOnScreenDatas.get(i).getCardID() == 37) { // Blank card
@@ -670,10 +678,12 @@ public class Gameplay extends ScreenAdapter {
                     break;
                 }
             }
+
             drawnEnemyBool = true;
         }
     }
 
+    // This method is used to place card on the field-slot
     void placeCardEnemy(){
         boolean placed = false;
         for (int i = 0; i < cardsInEnemyHand.size(); i++) { // Loop through every card in hand
@@ -681,23 +691,29 @@ public class Gameplay extends ScreenAdapter {
             for (int j = 10; j < 13; j++) { // Loop through every field slot
                 CardOnScreenData fieldSlot = cardOnScreenDatas.get(j);
                 Card fieldCard = fieldSlot.getCard();
+
                 // Check if evolution is possible
                 boolean canEvolve = fieldCard.getStage() == handCard.getStage() - 1 && fieldCard.getType().equals(handCard.getType()) && enemyEnergy >= handCard.getCost();
+
                 // Check if placement on blank slot is possible
                 boolean canPlaceOnBlank = enemyEnergy >= handCard.getCost() && fieldSlot.getCard().getName().equals("Blank");
                 if (canEvolve || canPlaceOnBlank) {
+
                     // Decrease energy
                     enemyEnergy -= handCard.getCost();
                     if (canEvolve) {
                         // Evolution: add attack and shield to hand card
                         handCard.setAttack(fieldCard.getAttack() + handCard.getAttack());
                         handCard.setShield(fieldCard.getShield() + handCard.getShield());
+
                     } else if (handCard.getStage() > 1) {
                         // Place raw higher-stage card on blank slot, halve its attack
                         handCard.setAttack(handCard.getAttack() / 2);
                     }
+
                     // Place hand card on the field slot
                     fieldSlot.remakeCard(handCard.deepCopy(), fieldSlot.getX(), fieldSlot.getY(), fieldSlot.getScale());
+
                     // Replace hand card with a blank card in the hand display
                     for (int k = 0; k < 4; k++) {
                         if (cardOnScreenDatas.get(k).getCard().getName().equals(handCard.getName())) {
@@ -705,6 +721,7 @@ public class Gameplay extends ScreenAdapter {
                             break;
                         }
                     }
+
                     // Remove the placed card from enemy hand
                     cardsInEnemyHand.remove(handCard);
                     placed = true;
@@ -715,24 +732,24 @@ public class Gameplay extends ScreenAdapter {
         }
     }
 
+    // This method is used to discard a card on enemy hand
     void discardCardEnemy(){
         // Determine if field is full
         boolean full = true;
-
         for (int i = 0; i < 4; i++){
             if (cardOnScreenDatas.get(i).getCard().getName().equals("Blank")) {
                 full = false;
                 break;
             }
         }
+
         // Discard priority logic
-        // Mostly check if handsize = 5 or not
-        // Check enemyReacharge <10 (better to check recharge than energy)
-        // Wasn't place any card this turn
+        // Check if hand size exceeds the limit
+        // Or if enemy recharge <10
         if (cardsInEnemyHand.size() >= 5 || (enemyRecharge < 10)) {
             Card discardCandidate = null;
-            // Only when >=6 energy
-            // Only when more than 2 card on hand (one cost on hand require high energy)
+
+            // Step 1: Prioritize discarding cards with high-cost if enough energy is available
             if (enemyEnergy >= 6 && cardsInEnemyHand.size() > 2) {
                 for (Card card : cardsInEnemyHand) {
                     if (card.getCost() > 6) {
@@ -746,7 +763,8 @@ public class Gameplay extends ScreenAdapter {
                     }
                 }
             }
-            // Step 1: Prioritize discarding basics if the field is full
+
+            // Step 2: If field is full, prioritize discarding basic cards (Stage 1)
             for (Card card : cardsInEnemyHand) {
                 if (card.getStage() == 1 && full) { // Check if basic and field is full
                     discardCandidate = card;
@@ -754,7 +772,7 @@ public class Gameplay extends ScreenAdapter {
                 }
             }
 
-            // Step 2: Prioritize higher-stage cards that don't match fielded card types
+            // Step 3: Discard higher-stage cards that don't match any card type on the field
             if (discardCandidate == null) {
                 for (Card card : cardsInEnemyHand) {
                     // Only consider cards with stage 2 (higher than basic)
@@ -776,12 +794,12 @@ public class Gameplay extends ScreenAdapter {
                 }
             }
 
-            // Step 3: Discard duplicates (higher to lower stages)
+            // Step 4: Discard duplicates (higher to lower stages)
             if (discardCandidate == null) {
                 for (int i = 0; i < cardsInEnemyHand.size(); i++) {
                     Card card = cardsInEnemyHand.get(i);
                     for (int j = i + 1; j < cardsInEnemyHand.size(); j++) {
-                        if (card.getName().equals(cardsInEnemyHand.get(j).getName())) {
+                        if (card.getName().equals(cardsInEnemyHand.get(j).getName())) { //Found duplicate
                             discardCandidate = card;
                             break;
                         }
@@ -794,9 +812,9 @@ public class Gameplay extends ScreenAdapter {
 
             // If a card was chosen to discard, proceed with discard
             if (discardCandidate != null) {
-                cardsInEnemyHand.remove(discardCandidate);
-                enemyEnergy++;
-                enemyRecharge++;
+                cardsInEnemyHand.remove(discardCandidate); // Remove the card from the hand
+                enemyEnergy++; // Gain energy as a result of discarding
+                enemyRecharge++; // Recharge increases with discard
                 // Update UI: replace card in hand with blank card
                 for (int k = 0; k < 5; k++) {
                     if (cardOnScreenDatas.get(k).getCard().getName().equals(discardCandidate.getName())) {
@@ -808,6 +826,7 @@ public class Gameplay extends ScreenAdapter {
         }
     }
 
+    // This method is used to handle the enemy's attack phase during its turn
     void attackPlayerEnemy(){
         processCardInteraction(1, 13, 10);
         processCardInteraction(1, 14, 11);
