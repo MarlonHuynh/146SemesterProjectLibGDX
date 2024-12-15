@@ -86,6 +86,11 @@ public class Library extends ScreenAdapter {
             cardOnPage.add(cardList.get(i).deepCopy());
         }
 
+        /**
+         * Displays the first set of cards to start
+         * Loads other important buttons and basic cards
+         * Loads the starting sprites as well as the buttons used for sorting
+         */
         cardInDeck = new ArrayList<Card>();
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(0), 80, 400, 0.45f));
         cardOnScreenDatas.add(new CardOnScreenData(cardOnPage.get(1), 190, 400, 0.45f));
@@ -143,7 +148,9 @@ public class Library extends ScreenAdapter {
         playersDeckIcon = new Sprite(new Texture("btn_deck.png"));
         playersDeckIcon.setPosition(370, 500);
 
-
+        /**
+         * More setting of our spirtes and text
+         */
         defaultFont = new BitmapFont(Gdx.files.internal("ui/dpcomic.fnt"));
         defaultFont.getData().setScale(0.4f);
         deckLayout.setText(defaultFont, deckStr, Color.RED, 500, Align.left, true);
@@ -160,7 +167,9 @@ public class Library extends ScreenAdapter {
         draw();
     }
 
-
+    /**
+     * The draw function to draw out our function and also set our camera
+     */
     public void draw() {
         ScreenUtils.clear(245 / 255f, 1250 / 255f, 205 / 255f, 1f);
         camera.position.set(300, 300, 0); // Recenter camera on resize
@@ -187,6 +196,9 @@ public class Library extends ScreenAdapter {
         spriteBatch.end();
     }
 
+    /**
+     * Used to update the cards in order to reflect what is being shown
+     */
     private void updateCardsOnPage() {
         int start = currentPage * CARDS_PER_PAGE;
         int end = Math.min(start + CARDS_PER_PAGE, viewCardList.size());
@@ -212,6 +224,9 @@ public class Library extends ScreenAdapter {
 
     }
 
+    /**
+     * Handles all the input for when the mouse clicks on a certain area
+     */
     public void createInputProcessor(){
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
@@ -357,6 +372,9 @@ public class Library extends ScreenAdapter {
                 return clicked;
             }
 
+            /**
+             * More checks when the button is being pressed
+             */
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
                 // Reset Btn Color
                 backSpr.setColor(1, 1, 1, 1f);
