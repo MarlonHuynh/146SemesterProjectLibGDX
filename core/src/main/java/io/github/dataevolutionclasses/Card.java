@@ -116,5 +116,4 @@ public class Card {
         System.out.println(name + " | " + type + " | " + stage + " | "
             + cost + " | " + attack + " | " + shield + " | " + desc);
     }
-
 }

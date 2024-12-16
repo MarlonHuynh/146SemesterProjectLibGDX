@@ -204,7 +204,6 @@ public class CardReader {
                     card.setTexture("cardsprites/balancedbinarytree.png");
                     break;
             }
-
         }
     }
 }

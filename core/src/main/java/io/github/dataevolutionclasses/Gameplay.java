@@ -34,7 +34,7 @@ public class Gameplay extends ScreenAdapter {
     private final HashMap<String, Card> nameToCardHashmap = new HashMap<>();            // Master Card Storage (Do not change)
     private final HashMap<String, Integer> nameToIntHashmap = new HashMap<>();          // Master Card Storage (Do not change)
     private ArrayList<CardOnScreenData> cardOnScreenDatas;                              // Houses all information about all cards spots displayed on the screen
-    private final ArrayList<Card> cardsInPlayerDeck = new ArrayList<>();                // Cards in player's deck
+    private ArrayList<Card> cardsInPlayerDeck = new ArrayList<>();                // Cards in player's deck
     private final ArrayList<Card> cardsInPlayerHand = new ArrayList<>();                // Cards in player's hand
     private final Card[] cardsInPlayerField = new Card[3];                              // Cards in player's field
     private final ArrayList<Card> cardsInEnemyDeck = new ArrayList<>();                 // See above, with enemy.
@@ -128,24 +128,28 @@ public class Gameplay extends ScreenAdapter {
         // Initialize stat variables
         playerHealth = 60; enemyHealth = 40; playerEnergy = 0; playerRecharge = 0; enemyEnergy = 0; enemyRecharge = 0;
         // Create the cards in the player's deck
-        // TODO: Initial deck will be a deck taken from from the library section
-        List<String> strTemp = Arrays.asList(
-            "Bubble Sort", "Bubble Sort", "Seelection", "Seelection", "Eelnsertion Sort", "Eelnsertion Sort",
-            "Bubble Sort", "Bubble Sort", "Seelection", "Seelection", "Eelnsertion Sort", "Eelnsertion Sort",
-            "Surgeon Sort", "Surgeon Sort", "Shell Sort", "Shell Sort", "Quickfish Sort", "Quickfish Sort",
-            "A-Starfish", "Bucket O' Fish", "Raydix Sort",
-            "Parraykeet", "Parraykeet", "Sphinx List", "Sphinx List", "Bin. Canary Tree", "Bin. Canary Tree",
-            "Parraykeet", "Parraykeet", "Sphinx List", "Sphinx List", "Bin. Canary Tree", "Bin. Canary Tree",
-            "Quack Stack", "Quack Stack", "Hawkmap", "Hawkmap", "Quetzelqueueotl", "Quetzelqueueotl",
-            "Grifminmax Heap", "Hippograph", "Bal. Canary Tree",
-            "Backup Data", "Backup Data", "Backup Data", "Backup Data", "Backup Data", "Backup Data"
-        );
-        for (String s : strTemp) {
-            Card card = nameToCardHashmap.get(s);
-            if (card != null)
-                cardsInPlayerDeck.add(card);
-            else
-                System.out.println("Null card: " + s);
+        if (Library.staticCardInDeck != null){
+            cardsInPlayerDeck = Library.staticCardInDeck;
+        }
+        else{
+            List<String> strTemp = Arrays.asList(
+                "Bubble Sort", "Bubble Sort", "Seelection", "Seelection", "Eelnsertion Sort", "Eelnsertion Sort",
+                "Bubble Sort", "Bubble Sort", "Seelection", "Seelection", "Eelnsertion Sort", "Eelnsertion Sort",
+                "Surgeon Sort", "Surgeon Sort", "Shell Sort", "Shell Sort", "Quickfish Sort", "Quickfish Sort",
+                "A-Starfish", "Bucket O' Fish", "Raydix Sort",
+                "Parraykeet", "Parraykeet", "Sphinx List", "Sphinx List", "Bin. Canary Tree", "Bin. Canary Tree",
+                "Parraykeet", "Parraykeet", "Sphinx List", "Sphinx List", "Bin. Canary Tree", "Bin. Canary Tree",
+                "Quack Stack", "Quack Stack", "Hawkmap", "Hawkmap", "Quetzelqueueotl", "Quetzelqueueotl",
+                "Grifminmax Heap", "Hippograph", "Bal. Canary Tree",
+                "Recover Data", "Recover Data", "Recover Data", "Backup Data", "Backup Data", "Backup Data"
+            );
+            for (String s : strTemp) {
+                Card card = nameToCardHashmap.get(s);
+                if (card != null)
+                    cardsInPlayerDeck.add(card);
+                else
+                    System.out.println("Null card: " + s);
+            }
         }
         // Generate hand by taking 5 cards from deck
         for (int i = 0; i < 5; i++){
@@ -378,29 +382,56 @@ public class Gameplay extends ScreenAdapter {
             // -----------------------------------------------------------------------------------------------
             CardOnScreenData currData = cardOnScreenDatas.get(selectedCardNumber);
             CardOnScreenData prevData = cardOnScreenDatas.get(prevSelectedCardNumber);
-            // 0) Spell Logic
-            if (currData.getCard().getType().equals("Spell") && prevData.getCard().getType().equals("Spell")){
-                if (currData.getCard().getName().equals("Recover Data") || currData.getCard().getName().equals("Backup Data") && playerEnergy >= currData.getCard().getCost()){
-                    // Subtract cost
-                    playerEnergy -= currData.getCard().getCost();
-                    // Add 5 hp
-                    if  (currData.getCard().getName().equals("Recover Data")) {
+            // 0) Spell Logic for single-use double-clicked spells (add player hp)
+            if (currData.getCard().getType().equals("Spell") && prevData.getCard().getType().equals("Spell") && playerEnergy >= currData.getCard().getCost()){
+                // Subtract cost
+                playerEnergy -= currData.getCard().getCost();
+                // Add 5 hp
+                switch (currData.getCard().getName()) {
+                    case "Recover Data":
                         playerHealth += 5;
-                    }
-                    else {
+                        break;
+                    case "Backup Data":
                         playerHealth += 10;
-                    }
-                    // Remove from hand
-                    for (int i = 0; i < cardsInPlayerHand.size(); i++) {
-                        if (cardsInPlayerHand.get(i).getName().equals(currData.getCard().getName())) {
-                            cardsInPlayerHand.remove(i);
-                            break;
-                        }
-                    }
-                    // Remake the card's UI to be reflective of usage
-                    currData.remakeCard(37, currData.getX(), currData.getY(), currData.getScale());
+                        break;
+                    default:
+                        break;
                 }
-                // TODO: Add more spells
+                // Remove from hand
+                for (int i = 0; i < cardsInPlayerHand.size(); i++) {
+                    if (cardsInPlayerHand.get(i).getName().equals(currData.getCard().getName())) {
+                        cardsInPlayerHand.remove(i);
+                        break;
+                    }
+                }
+                // Remake the card's UI to be reflective of usage
+                currData.remakeCard(37, currData.getX(), currData.getY(), currData.getScale());
+            }
+            else if (prevData.getCard().getType().equals("Spell")                    // Current select is blank card
+                && !currData.getCard().getName().equals("Blank")
+                && prevSelectedCardNumber >= 5 && prevSelectedCardNumber <= 9       // Previous select is in player hand
+                && selectedCardNumber >= 13 && selectedCardNumber <= 15             // Current select is in bottom field (player field)
+                && prevData.getCard().getCost() <= playerEnergy) {                  // Player has enough money to place card
+                // Subtract cost
+                playerEnergy -= prevData.getCard().getCost();
+                switch (prevData.getCard().getName()) {
+                    case "Overclock":
+                        currData.getCard().setAttack(currData.getCard().getAttack() + 2);
+                        break;
+                    case "Superoverclock":
+                        currData.getCard().setAttack(currData.getCard().getAttack() + 4);
+                        break;
+                    case "Allocate memory":
+                        currData.getCard().setShield(currData.getCard().getShield() + 2);
+                        break;
+                    case "Allocate more memory":
+                        currData.getCard().setShield(currData.getCard().getShield() + 4);
+                        break;
+                    default:
+                        break;
+                }
+                // Remake the card's UI to be reflective of the swap
+                prevData.remakeCard(37, prevData.getX(), prevData.getY(), prevData.getScale()); // ID 37 -> blank card
             }
             // 1) Fielding Card logic (prev -> card in hand, curr -> player field blank)
             else if (!prevData.getCard().getName().equals("Blank")                       // CONDITIONS: Previous select is not blank card

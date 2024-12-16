@@ -25,6 +25,7 @@ public class Library extends ScreenAdapter {
     private final HashMap<String, Integer> nameToIntHashmap = new HashMap<>();          // Master Card Storage (Do not change)
     private List<Card> cardOnPage;
     private ArrayList<Card> cardInDeck;
+    static ArrayList<Card> staticCardInDeck;
     private ArrayList<CardOnScreenData> cardOnScreenDatas = new ArrayList<>();
     // Spr
     private SpriteBatch spriteBatch;
@@ -71,9 +72,10 @@ public class Library extends ScreenAdapter {
         // Pop storage
         CardReader reader = new CardReader("core/src/main/java/io/github/dataevolutionclasses/CardStats2.csv");
         reader.generateFirst35CardsFromFile();
-        cardList = reader.getCardList();
-
-        for (int i = 0; i < cardList.size(); i++){
+        List<Card> tempCardList = reader.getCardList();
+        cardList = new ArrayList<>();
+        for (int i = 0; i < 33; i++){
+            cardList.add(tempCardList.get(i));
             nameToCardHashmap.put(cardList.get(i).getName(), cardList.get(i)); // Populate the nameToCard and nameToInt Hashmap (For easier searches of name to Card type);
             nameToIntHashmap.put(cardList.get(i).getName(), i);
         }
@@ -192,6 +194,7 @@ public class Library extends ScreenAdapter {
         if (selectedCardNumber != -1)
             cardOnScreenDatas.get(selectedCardNumber).getSelectedSprite().draw(spriteBatch);
         defaultFont.draw(spriteBatch, deckLayout, 10, 550);
+        defaultFont.draw(spriteBatch, "Must have 40 cards to view deck.", 350, 570);
 
         spriteBatch.end();
     }
@@ -385,6 +388,7 @@ public class Library extends ScreenAdapter {
                     return false;
                 // If back button is clicked, play sound and return to the Title screen
                 if (backSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    staticCardInDeck = cardInDeck;
                     buttonSound.play();
                     game.setScreen(new Title(game));
                     dispose();
