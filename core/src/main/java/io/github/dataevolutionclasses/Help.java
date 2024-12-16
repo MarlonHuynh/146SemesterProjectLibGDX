@@ -26,7 +26,9 @@ public class Help extends ScreenAdapter {
     private OrthographicCamera camera;              // Camera
     private FitViewport viewport;                   // Viewport
     private SpriteBatch spriteBatch;
-    private Sprite backSpr, nextSpr, HelpPage1;       // Sprites for background and help elements
+    private Sprite backSpr,prevSpr, nextSpr, HelpPage1, HelpPage2, HelpPage3, HelpPage4, HelpPage5;       // Sprites for background and help elements
+    private boolean InHelpPage = true;
+    private int PageCounter = 1;
 
     //State variables for input and screen interaction
     private boolean clicked = false;    //Tracks if the screen was clicked
@@ -66,13 +68,24 @@ public class Help extends ScreenAdapter {
         // Sprite
         spriteBatch = new SpriteBatch();
         backSpr = new Sprite(new Texture("btn_back.png"));
+        prevSpr = new Sprite(new Texture("btn_prevpage.png"));
         nextSpr = new Sprite(new Texture("btn_nextpage.png"));
         HelpPage1 = new Sprite(new Texture("Help1.jpg"));
+        HelpPage2 = new Sprite(new Texture("Help2.jpg"));
+        HelpPage3 = new Sprite(new Texture("Help3.jpg"));
+        HelpPage4 = new Sprite(new Texture("Help4.jpg"));
+        HelpPage5 = new Sprite(new Texture("Help5.jpg"));
 
         // Set up sprite properties
         HelpPage1.setSize(600, 600);    // Help page fills the viewport
+        HelpPage2.setSize(600, 600);
+        HelpPage3.setSize(600, 600);
+        HelpPage4.setSize(600, 600);
+        HelpPage5.setSize(600, 600);
         backSpr.setScale(0.5f);         // Scale down the back button
         backSpr.setPosition(-30, 550);  // Position the back button
+        prevSpr.setScale(0.5f);
+        prevSpr.setPosition(-30, 10);
         nextSpr.setScale(0.5f);
         nextSpr.setPosition(430, 10);
     }
@@ -98,10 +111,23 @@ public class Help extends ScreenAdapter {
         camera.update();
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
-
-        //bgSpr.draw(spriteBatch);
-        HelpPage1.draw(spriteBatch);
+        if (PageCounter == 1) {
+            HelpPage1.draw(spriteBatch);
+        }
+        else if (PageCounter == 2){
+            HelpPage2.draw(spriteBatch);
+        }
+        else if (PageCounter == 3){
+            HelpPage3.draw(spriteBatch);
+        }
+        else if (PageCounter == 4){
+            HelpPage4.draw(spriteBatch);
+        }
+        else if (PageCounter == 5){
+            HelpPage5.draw(spriteBatch);
+        }
         backSpr.draw(spriteBatch);
+        prevSpr.draw(spriteBatch);
         nextSpr.draw(spriteBatch);
 
         spriteBatch.end();
@@ -147,6 +173,12 @@ public class Help extends ScreenAdapter {
                     return clicked;
                 }
 
+                // if prev button is clicked
+                if (prevSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
+                    pageSound.play();
+                    prevSpr.setColor(1, 1, 1, 0.8f);
+                }
+
                 // if next button is clicked
                 if (nextSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)) {
                     pageSound.play();
@@ -169,10 +201,13 @@ public class Help extends ScreenAdapter {
                     game.setScreen(new Title(game));
                     dispose();
                 }
+                if (prevSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)){
+                    prevSpr.setColor(1, 1, 1, 1f);
+                    PageCounter --;
+                }
                 if (nextSpr.getBoundingRectangle().contains(worldCoords.x, worldCoords.y)){
                     nextSpr.setColor(1, 1, 1, 1f);
-                    game.setScreen(new Help2(game));
-                    dispose();
+                    PageCounter ++;
                 }
 
                 return clicked;
