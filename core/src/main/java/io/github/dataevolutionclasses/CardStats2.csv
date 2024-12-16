@@ -32,6 +32,8 @@ Overclock,Spell,-1,2,-1,-1,Adds 2 attack to creature
 Superoverclock,Spell,-1,3,-1,-1,Adds 4 attack to creature
 Recover Data,Spell,-1,2,-1,-1,Adds 5 health to player
 Backup Data,Spell,-1,3,-1,-1,Adds 10 health to player
+Send Bug,Spell,-1,1,-1,-1,Subtract 2 health from target
+Send Malware,Spell,-1,2,-1,-1,Subtract 3 health from target
 Draw,Special,-1,-1,-1,-1,NullText IF SEEN ERROR OCCURED
 Trash,Special,-1,-1,-1,-1,NullText IF SEEN ERROR OCCURED
 Blank,Special,-1,-1,-1,-1,NullText IF SEEN ERROR OCCURED
