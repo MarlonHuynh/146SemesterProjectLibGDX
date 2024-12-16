@@ -128,7 +128,7 @@ public class Gameplay extends ScreenAdapter {
         // Initialize stat variables
         playerHealth = 60; enemyHealth = 40; playerEnergy = 0; playerRecharge = 0; enemyEnergy = 0; enemyRecharge = 0;
         // Create the cards in the player's deck
-        if (Library.staticCardInDeck != null){
+        if (Library.staticCardInDeck != null && Library.staticCardInDeck.size()>=40){
             cardsInPlayerDeck = Library.staticCardInDeck;
         }
         else{

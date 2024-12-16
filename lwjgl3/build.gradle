@@ -10,6 +10,7 @@ buildscript {
   }
 }
 plugins {
+  id 'java'
   id "io.github.fourlastor.construo" version "1.4.1"
   id "application"
 }
@@ -18,30 +19,25 @@ plugins {
 import io.github.fourlastor.construo.Target
 
 sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
-mainClassName = 'io.github.dataevolution.lwjgl3.Lwjgl3Launcher'
-application.setMainClass(mainClassName)
+application {
+  mainClass = 'io.github.dataevolution.lwjgl3.Lwjgl3Launcher'
+}
 eclipse.project.name = appName + '-lwjgl3'
-java.sourceCompatibility = 11
-java.targetCompatibility = 11
-if (JavaVersion.current().isJava9Compatible()) {
-        compileJava.options.release.set(11)
+java {
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
 }
 
 dependencies {
-  implementation "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:$gdxControllersVersion"
-  implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-  implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-  implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-  implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+  implementation "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:2.2.1"
+  implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.12.1"
+  implementation "com.badlogicgames.gdx:gdx-box2d-platform:1.12.1:natives-desktop"
+  implementation "com.badlogicgames.gdx:gdx-freetype-platform:1.12.1:natives-desktop"
+  implementation "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-desktop"
   implementation project(':core')
-  implementation("com.badlogicgames.gdx:gdx-tools:$gdxVersion"){exclude group: 'com.badlogicgames.gdx', module: 'gdx-backend-lwjgl'}
-
-  if(enableGraalNative == 'true') {
-    implementation "io.github.berstanio:gdx-svmhelper-backend-lwjgl3:$graalHelperVersion"
-      implementation "io.github.berstanio:gdx-svmhelper-extension-box2d:$graalHelperVersion"
-      implementation "io.github.berstanio:gdx-svmhelper-extension-freetype:$graalHelperVersion"
-    }
-
+  implementation("com.badlogicgames.gdx:gdx-tools:1.12.1") {
+    exclude group: 'com.badlogicgames.gdx', module: 'gdx-backend-lwjgl'
+  }
 }
 
 def os = System.properties['os.name'].toLowerCase()
@@ -67,7 +63,7 @@ jar {
   }
 // setting the manifest makes the JAR runnable.
   manifest {
-    attributes 'Main-Class': project.mainClassName
+    attributes 'Main-Class': application.mainClass
   }
 // this last step may help on some OSes that need extra instruction to make runnable JARs.
   doLast {
